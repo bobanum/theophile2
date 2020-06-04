@@ -8,7 +8,16 @@ export default class Plugin {
         console.log("Plugin " + this.name + " mounted");
         return Promise.resolve();
     }
+    static cssLink() {
+        return Theophile.cssLink.call(this);
+        // var pathname = import.meta.url.slice(0, -12);   // 12 = "js/Plugin.js"
+        // pathname += "css/" + this.name.toLowerCase() + ".css";
+        // const link = document.head.appendChild(document.createElement("link"));
+        // link.setAttribute("rel", "stylesheet");
+        // link.setAttribute("href", pathname);
+    }
     static init() {
         Theophile.register(this);
+        this.cssLink();
     }
 }

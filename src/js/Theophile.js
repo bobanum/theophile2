@@ -50,14 +50,23 @@ export default class Theophile {
             return Promise.all(this.plugins.map(plugin => plugin.mount()));
         });
     }
+    static cssLink(name) {
+        name = name || this.name.toLowerCase();
+        var pathname = import.meta.url.slice(0, -15);   // 15 = "js/Theophile.js"
+        pathname += "css/" + name + ".css";
+        const link = document.head.appendChild(document.createElement("link"));
+        link.setAttribute("rel", "stylesheet");
+        link.setAttribute("href", pathname);
+        return link;
+    }
+    static register(plugin) {
+        this.plugins.push(plugin);
+    }
     static async init() {
         this.ready = false;
         this.plugins = [];
         await this.prepare();
         await this.mount();
-    }
-    static register(plugin) {
-        this.plugins.push(plugin);
     }
 }
 Theophile.init();
