@@ -1,12 +1,48 @@
 import Plugin from "./Plugin.js";
+/**
+ * @export
+ * @class Slide
+ * @extends {Plugin}
+ */
 export default class Slide extends Plugin {
+    /**
+     * Creates an instance of Slide.
+     * @memberof Slide
+     */
     constructor() {
         super();
+        /** 
+         * Le id de la slide
+         */
+        this.id = "";
+        /**
+         * La Slide précédent
+         * @type Slide
+         */
         this.previous = null;
+        /**
+         * La Slide suivante
+         * @type Slide
+         */
         this.next = null;
+        /**
+         * Le contenu sans le titre
+         * @type {HTMLElement[]}
+         */
         this.contents = [];
+        /**
+         * Le dom HTML créé pour la slide
+         * @type HTMLElement
+         * @private
+         */
         this._html = null;
     }
+    /**
+     * 
+     *
+     * @readonly
+     * @memberof Slide
+     */
     get first() {
         var ptr = this;
         while (ptr.previous) {
@@ -23,16 +59,15 @@ export default class Slide extends Plugin {
     }
     create_html() {
         const result = document.createElement("div");
+        result.classList.add("th-slide");
         result.classList.add("th-slide-backdrop");
-        result.innerHTML = "SLIDE";
         const scene = result.appendChild(document.createElement("div"));
         scene.classList.add("th-slide-scene");
-        scene.innerHTML = "scene";
         scene.appendChild(this.create_header());
         scene.appendChild(this.create_footer());
         this.contents.forEach(content => {
             scene.appendChild(content.cloneNode(true));
-        })
+        });
         return result;
     }
     create_header() {
@@ -51,8 +86,16 @@ export default class Slide extends Plugin {
     }
     create_footer() {
         const result = document.createElement("footer");
+        result.innerHTML = "&copy; 2038 My pretty course"
         return result;
     }
+    /**
+     * 
+     *
+     * @static
+     * @returns
+     * @memberof Slide
+     */
     static prepare() {
         console.log("Slide ready");
         return Promise.resolve();
@@ -83,6 +126,7 @@ export default class Slide extends Plugin {
             }
             element.slide = slide;
             slide.heading = element;
+            slide.id = element.getAttribute("id");
             return slide;
         }
         if (element.matches("br")) {
@@ -104,19 +148,35 @@ export default class Slide extends Plugin {
         slide.contents.push(element);
         return slide;
     }
-
+    static html_contactsheet() {
+        var cs = document.createElement("section");
+        cs.classList.add("th-contactsheet");
+        var slide = this.first;
+        while(slide) {
+            cs.appendChild(slide.html.cloneNode(true));
+            slide = slide.next;
+        }
+        return cs;
+    }
     static mount() {
         var slide;
         var ptr = document.body.firstChild;
+        this.slides = [];
         while (ptr) {
             slide = this.addElement(slide, ptr);
+            if (slide) {
+                slide.idx = this.slides.length;
+                this.slides.push(this.slides);
+            }
             ptr = ptr.nextSibling;
         }
-        slide = slide.first;
-        while(slide) {
-            document.body.appendChild(slide.html);
-            slide = slide.next;
-        }
+        this.first = slide.first;
+        document.body.insertBefore(this.html_contactsheet(), document.body.firstChild);
+        // slide = slide.first;
+        // while(slide) {
+        //     document.body.appendChild(slide.html);
+        //     slide = slide.next;
+        // }
         return Promise.resolve();
     }
 }

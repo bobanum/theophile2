@@ -1,12 +1,67 @@
-div.th-slide-backdrop {
-  border: 1px solid black;
-  width: 32em;
-  height: 18em;
+.th-slide {
+  --ratio: 1.78;
+  --nlines: 18;
+  font-size: var(--font-size);
 }
 
-div.th-slide-scene {
-  border: 1px solid red;
-  width: 32em;
-  height: 18em;
+.th-slide.th-slide-backdrop {
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-image: repeating-linear-gradient(to right, #660022, #750027, #660022, #57001d 4.5%, #660022 5%);
+  display: -ms-grid;
+  display: grid;
+  justify-items: center;
+  -ms-flex-line-pack: center;
+      align-content: center;
+}
+
+.th-slide div.th-slide-scene {
+  background-color: black;
+  color: white;
+  width: calc(1em * var(--nlines) * var(--ratio));
+  height: calc(1em * var(--nlines));
+  display: -ms-grid;
+  display: grid;
+  -ms-flex-line-pack: justify;
+      align-content: space-between;
+}
+
+.th-slide div.th-slide-scene > * {
+  border: 1px solid white;
+}
+
+.th-slide div.th-slide-scene > header {
+  -webkit-box-ordinal-group: -999;
+      -ms-flex-order: -1000;
+          order: -1000;
+}
+
+.th-slide div.th-slide-scene > header h1, .th-slide div.th-slide-scene > header h2, .th-slide div.th-slide-scene > header h3, .th-slide div.th-slide-scene > header p {
+  margin: 0;
+  font-size: 2.2em;
+}
+
+.th-slide div.th-slide-scene > footer {
+  -webkit-box-ordinal-group: 1001;
+      -ms-flex-order: 1000;
+          order: 1000;
+}
+
+.th-slideshow {
+  --font-size: 38px;
+}
+
+.th-slideshow ~ * {
+  display: none;
+}
+
+.th-contactsheet {
+  --font-size: 5pt;
+}
+
+.th-contactsheet ~ * {
+  display: none;
 }
 /*# sourceMappingURL=slide.css.map */

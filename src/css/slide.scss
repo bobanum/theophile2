@@ -1,10 +1,55 @@
-div.th-slide-backdrop {
-    border: 1px solid black;
-    width: 32em;
-    height: 18em;
+.th-slide {
+    --ratio: 1.78;
+    --nlines: 18;
+    font-size: var(--font-size);
+    &.th-slide-backdrop {
+        // position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background-image: repeating-linear-gradient(to right, 
+        hsl(340, 100%, 20%), 
+        hsl(340, 100%, 23%), 
+        hsl(340, 100%, 20%), 
+        hsl(340, 100%, 17%) 4.5%, 
+        hsl(340, 100%, 20%) 5%);
+        display: grid;
+        justify-items: center;
+        align-content: center;
+    }
+    div.th-slide-scene {
+        background-color: black;
+        color: white;
+        width: calc(1em * var(--nlines) * var(--ratio));
+        height: calc(1em * var(--nlines));
+        display: grid;
+        align-content: space-between;
+        & > * {
+            border: 1px solid white;
+        }
+        & > header {
+            order: -1000;
+            h1, h2, h3, p {
+                margin: 0;
+                font-size: 2.2em;
+            }
+        }
+        & > footer {
+            order: 1000;
+        }
+    }
 }
-div.th-slide-scene {
-    border: 1px solid red;
-    width: 32em;
-    height: 18em;
+.th-slideshow {
+    --font-size: 38px;
+    
+    & ~ * {
+        display: none;
+    }
+}
+.th-contactsheet {
+    --font-size: 5pt;
+    & ~ * {
+        display: none;
+    }
 }
