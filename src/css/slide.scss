@@ -40,6 +40,7 @@
         width: calc(1em * var(--nlines) * var(--ratio));
         height: calc(1em * var(--nlines));
         display: grid;
+        grid-template-rows: auto 1fr auto;
         align-content: space-between;
         & > * {
             border: 1px solid white;
@@ -56,6 +57,9 @@
         }
         & > footer {
             order: 1000;
+        }
+        & > .th-slide-body {
+            padding: 1em;
         }
     }
     > .th-slide-navigation {
@@ -160,6 +164,12 @@
             .th-option-print {
                 &::before {
                     content: "print";
+                }
+            }
+            .th-option-menu {
+                flex-grow: 0;
+                &::before {
+                    content: "menu";
                 }
             }
         }

@@ -51,6 +51,8 @@
   height: calc(1em * var(--nlines));
   display: -ms-grid;
   display: grid;
+  -ms-grid-rows: auto 1fr auto;
+      grid-template-rows: auto 1fr auto;
   -ms-flex-line-pack: justify;
       align-content: space-between;
 }
@@ -77,6 +79,10 @@
   -webkit-box-ordinal-group: 1001;
       -ms-flex-order: 1000;
           order: 1000;
+}
+
+.th-slide-backdrop > .th-slide > .th-slide-body {
+  padding: 1em;
 }
 
 .th-slide-backdrop > .th-slide-navigation {
@@ -236,6 +242,16 @@
 
 .th-slide-backdrop > .th-slide-navigation .th-slide-options .th-option-print::before {
   content: "print";
+}
+
+.th-slide-backdrop > .th-slide-navigation .th-slide-options .th-option-menu {
+  -webkit-box-flex: 0;
+      -ms-flex-positive: 0;
+          flex-grow: 0;
+}
+
+.th-slide-backdrop > .th-slide-navigation .th-slide-options .th-option-menu::before {
+  content: "menu";
 }
 
 .th-contactsheet {
