@@ -6,9 +6,7 @@
     <title>My first document</title>
     <script type="module">
         import App from "../src/js/App.js";
-        App.prepare().then(_data => {
-            console.log("ready");
-        });
+        App.load().then(_data => App.exec());
     </script>
 </head>
 <body>

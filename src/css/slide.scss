@@ -1,24 +1,40 @@
-.th-slide {
+:root {
     --ratio: 1.78;
     --nlines: 18;
-    font-size: var(--font-size);
-    &.th-slide-backdrop {
-        // position: fixed;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-        background-image: repeating-linear-gradient(to right, 
-        hsl(340, 100%, 20%), 
-        hsl(340, 100%, 23%), 
-        hsl(340, 100%, 20%), 
-        hsl(340, 100%, 17%) 4.5%, 
-        hsl(340, 100%, 20%) 5%);
-        display: grid;
-        justify-items: center;
-        align-content: center;
+}
+.th-slideshow {
+    > * {
+        display: none;
     }
-    div.th-slide-scene {
+    > .th-slide-backdrop {
+        display: flex;
+    }
+    --font-size: calc(100vw / (var(--nlines) * var(--ratio)));
+    @media (min-aspect-ratio: 16 / 9) {
+        --font-size: calc(100vh / var(--nlines));
+    }
+}
+.th-slide-backdrop {
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size);
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-image: repeating-linear-gradient(
+        to right,
+        hsl(340, 100%, 20%),
+        hsl(340, 100%, 23%),
+        hsl(340, 100%, 20%),
+        hsl(340, 100%, 17%) 4.5%,
+        hsl(340, 100%, 20%) 5%
+    );
+    display: grid;
+    justify-items: center;
+    align-content: center;
+    > .th-slide {
         background-color: black;
         color: white;
         width: calc(1em * var(--nlines) * var(--ratio));
@@ -30,7 +46,10 @@
         }
         & > header {
             order: -1000;
-            h1, h2, h3, p {
+            h1,
+            h2,
+            h3,
+            p {
                 margin: 0;
                 font-size: 2.2em;
             }
@@ -39,16 +58,119 @@
             order: 1000;
         }
     }
-}
-.th-slideshow {
-    --font-size: 38px;
-    
-    & ~ * {
-        display: none;
+    > .th-slide-navigation {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        display: grid;
+        grid-template-columns: 15px min-content 1fr min-content 15px;
+        grid-template-rows: min-content 1fr min-content;
+        > * {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: "Material Icons";
+            opacity: 0;
+            color: white;
+            text-shadow: 0.1em 0.1em 0.1em #0008;
+            position: relative;
+            transition-property: opacity;
+            transition-duration: .5s;
+            &:hover {
+                opacity: 1;
+            }
+        }
+        .th-slide-previous {
+            background-image: linear-gradient(to left, #8880, #888C);
+            grid-row: 1 / -1;
+            grid-column: 1 / span 2;
+            &::before {
+                font-size: 3em;
+                content: "arrow_back";
+            }
+        }
+        .th-slide-next {
+            background-image: linear-gradient(to right, #8880, #888C);
+            grid-row: 1 / -1;
+            grid-column: -3 / span 2;
+            &::before {
+                font-size: 3em;
+                content: "arrow_forward";
+            }
+        }
+        .th-slide-first,
+        .th-slide-last {
+            grid-row: 1 / -1;
+            &::before {
+                position: absolute;
+                font-size: 3em;
+            }
+            &:not(:hover)::before {
+                display: none;
+            }
+        }
+        .th-slide-first {
+            background-image: linear-gradient(to left, #8880, #888F);
+            grid-column: 1 / span 1;
+            justify-content: start;
+            &::before {
+                content: "first_page";
+            }
+        }
+        .th-slide-last {
+            background-image: linear-gradient(to right, #8880, #888F);
+            grid-column: -2 / span 1;
+            justify-content: end;
+            &::before {
+                content: "last_page";
+            }
+        }
+        .th-slide-options {
+            background-image: linear-gradient(to bottom, #8880, #888C);
+            grid-row: -2 / span 1;
+            grid-column: 1 / -1;
+            align-items: stretch;
+            > * {
+                padding: 0.25em;
+                cursor: pointer;
+                flex: 1 0 0;
+                gap: 1em;
+                opacity: 0.5;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                &:hover {
+                    opacity: 1;
+                    background-image: linear-gradient(to bottom, #fff0, #fff4);
+                }
+            }
+            .th-option-contactsheet {
+                &::before {
+                    content: "calendar_view_month";
+                }
+            }
+            .th-option-stopslideshow {
+                &::before {
+                    content: "cancel_presentation";
+                }
+            }
+            .th-option-print {
+                &::before {
+                    content: "print";
+                }
+            }
+        }
     }
 }
 .th-contactsheet {
     --font-size: 5pt;
+    font-size: 5pt;
+    display: grid;
+    gap: 1em;
+    grid-template-columns: repeat(auto-fit, minmax(calc(1em * var(--nlines) * var(--ratio)), 1fr));
     & ~ * {
         display: none;
     }

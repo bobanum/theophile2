@@ -8,6 +8,10 @@ export default class Plugin {
         console.log("Plugin " + this.name + " mounted");
         return Promise.resolve();
     }
+    static clean() {
+        console.log("Plugin " + this.name + " cleaned");
+        return Promise.resolve();
+    }
     static cssLink() {
         return Theophile.cssLink.call(this);
         // var pathname = import.meta.url.slice(0, -12);   // 12 = "js/Plugin.js"
@@ -17,7 +21,6 @@ export default class Plugin {
         // link.setAttribute("href", pathname);
     }
     static init() {
-        Theophile.register(this);
         this.cssLink();
     }
 }

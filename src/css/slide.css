@@ -1,10 +1,37 @@
-.th-slide {
+:root {
   --ratio: 1.78;
   --nlines: 18;
-  font-size: var(--font-size);
 }
 
-.th-slide.th-slide-backdrop {
+.th-slideshow {
+  --font-size: calc(100vw / (var(--nlines) * var(--ratio)));
+}
+
+.th-slideshow > * {
+  display: none;
+}
+
+.th-slideshow > .th-slide-backdrop {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+@media (min-aspect-ratio: 16 / 9) {
+  .th-slideshow {
+    --font-size: calc(100vh / var(--nlines));
+  }
+}
+
+.th-slide-backdrop {
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  font-size: var(--font-size);
+  position: absolute;
   top: 0;
   right: 0;
   bottom: 0;
@@ -17,7 +44,7 @@
       align-content: center;
 }
 
-.th-slide div.th-slide-scene {
+.th-slide-backdrop > .th-slide {
   background-color: black;
   color: white;
   width: calc(1em * var(--nlines) * var(--ratio));
@@ -28,37 +55,197 @@
       align-content: space-between;
 }
 
-.th-slide div.th-slide-scene > * {
+.th-slide-backdrop > .th-slide > * {
   border: 1px solid white;
 }
 
-.th-slide div.th-slide-scene > header {
+.th-slide-backdrop > .th-slide > header {
   -webkit-box-ordinal-group: -999;
       -ms-flex-order: -1000;
           order: -1000;
 }
 
-.th-slide div.th-slide-scene > header h1, .th-slide div.th-slide-scene > header h2, .th-slide div.th-slide-scene > header h3, .th-slide div.th-slide-scene > header p {
+.th-slide-backdrop > .th-slide > header h1,
+.th-slide-backdrop > .th-slide > header h2,
+.th-slide-backdrop > .th-slide > header h3,
+.th-slide-backdrop > .th-slide > header p {
   margin: 0;
   font-size: 2.2em;
 }
 
-.th-slide div.th-slide-scene > footer {
+.th-slide-backdrop > .th-slide > footer {
   -webkit-box-ordinal-group: 1001;
       -ms-flex-order: 1000;
           order: 1000;
 }
 
-.th-slideshow {
-  --font-size: 38px;
+.th-slide-backdrop > .th-slide-navigation {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 15px min-content 1fr min-content 15px;
+      grid-template-columns: 15px -webkit-min-content 1fr -webkit-min-content 15px;
+      grid-template-columns: 15px min-content 1fr min-content 15px;
+  -ms-grid-rows: min-content 1fr min-content;
+      grid-template-rows: -webkit-min-content 1fr -webkit-min-content;
+      grid-template-rows: min-content 1fr min-content;
 }
 
-.th-slideshow ~ * {
+.th-slide-backdrop > .th-slide-navigation > * {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  font-family: "Material Icons";
+  opacity: 0;
+  color: white;
+  text-shadow: 0.1em 0.1em 0.1em #0008;
+  position: relative;
+  -webkit-transition-property: opacity;
+  transition-property: opacity;
+  -webkit-transition-duration: .5s;
+          transition-duration: .5s;
+}
+
+.th-slide-backdrop > .th-slide-navigation > *:hover {
+  opacity: 1;
+}
+
+.th-slide-backdrop > .th-slide-navigation .th-slide-previous {
+  background-image: -webkit-gradient(linear, right top, left top, from(#8880), to(#888C));
+  background-image: linear-gradient(to left, #8880, #888C);
+  grid-row: 1 / -1;
+  -ms-grid-column: 1;
+  -ms-grid-column-span: 2;
+  grid-column: 1 / span 2;
+}
+
+.th-slide-backdrop > .th-slide-navigation .th-slide-previous::before {
+  font-size: 3em;
+  content: "arrow_back";
+}
+
+.th-slide-backdrop > .th-slide-navigation .th-slide-next {
+  background-image: -webkit-gradient(linear, left top, right top, from(#8880), to(#888C));
+  background-image: linear-gradient(to right, #8880, #888C);
+  grid-row: 1 / -1;
+  grid-column: -3 / span 2;
+}
+
+.th-slide-backdrop > .th-slide-navigation .th-slide-next::before {
+  font-size: 3em;
+  content: "arrow_forward";
+}
+
+.th-slide-backdrop > .th-slide-navigation .th-slide-first,
+.th-slide-backdrop > .th-slide-navigation .th-slide-last {
+  grid-row: 1 / -1;
+}
+
+.th-slide-backdrop > .th-slide-navigation .th-slide-first::before,
+.th-slide-backdrop > .th-slide-navigation .th-slide-last::before {
+  position: absolute;
+  font-size: 3em;
+}
+
+.th-slide-backdrop > .th-slide-navigation .th-slide-first:not(:hover)::before,
+.th-slide-backdrop > .th-slide-navigation .th-slide-last:not(:hover)::before {
   display: none;
+}
+
+.th-slide-backdrop > .th-slide-navigation .th-slide-first {
+  background-image: -webkit-gradient(linear, right top, left top, from(#8880), to(#888F));
+  background-image: linear-gradient(to left, #8880, #888F);
+  -ms-grid-column: 1;
+  -ms-grid-column-span: 1;
+  grid-column: 1 / span 1;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: start;
+}
+
+.th-slide-backdrop > .th-slide-navigation .th-slide-first::before {
+  content: "first_page";
+}
+
+.th-slide-backdrop > .th-slide-navigation .th-slide-last {
+  background-image: -webkit-gradient(linear, left top, right top, from(#8880), to(#888F));
+  background-image: linear-gradient(to right, #8880, #888F);
+  grid-column: -2 / span 1;
+  -webkit-box-pack: end;
+      -ms-flex-pack: end;
+          justify-content: end;
+}
+
+.th-slide-backdrop > .th-slide-navigation .th-slide-last::before {
+  content: "last_page";
+}
+
+.th-slide-backdrop > .th-slide-navigation .th-slide-options {
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#8880), to(#888C));
+  background-image: linear-gradient(to bottom, #8880, #888C);
+  grid-row: -2 / span 1;
+  grid-column: 1 / -1;
+  -webkit-box-align: stretch;
+      -ms-flex-align: stretch;
+          align-items: stretch;
+}
+
+.th-slide-backdrop > .th-slide-navigation .th-slide-options > * {
+  padding: 0.25em;
+  cursor: pointer;
+  -webkit-box-flex: 1;
+      -ms-flex: 1 0 0px;
+          flex: 1 0 0;
+  gap: 1em;
+  opacity: 0.5;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
+.th-slide-backdrop > .th-slide-navigation .th-slide-options > *:hover {
+  opacity: 1;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#fff0), to(#fff4));
+  background-image: linear-gradient(to bottom, #fff0, #fff4);
+}
+
+.th-slide-backdrop > .th-slide-navigation .th-slide-options .th-option-contactsheet::before {
+  content: "calendar_view_month";
+}
+
+.th-slide-backdrop > .th-slide-navigation .th-slide-options .th-option-stopslideshow::before {
+  content: "cancel_presentation";
+}
+
+.th-slide-backdrop > .th-slide-navigation .th-slide-options .th-option-print::before {
+  content: "print";
 }
 
 .th-contactsheet {
   --font-size: 5pt;
+  font-size: 5pt;
+  display: -ms-grid;
+  display: grid;
+  gap: 1em;
+  -ms-grid-columns: (minmax(calc(1em * var(--nlines) * var(--ratio)), 1fr))[auto-fit];
+      grid-template-columns: repeat(auto-fit, minmax(calc(1em * var(--nlines) * var(--ratio)), 1fr));
 }
 
 .th-contactsheet ~ * {
