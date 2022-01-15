@@ -16,9 +16,10 @@ export default class Transition {
     }
     static init() {
         Promise.all([
-            "./TransitionSlide.js",
-            "./TransitionFade.js",
-        ].map(file => import(file))).then(data => {
+            "Slide",
+            "Fade",
+            "Box",
+        ].map(file => import(`./Transition${file}.js`))).then(data => {
             data.forEach(obj => {
                 this[obj.default.name.slice(10)] = obj.default;
             });

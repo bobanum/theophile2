@@ -35,7 +35,7 @@
     display: grid;
     justify-items: center;
     align-content: center;
-    > .th-slide {
+    .th-slide {
         background-color: black;
         color: white;
         width: calc(1em * var(--nlines) * var(--ratio));

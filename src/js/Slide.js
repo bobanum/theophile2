@@ -160,7 +160,7 @@ export default class Slide extends Plugin {
     static async showSlide(slide) {
         if (slide === this.backdrop.slide) return;
         // await Promise.all(Object.values(this.animations));
-        var transition = new Transition.Slide(this.backdrop.slide, slide);
+        var transition = new Transition.Box(this.backdrop.slide, slide);
         transition.reverse = slide.idx < this.backdrop.slide.idx;
         transition.go().then(data => {
             this.backdrop.slide = slide;
