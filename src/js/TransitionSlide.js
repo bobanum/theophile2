@@ -4,6 +4,15 @@ import Transition from "./Transition.js";
 export default class TransitionSlide extends Transition {
     constructor(original, replacement) {
         super(original, replacement);
+        var boundingBox = this.original.getBoundingClientRect();
+        console.log(window, document, document.body);
+        this.box = {
+            left: boundingBox.left,
+            right: document.documentElement.clientWidth - boundingBox.right,
+            top: boundingBox.top,
+            bottom: document.documentElement.clientHeight - boundingBox.bottom,
+        };
+        console.log(this.box);
     }
     prepare(prop) {
         this.original.parentNode.appendChild(this.replacement);
