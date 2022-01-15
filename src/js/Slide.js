@@ -1,4 +1,5 @@
 import Plugin from "./Plugin.js";
+import TransitionSlide from "./TransitionSlide.js";
 /**
  * @export
  * @class Slide
@@ -81,53 +82,38 @@ export default class Slide extends Plugin {
         navigation.classList.add("th-slide-navigation");
         const previous = navigation.appendChild(document.createElement("div"));
         previous.classList.add("th-slide-previous");
-        previous.addEventListener("click", e => {
-            const previous = backdrop.slide.previous;
-            if (previous) {
-                backdrop.appendChild(previous.html);
-                backdrop.slide.html.remove();
-                backdrop.slide = previous;
-            }
-        });
+        previous.addEventListener("click", e => this.showPrevious);
         const next = navigation.appendChild(document.createElement("div"));
         next.classList.add("th-slide-next");
         next.addEventListener("click", e => this.showNext());
         const first = navigation.appendChild(document.createElement("div"));
         first.classList.add("th-slide-first");
-        first.addEventListener("click", e => {
-            const first = backdrop.slide.first;
-            if (first) {
-                backdrop.appendChild(first.html);
-                backdrop.slide.html.remove();
-                backdrop.slide = first;
-            }
-        });
+        first.addEventListener("click", e => this.showFirst);
         const last = navigation.appendChild(document.createElement("div"));
         last.classList.add("th-slide-last");
-        last.addEventListener("click", e => {
-            const last = backdrop.slide.last;
-            console.log(last);
-            if (last) {
-                backdrop.appendChild(last.html);
-                backdrop.slide.html.remove();
-                backdrop.slide = last;
-            }
-        });
-        var options = navigation.appendChild(document.createElement("div"));
-        options.classList.add("th-slide-options");
-        var option = options.appendChild(document.createElement("span"));
-        option.classList.add("th-option-menu");
-        var option = options.appendChild(document.createElement("span"));
-        option.classList.add("th-option-contactsheet");
-        var option = options.appendChild(document.createElement("span"));
-        option.classList.add("th-option-stopslideshow");
-        var option = options.appendChild(document.createElement("span"));
-        option.classList.add("th-option-print");
-        this.keydown(backdrop);
+        last.addEventListener("click", e => this.showLast);
+        navigation.appendChild(this.html_options());
+        this.addKeydownEvents(backdrop);
         backdrop.Slide = this;
         return backdrop;
     }
-    static keydown(backdrop) {
+    static html_options() {
+        var options = document.createElement("div");
+        options.classList.add("th-slide-options");
+        var menu = options.appendChild(document.createElement("span"));
+        menu.classList.add("th-option-menu");
+        var contactsheet = options.appendChild(document.createElement("span"));
+        contactsheet.classList.add("th-option-contactsheet");
+        var stop = options.appendChild(document.createElement("span"));
+        stop.classList.add("th-option-stopslideshow");
+        stop.addEventListener("click", e => {
+            this.stopSlideshow();
+        });
+        var print = options.appendChild(document.createElement("span"));
+        print.classList.add("th-option-print");
+        return options;
+    }
+    static addKeydownEvents(backdrop) {
         backdrop.tabIndex = "0";
         backdrop.addEventListener("keydown", e => {
             if (e.key === "Control" || e.key === "Alt" || e.key === "Shift" || e.key === "Meta") {
@@ -148,7 +134,7 @@ export default class Slide extends Plugin {
                 case "Enter":
                     this.showNext();
                     break;
-                case "ArrowLeftt":
+                case "ArrowLeft":
                 case "ArrowUp":
                 case "PageUp":
                 case "-":
@@ -162,18 +148,26 @@ export default class Slide extends Plugin {
                     break;
                 case " ":
                 case "Escape":
-                    this.startSlideshow(false);
+                    this.stopSlideshow();
             }
             e.stopPropagation();
         });
     }
-    static showSlide(slide) {
+    static async showSlide(slide) {
         if (slide === this.backdrop.slide) return;
-        this.backdrop.appendChild(slide.html);
-        this.backdrop.slide.html.remove();
-        this.backdrop.slide = slide;
+        await Promise.all(Object.values(this.animations));
+        var anim = new TransitionSlide(this.backdrop.slide, slide);
+        anim.go(slide.idx > this.backdrop.slide.idx).then(data => {
+            // this.backdrop.slide.html.remove();
+            this.backdrop.slide = slide;
+        });
     }
-    static showNext(n = 1) {
+    static async waitTransitions() {
+        console.log(Object.values(this.animations).map(animation => animation.promise));
+        await Promise.all(Object.values(this.animations).map(animation => animation.promise));
+    } 
+    static async showNext(n = 1) {
+        await this.waitTransitions();
         var slide = this.backdrop.slide;
         while (n > 0 && slide.next) {
             slide = slide.next;
@@ -181,7 +175,8 @@ export default class Slide extends Plugin {
         }
         this.showSlide(slide);
     }
-    static showPrevious(n = 1) {
+    static async showPrevious(n = 1) {
+        await this.waitTransitions();
         var slide = this.backdrop.slide;
         while (n > 0 && slide.previous) {
             slide = slide.previous;
@@ -189,11 +184,13 @@ export default class Slide extends Plugin {
         }
         this.showSlide(slide);
     }
-    static showLast() {
+    static async showLast() {
+        await this.waitTransitions();
         var slide = this.backdrop.slide.last;
         this.showSlide(slide);
     }
-    static showFirst() {
+    static async showFirst() {
+        await this.waitTransitions();
         var slide = this.backdrop.slide.first;
         this.showSlide(slide);
     }
@@ -322,12 +319,15 @@ export default class Slide extends Plugin {
                 this.backdrop.focus();
             }, 100);
         } else {
-            document.body.classList.remove("th-slideshow");
-            this.backdrop.remove();
-            delete this.backdrop;
-            localStorage.slideshow = "false";
+            return this.stopSlideshow();
         }
         return this;
+    }
+    static stopSlideshow() {
+        document.body.classList.remove("th-slideshow");
+        this.backdrop.remove();
+        delete this.backdrop;
+        localStorage.slideshow = "false";
     }
     static async clean() {
         window.addEventListener("keydown", e => {
@@ -347,6 +347,7 @@ export default class Slide extends Plugin {
         super.init();
         this.contactsheet = null;
         this.slides = [];
+        this.animations = {};
     }
 }
 Slide.init();

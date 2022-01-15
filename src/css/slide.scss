@@ -18,6 +18,7 @@
     align-items: center;
     justify-content: center;
     font-size: var(--font-size);
+    overflow:hidden;
     position: absolute;
     top: 0;
     right: 0;
@@ -60,6 +61,7 @@
         }
         & > .th-slide-body {
             padding: 1em;
+            overflow: auto;
         }
     }
     > .th-slide-navigation {
