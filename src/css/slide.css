@@ -45,7 +45,7 @@
       align-content: center;
 }
 
-.th-slide-backdrop > .th-slide {
+.th-slide-backdrop .th-slide {
   background-color: black;
   color: white;
   width: calc(1em * var(--nlines) * var(--ratio));
@@ -58,31 +58,31 @@
       align-content: space-between;
 }
 
-.th-slide-backdrop > .th-slide > * {
+.th-slide-backdrop .th-slide > * {
   border: 1px solid white;
 }
 
-.th-slide-backdrop > .th-slide > header {
+.th-slide-backdrop .th-slide > header {
   -webkit-box-ordinal-group: -999;
       -ms-flex-order: -1000;
           order: -1000;
 }
 
-.th-slide-backdrop > .th-slide > header h1,
-.th-slide-backdrop > .th-slide > header h2,
-.th-slide-backdrop > .th-slide > header h3,
-.th-slide-backdrop > .th-slide > header p {
+.th-slide-backdrop .th-slide > header h1,
+.th-slide-backdrop .th-slide > header h2,
+.th-slide-backdrop .th-slide > header h3,
+.th-slide-backdrop .th-slide > header p {
   margin: 0;
   font-size: 2.2em;
 }
 
-.th-slide-backdrop > .th-slide > footer {
+.th-slide-backdrop .th-slide > footer {
   -webkit-box-ordinal-group: 1001;
       -ms-flex-order: 1000;
           order: 1000;
 }
 
-.th-slide-backdrop > .th-slide > .th-slide-body {
+.th-slide-backdrop .th-slide > .th-slide-body {
   padding: 1em;
   overflow: auto;
 }
@@ -213,8 +213,8 @@
   padding: 0.25em;
   cursor: pointer;
   -webkit-box-flex: 1;
-      -ms-flex: 1 0 0px;
-          flex: 1 0 0;
+      -ms-flex: 1 0 1.5em;
+          flex: 1 0 1.5em;
   gap: 1em;
   opacity: 0.5;
   display: -webkit-box;
@@ -238,8 +238,22 @@
   content: "calendar_view_month";
 }
 
+.th-slide-backdrop > .th-slide-navigation .th-slide-options .th-option-stopslideshow {
+  -webkit-box-flex: 0;
+      -ms-flex-positive: 0;
+          flex-grow: 0;
+}
+
 .th-slide-backdrop > .th-slide-navigation .th-slide-options .th-option-stopslideshow::before {
   content: "cancel_presentation";
+}
+
+.th-slide-backdrop > .th-slide-navigation .th-slide-options .th-option-slideshow::before {
+  content: "crop_16_9";
+}
+
+.th-slide-backdrop > .th-slide-navigation .th-slide-options .th-option-continous::before {
+  content: "splitscreen";
 }
 
 .th-slide-backdrop > .th-slide-navigation .th-slide-options .th-option-print::before {

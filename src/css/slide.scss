@@ -35,7 +35,7 @@
     display: grid;
     justify-items: center;
     align-content: center;
-    > .th-slide {
+    .th-slide {
         background-color: black;
         color: white;
         width: calc(1em * var(--nlines) * var(--ratio));
@@ -142,7 +142,7 @@
             > * {
                 padding: 0.25em;
                 cursor: pointer;
-                flex: 1 0 0;
+                flex: 1 0 1.5em;
                 gap: 1em;
                 opacity: 0.5;
                 display: flex;
@@ -159,8 +159,19 @@
                 }
             }
             .th-option-stopslideshow {
+                flex-grow: 0;
                 &::before {
                     content: "cancel_presentation";
+                }
+            }
+            .th-option-slideshow {
+                &::before {
+                    content: "crop_16_9";
+                }
+            }
+            .th-option-continous {
+                &::before {
+                    content: "splitscreen";
                 }
             }
             .th-option-print {

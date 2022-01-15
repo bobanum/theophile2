@@ -1,44 +1,84 @@
-import Slide from "./Slide.js";
 import Transition from "./Transition.js";
 
 export default class TransitionSlide extends Transition {
     constructor(original, replacement) {
         super(original, replacement);
+        var boundingBox = this.original.getBoundingClientRect();
+        this.box = {
+            left: boundingBox.left,
+            right: document.documentElement.clientWidth - boundingBox.right,
+            top: boundingBox.top,
+            bottom: document.documentElement.clientHeight - boundingBox.bottom,
+        };
+        this.mode = "stack";
+        this.reverse = false;
+        this.direction = 2;
+        this.directions = [
+            ["left"],
+            ["left", "top"],
+            ["top"],
+            ["top", "right"],
+            ["right"],
+            ["right", "bottom"],
+            ["bottom"],
+            ["bottom", "left"],
+        ];
     }
-    prepare(prop) {
-        this.original.parentNode.appendChild(this.replacement);
-        this.replacement.style.position = "absolute";
-        this.replacement.style.zIndex = "100";
-        this.replacement.style.transitionDuration = "1000ms";
-        this.replacement.style[prop] = "80%";
-        this.replacement.style.transitionProperty = prop;
+    get props() {
+        return this.directions[(this.mode === "stack") ? this.direction : (this.direction + 4) % 8]
     }
-    clean(prop) {
-        this.replacement.style.position = "";
-        this.replacement.style.zIndex = "";
-        this.replacement.style.transitionDuration = "";
-        this.replacement.style.transitionProperty = "";
-        this.replacement.style[prop] = "";
+    start(prop) {
+        return !(this.reverse  ^ this.mode === "stack") ? (this.box[prop] + "px") : "100%";
     }
-    async go(reverse = false) {
-        Slide.animations[this.id] = this;
+    end(prop) {
+        return (this.reverse  ^ this.mode === "stack") ? (this.box[prop] + "px") : "100%";
+    }
+    cancel() {
+        this.moving.style.transition = "none";
+    }
+    prepare(resolve) {
+        super.prepare();
+        this.moving = !(this.reverse ^ this.mode === "stack") ? this.original : this.replacement;
+        this.moving.style.position = "absolute";
+        this.moving.style.zIndex = "100";
+        this.moving.style.transitionDuration = this.duration + "ms";
+        this.moving.style.transitionProperty = this.props.join(",");
+        this.props.forEach(prop => {
+            this.moving.style[prop] = this.start(prop);
+        });
+        this.evt_transitionend = e => {
+            if (this.props.indexOf(e.propertyName) < 0) return;
+            resolve(e);
+        };
+        ["transitionend", "transitioncancel"].forEach(evt => {
+            this.moving.addEventListener(evt, this.evt_transitionend);
+        });
+    }
+    clean() {
+        super.clean();
+        this.moving.style.removeProperty('position');
+        this.moving.style.removeProperty('z-index');
+        this.moving.style.removeProperty('transition');
+        this.props.forEach(prop => {
+            this.moving.style.removeProperty(prop);
+        });
+        ["transitionend", "transitioncancel"].forEach(evt => {
+            this.moving.removeEventListener(evt, this.evt_transitionend);
+        });
+    }
+    async go() {
+        this.Object.animations[this.id] = this;
         return this.promise = new Promise(resolve => {
-            if (reverse) {
-                var prop = "left";
-            } else {
-                var prop = "right"
-            }
-            this.prepare(prop);
+            this.prepare(resolve);
             setTimeout(() => {
-                this.replacement.style[prop] = "0";
+                this.props.forEach(prop => {
+                    this.moving.style[prop] = this.end(prop);
+                });
             }, 10);
-            this.replacement.addEventListener("transitionend", e => {
-                if (e.propertyName !== prop) return;
-                this.clean(prop);
-                this.original.remove();
-                delete Slide.animations[this.id];
-                resolve(e.currentTarget);
-            });
+        }).then(e => {
+            this.clean();
+            delete this.Object.animations[this.id];
+            return e;
         });
     }
 }
