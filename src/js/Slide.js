@@ -104,13 +104,17 @@ export default class Slide extends Plugin {
         menu.classList.add("th-option-menu");
         var contactsheet = options.appendChild(document.createElement("span"));
         contactsheet.classList.add("th-option-contactsheet");
+        var slideshow = options.appendChild(document.createElement("span"));
+        slideshow.classList.add("th-option-slideshow");
+        var continous = options.appendChild(document.createElement("span"));
+        continous.classList.add("th-option-continous");
+        var print = options.appendChild(document.createElement("span"));
+        print.classList.add("th-option-print");
         var stop = options.appendChild(document.createElement("span"));
         stop.classList.add("th-option-stopslideshow");
         stop.addEventListener("click", e => {
             this.stopSlideshow();
         });
-        var print = options.appendChild(document.createElement("span"));
-        print.classList.add("th-option-print");
         return options;
     }
     static addKeydownEvents(backdrop) {

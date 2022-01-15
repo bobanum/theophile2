@@ -213,8 +213,8 @@
   padding: 0.25em;
   cursor: pointer;
   -webkit-box-flex: 1;
-      -ms-flex: 1 0 0px;
-          flex: 1 0 0;
+      -ms-flex: 1 0 1.5em;
+          flex: 1 0 1.5em;
   gap: 1em;
   opacity: 0.5;
   display: -webkit-box;
@@ -238,8 +238,22 @@
   content: "calendar_view_month";
 }
 
+.th-slide-backdrop > .th-slide-navigation .th-slide-options .th-option-stopslideshow {
+  -webkit-box-flex: 0;
+      -ms-flex-positive: 0;
+          flex-grow: 0;
+}
+
 .th-slide-backdrop > .th-slide-navigation .th-slide-options .th-option-stopslideshow::before {
   content: "cancel_presentation";
+}
+
+.th-slide-backdrop > .th-slide-navigation .th-slide-options .th-option-slideshow::before {
+  content: "crop_16_9";
+}
+
+.th-slide-backdrop > .th-slide-navigation .th-slide-options .th-option-continous::before {
+  content: "splitscreen";
 }
 
 .th-slide-backdrop > .th-slide-navigation .th-slide-options .th-option-print::before {

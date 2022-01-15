@@ -30,6 +30,8 @@ export default class Transition {
             "Fade",
             "Box",
             "Flip",
+            // "Push",
+            // "Scale",
         ].map(file => import(`./Transition${file}.js`))).then(data => {
             data.forEach(obj => {
                 this[obj.default.name.slice(10)] = obj.default;
