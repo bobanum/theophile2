@@ -12,7 +12,7 @@ export default class TransitionSlide extends Transition {
         };
         this.mode = "stack";
         this.reverse = false;
-        this.direction = 0;
+        this.direction = 2;
         this.directions = [
             ["left"],
             ["left", "top"],
@@ -25,21 +25,20 @@ export default class TransitionSlide extends Transition {
         ];
     }
     get props() {
-        return this.directions[this.direction];
-        return this.directions[(this.reverse) ? this.direction : (this.direction + 4) % 8]
+        return this.directions[(this.mode === "stack") ? this.direction : (this.direction + 4) % 8]
     }
     start(prop) {
-        return this.reverse ? (this.box[prop] + "px") : "100%";
+        return !(this.reverse  ^ this.mode === "stack") ? (this.box[prop] + "px") : "100%";
     }
     end(prop) {
-        return !this.reverse ? (this.box[prop] + "px") : "100%";
+        return (this.reverse  ^ this.mode === "stack") ? (this.box[prop] + "px") : "100%";
     }
     cancel() {
         this.moving.style.transition = "none";
     }
     prepare(resolve) {
         super.prepare();
-        this.moving = (this.reverse) ? this.original : this.replacement;
+        this.moving = !(this.reverse ^ this.mode === "stack") ? this.original : this.replacement;
         this.moving.style.position = "absolute";
         this.moving.style.zIndex = "100";
         this.moving.style.transitionDuration = this.duration + "ms";
