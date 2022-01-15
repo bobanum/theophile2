@@ -3,6 +3,7 @@ export default class Transition {
         this.id = "a" + new Date().getTime() + Math.random();
         this.original = original.html;
         this.replacement = replacement.html;
+        this.duration = 500;
     }
 
 }

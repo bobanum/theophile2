@@ -1,5 +1,6 @@
 import Plugin from "./Plugin.js";
 import TransitionSlide from "./TransitionSlide.js";
+import TransitionFade from "./TransitionFade.js";
 /**
  * @export
  * @class Slide
@@ -82,16 +83,16 @@ export default class Slide extends Plugin {
         navigation.classList.add("th-slide-navigation");
         const previous = navigation.appendChild(document.createElement("div"));
         previous.classList.add("th-slide-previous");
-        previous.addEventListener("click", e => this.showPrevious);
+        previous.addEventListener("click", e => this.showPrevious());
         const next = navigation.appendChild(document.createElement("div"));
         next.classList.add("th-slide-next");
         next.addEventListener("click", e => this.showNext());
         const first = navigation.appendChild(document.createElement("div"));
         first.classList.add("th-slide-first");
-        first.addEventListener("click", e => this.showFirst);
+        first.addEventListener("click", e => this.showFirst());
         const last = navigation.appendChild(document.createElement("div"));
         last.classList.add("th-slide-last");
-        last.addEventListener("click", e => this.showLast);
+        last.addEventListener("click", e => this.showLast());
         navigation.appendChild(this.html_options());
         this.addKeydownEvents(backdrop);
         backdrop.Slide = this;
@@ -156,7 +157,7 @@ export default class Slide extends Plugin {
     static async showSlide(slide) {
         if (slide === this.backdrop.slide) return;
         await Promise.all(Object.values(this.animations));
-        var anim = new TransitionSlide(this.backdrop.slide, slide);
+        var anim = new TransitionFade(this.backdrop.slide, slide);
         anim.go(slide.idx > this.backdrop.slide.idx).then(data => {
             // this.backdrop.slide.html.remove();
             this.backdrop.slide = slide;
@@ -168,6 +169,7 @@ export default class Slide extends Plugin {
     } 
     static async showNext(n = 1) {
         await this.waitTransitions();
+        console.log(this);
         var slide = this.backdrop.slide;
         while (n > 0 && slide.next) {
             slide = slide.next;
@@ -177,6 +179,7 @@ export default class Slide extends Plugin {
     }
     static async showPrevious(n = 1) {
         await this.waitTransitions();
+        console.log(this);
         var slide = this.backdrop.slide;
         while (n > 0 && slide.previous) {
             slide = slide.previous;

@@ -5,45 +5,57 @@ export default class TransitionSlide extends Transition {
     constructor(original, replacement) {
         super(original, replacement);
         var boundingBox = this.original.getBoundingClientRect();
-        console.log(window, document, document.body);
         this.box = {
             left: boundingBox.left,
             right: document.documentElement.clientWidth - boundingBox.right,
             top: boundingBox.top,
             bottom: document.documentElement.clientHeight - boundingBox.bottom,
         };
-        console.log(this.box);
+        this.direction = 0;
+        this.directions = [
+            ["left"],
+            ["left", "top"],
+            ["top"],
+            ["top", "right"],
+            ["right"],
+            ["right", "bottom"],
+            ["bottom"],
+            ["bottom", "left"],
+        ];
     }
-    prepare(prop) {
+    prepare(props) {
         this.original.parentNode.appendChild(this.replacement);
         this.replacement.style.position = "absolute";
         this.replacement.style.zIndex = "100";
-        this.replacement.style.transitionDuration = "1000ms";
-        this.replacement.style[prop] = "80%";
-        this.replacement.style.transitionProperty = prop;
+        this.replacement.style.transitionDuration = this.duration + "ms";
+        this.replacement.style.transitionProperty = props.join(",");
+        props.forEach(prop => {
+            this.replacement.style[prop] = "100%";
+        });
     }
-    clean(prop) {
+    clean(props) {
         this.replacement.style.position = "";
         this.replacement.style.zIndex = "";
         this.replacement.style.transitionDuration = "";
         this.replacement.style.transitionProperty = "";
-        this.replacement.style[prop] = "";
+        props.forEach(prop => {
+            this.replacement.style[prop] = "";
+        });
     }
     async go(reverse = false) {
         Slide.animations[this.id] = this;
         return this.promise = new Promise(resolve => {
-            if (reverse) {
-                var prop = "left";
-            } else {
-                var prop = "right"
-            }
-            this.prepare(prop);
+            var direction = (reverse) ? this.direction : (this.direction + 4) % 8;
+            var props = this.directions[direction];
+            this.prepare(props);
             setTimeout(() => {
-                this.replacement.style[prop] = "0";
+                props.forEach(prop => {
+                    this.replacement.style[prop] = this.box[prop] + "px";
+                });
             }, 10);
             this.replacement.addEventListener("transitionend", e => {
-                if (e.propertyName !== prop) return;
-                this.clean(prop);
+                if (props.indexOf(e.propertyName) < 0) return;
+                this.clean(props);
                 this.original.remove();
                 delete Slide.animations[this.id];
                 resolve(e.currentTarget);
