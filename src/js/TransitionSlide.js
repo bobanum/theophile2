@@ -1,4 +1,3 @@
-import Slide from "./Slide.js";
 import Transition from "./Transition.js";
 
 export default class TransitionSlide extends Transition {
@@ -11,6 +10,8 @@ export default class TransitionSlide extends Transition {
             top: boundingBox.top,
             bottom: document.documentElement.clientHeight - boundingBox.bottom,
         };
+        this.mode = "stack";
+        this.reverse = false;
         this.direction = 0;
         this.directions = [
             ["left"],
@@ -23,43 +24,62 @@ export default class TransitionSlide extends Transition {
             ["bottom", "left"],
         ];
     }
-    prepare(props) {
-        this.original.parentNode.appendChild(this.replacement);
-        this.replacement.style.position = "absolute";
-        this.replacement.style.zIndex = "100";
-        this.replacement.style.transitionDuration = this.duration + "ms";
-        this.replacement.style.transitionProperty = props.join(",");
-        props.forEach(prop => {
-            this.replacement.style[prop] = "100%";
+    get props() {
+        return this.directions[this.direction];
+        return this.directions[(this.reverse) ? this.direction : (this.direction + 4) % 8]
+    }
+    start(prop) {
+        return this.reverse ? (this.box[prop] + "px") : "100%";
+    }
+    end(prop) {
+        return !this.reverse ? (this.box[prop] + "px") : "100%";
+    }
+    cancel() {
+        this.moving.style.transition = "none";
+    }
+    prepare(resolve) {
+        super.prepare();
+        this.moving = (this.reverse) ? this.original : this.replacement;
+        this.moving.style.position = "absolute";
+        this.moving.style.zIndex = "100";
+        this.moving.style.transitionDuration = this.duration + "ms";
+        this.moving.style.transitionProperty = this.props.join(",");
+        this.props.forEach(prop => {
+            this.moving.style[prop] = this.start(prop);
+        });
+        this.evt_transitionend = e => {
+            if (this.props.indexOf(e.propertyName) < 0) return;
+            resolve(e);
+        };
+        ["transitionend", "transitioncancel"].forEach(evt => {
+            this.moving.addEventListener(evt, this.evt_transitionend);
         });
     }
-    clean(props) {
-        this.replacement.style.position = "";
-        this.replacement.style.zIndex = "";
-        this.replacement.style.transitionDuration = "";
-        this.replacement.style.transitionProperty = "";
-        props.forEach(prop => {
-            this.replacement.style[prop] = "";
+    clean() {
+        super.clean();
+        this.moving.style.removeProperty('position');
+        this.moving.style.removeProperty('z-index');
+        this.moving.style.removeProperty('transition');
+        this.props.forEach(prop => {
+            this.moving.style.removeProperty(prop);
+        });
+        ["transitionend", "transitioncancel"].forEach(evt => {
+            this.moving.removeEventListener(evt, this.evt_transitionend);
         });
     }
-    async go(reverse = false) {
-        Slide.animations[this.id] = this;
+    async go() {
+        this.Object.animations[this.id] = this;
         return this.promise = new Promise(resolve => {
-            var direction = (reverse) ? this.direction : (this.direction + 4) % 8;
-            var props = this.directions[direction];
-            this.prepare(props);
+            this.prepare(resolve);
             setTimeout(() => {
-                props.forEach(prop => {
-                    this.replacement.style[prop] = this.box[prop] + "px";
+                this.props.forEach(prop => {
+                    this.moving.style[prop] = this.end(prop);
                 });
             }, 10);
-            this.replacement.addEventListener("transitionend", e => {
-                if (props.indexOf(e.propertyName) < 0) return;
-                this.clean(props);
-                this.original.remove();
-                delete Slide.animations[this.id];
-                resolve(e.currentTarget);
-            });
+        }).then(e => {
+            this.clean();
+            delete this.Object.animations[this.id];
+            return e;
         });
     }
 }

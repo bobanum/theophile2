@@ -1,6 +1,5 @@
 import Plugin from "./Plugin.js";
-import TransitionSlide from "./TransitionSlide.js";
-import TransitionFade from "./TransitionFade.js";
+import Transition from "./Transition.js";
 /**
  * @export
  * @class Slide
@@ -56,25 +55,25 @@ export default class Slide extends Plugin {
     get html() {
         if (!this._html) {
             this._html = this.html_create();
-            this._html.slide = this;
         }
         return this._html;
     }
     html_create() {
-        const result = document.createElement("div");
-        result.classList.add("th-slide");
-        result.appendChild(this.html_header());
-        result.appendChild(this.html_footer());
-        result.appendChild(this.html_body());
-        return result;
+        const html = document.createElement("div");
+        html.classList.add("th-slide");
+        html.appendChild(this.html_header());
+        html.appendChild(this.html_footer());
+        html.appendChild(this.html_body());
+        html.obj = this;
+        return html;
     }
     html_body() {
-        const result = document.createElement("div");
-        result.classList.add("th-slide-body");
+        const body = document.createElement("div");
+        body.classList.add("th-slide-body");
         this.contents.forEach(content => {
-            result.appendChild(content.cloneNode(true));
+            body.appendChild(content.cloneNode(true));
         });
-        return result;
+        return body;
     }
     static html_backdrop() {
         const backdrop = document.createElement("div");
@@ -99,7 +98,7 @@ export default class Slide extends Plugin {
         return backdrop;
     }
     static html_options() {
-        var options = document.createElement("div");
+        const options = document.createElement("div");
         options.classList.add("th-slide-options");
         var menu = options.appendChild(document.createElement("span"));
         menu.classList.add("th-option-menu");
@@ -149,27 +148,36 @@ export default class Slide extends Plugin {
                     break;
                 case " ":
                 case "Escape":
-                    this.stopSlideshow();
+                    if (Object.values(this.animations).length > 0) {
+                        this.cancelAnimations();
+                    } else {
+                        this.stopSlideshow();
+                    }
             }
             e.stopPropagation();
         });
     }
     static async showSlide(slide) {
         if (slide === this.backdrop.slide) return;
-        await Promise.all(Object.values(this.animations));
-        var anim = new TransitionFade(this.backdrop.slide, slide);
-        anim.go(slide.idx > this.backdrop.slide.idx).then(data => {
-            // this.backdrop.slide.html.remove();
+        // await Promise.all(Object.values(this.animations));
+        var transition = new Transition.Slide(this.backdrop.slide, slide);
+        transition.reverse = slide.idx < this.backdrop.slide.idx;
+        transition.go().then(data => {
             this.backdrop.slide = slide;
         });
     }
-    static async waitTransitions() {
-        console.log(Object.values(this.animations).map(animation => animation.promise));
-        await Promise.all(Object.values(this.animations).map(animation => animation.promise));
+    static async cancelAnimations() {
+        Object.values(this.animations).forEach(animation => animation.cancel());
+        return await Promise.all(Object.values(this.animations).map(animation => animation.promise));
+    } 
+    static async waitTransitions(cancel = true) {
+        if (cancel) {
+            Object.values(this.animations).forEach(animation => animation.cancel());
+        }
+        return Promise.all(Object.values(this.animations).map(animation => animation.promise));
     } 
     static async showNext(n = 1) {
         await this.waitTransitions();
-        console.log(this);
         var slide = this.backdrop.slide;
         while (n > 0 && slide.next) {
             slide = slide.next;
@@ -179,7 +187,6 @@ export default class Slide extends Plugin {
     }
     static async showPrevious(n = 1) {
         await this.waitTransitions();
-        console.log(this);
         var slide = this.backdrop.slide;
         while (n > 0 && slide.previous) {
             slide = slide.previous;

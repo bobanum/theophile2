@@ -1,52 +1,49 @@
-import Slide from "./Slide.js";
 import Transition from "./Transition.js";
 
 export default class TransitionFade extends Transition {
     constructor(original, replacement) {
         super(original, replacement);
     }
-    prepare(reverse) {
-        this.original.parentNode.appendChild(this.replacement);
-        this.original.style.position = "absolute";
+    cancel() {
+        this.replacement.style.transition = "none";
+    }
+    prepare(resolve) {
+        super.prepare();
         this.replacement.style.position = "absolute";
-        if (reverse) {
-            this.replacement.style.zIndex = "100";
-            this.replacement.style.opacity = "0";
-        } else {
-            this.replacement.style.zIndex = "100";
-            this.replacement.style.opacity = "0";
-        }
+        this.replacement.style.zIndex = "100";
+        this.replacement.style.opacity = "0";
         this.replacement.style.transitionDuration = this.duration + "ms";
-        this.replacement.style.transitionProperty = "opacity";
+        this.replacement.style.transitionProperty = "opacity"; 
+        this.evt_transitionend = e => {
+            if (e.propertyName === "opacity") {
+                resolve();
+            }
+        };
+        ["transitionend", "transitioncancel"].forEach(evt => {
+            this.replacement.addEventListener(evt, this.evt_transitionend);
+        });
     }
-    clean(reverse) {
-        this.replacement.style.position = "";
-        this.replacement.style.zIndex = "";
-        this.replacement.style.transitionDuration = "";
-        this.replacement.style.transitionProperty = "";
-        if (reverse) {
-            this.replacement.opacity = "";
-        } else {
-            this.replacement.opacity = "";
-        }
-
+    clean() {
+        super.clean();
+        this.replacement.style.removeProperty('position');
+        this.replacement.style.removeProperty('z-index');
+        this.replacement.style.removeProperty('transition');
+        this.replacement.style.removeProperty('opacity');
+        ["transitionend", "transitioncancel"].forEach(evt => {
+            this.replacement.removeEventListener(evt, this.evt_transitionend);
+        });
     }
-    async go(reverse = false) {
-        Slide.animations[this.id] = this;
+    async go() {
+        this.Object.animations[this.id] = this;
         return this.promise = new Promise(resolve => {
-            // var direction = (reverse) ? this.direction : (this.direction + 4) % 8;
-            // var props = this.directions[direction];
-            this.prepare(reverse);
+            this.prepare(resolve);
             setTimeout(() => {
                 this.replacement.style.opacity = "1";
             }, 10);
-            this.replacement.addEventListener("transitionend", e => {
-                if (e.propertyName !== "opacity") return;
-                this.clean(reverse);
-                this.original.remove();
-                delete Slide.animations[this.id];
-                resolve(e.currentTarget);
-            });
+        }).then(e => {
+            this.clean();
+            delete this.Object.animations[this.id];
+            return e;
         });
     }
 }
