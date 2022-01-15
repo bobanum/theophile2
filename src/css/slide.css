@@ -102,9 +102,11 @@
   -ms-grid-rows: min-content 1fr min-content;
       grid-template-rows: -webkit-min-content 1fr -webkit-min-content;
       grid-template-rows: min-content 1fr min-content;
+  pointer-events: none;
 }
 
 .th-slide-backdrop > .th-slide-navigation > * {
+  pointer-events: all;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;

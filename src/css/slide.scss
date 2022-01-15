@@ -74,7 +74,9 @@
         display: grid;
         grid-template-columns: 15px min-content 1fr min-content 15px;
         grid-template-rows: min-content 1fr min-content;
+        pointer-events: none;
         > * {
+            pointer-events: all;
             display: flex;
             align-items: center;
             justify-content: center;
