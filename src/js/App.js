@@ -1,8 +1,4 @@
 import Theophile from "./Theophile.js";
-import Slide from "./Slide.js";
-import Reference from "./Reference.js";
-import Template from "./Template.js";
-import Toc from "./Toc.js";
 export default class App extends Theophile {
     static load() {
         if (this.loaded) return Promise.resolve();
@@ -18,7 +14,18 @@ export default class App extends Theophile {
     }
     static init() {
         this.loaded = false;
-        this.register(Slide, Reference, Template, Toc);
+        this.plugins = {};
+        Promise.all([
+            "Reference",
+            "Slide",
+            "Toc",
+            "Flip",
+        ].map(file => import(`./${file}.js`))).then(data => {
+            data.forEach(obj => {
+                this[obj.default.name.slice(10)] = obj.default;
+                this.plugins[obj.default.name] = obj.default;
+            });
+        });
     }
 }
 App.init();

@@ -1,4 +1,4 @@
-import Plugin from "./Plugin.js";
+import Plugin from "../Plugin.js";
 // import Theophile from "./Theophile.js";
 export default class Reference extends Plugin {
     static findReferences() {
@@ -8,16 +8,15 @@ export default class Reference extends Plugin {
         });
         return Promise.all(promises);
     }
-    static processGroup(group) {
+    static async processGroup(group) {
         var refs = Array.from(group.querySelectorAll("a"));
-        return Promise.all(refs.map(ref => {
+        const data = await Promise.all(refs.map(ref => {
             return this.processRef(ref);
-        })).then(data => {
-            while (group.firstChild) {
-                group.parentNode.insertBefore(group.firstChild, group);
-            }
-            group.parentNode.removeChild(group);
-        });
+        }));
+        while (group.firstChild) {
+            group.parentNode.insertBefore(group.firstChild, group);
+        }
+        group.parentNode.removeChild(group);
     }
     static async processRef(ref) {
         const href = ref.getAttribute("href");
@@ -50,11 +49,10 @@ export default class Reference extends Plugin {
             xhr.send();
         });
     }
-    static prepare() {
-        return this.findReferences().then(data => {
-            console.log("Reference ready");
-            return Promise.resolve();
-        });
+    static async prepare() {
+        await super.prepare();
+        const data = await this.findReferences();
+        return data;
     }
     static init() {
         super.init();

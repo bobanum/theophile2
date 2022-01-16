@@ -12,7 +12,7 @@ export default class TransitionSlide extends Transition {
         };
         this.mode = "stack";
         this.reverse = false;
-        this.direction = 2;
+        this.direction = 0;
         this.directions = [
             ["left"],
             ["left", "top"],
