@@ -102,9 +102,11 @@
   -ms-grid-rows: min-content 1fr min-content;
       grid-template-rows: -webkit-min-content 1fr -webkit-min-content;
       grid-template-rows: min-content 1fr min-content;
+  pointer-events: none;
 }
 
 .th-slide-backdrop > .th-slide-navigation > * {
+  pointer-events: all;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -121,8 +123,8 @@
   position: relative;
   -webkit-transition-property: opacity;
   transition-property: opacity;
-  -webkit-transition-duration: .5s;
-          transition-duration: .5s;
+  -webkit-transition-duration: 0.5s;
+          transition-duration: 0.5s;
 }
 
 .th-slide-backdrop > .th-slide-navigation > *:hover {
@@ -130,8 +132,8 @@
 }
 
 .th-slide-backdrop > .th-slide-navigation .th-slide-previous {
-  background-image: -webkit-gradient(linear, right top, left top, from(#8880), to(#888C));
-  background-image: linear-gradient(to left, #8880, #888C);
+  background-image: -webkit-gradient(linear, right top, left top, from(#8880), to(#888c));
+  background-image: linear-gradient(to left, #8880, #888c);
   grid-row: 1 / -1;
   -ms-grid-column: 1;
   -ms-grid-column-span: 2;
@@ -144,8 +146,8 @@
 }
 
 .th-slide-backdrop > .th-slide-navigation .th-slide-next {
-  background-image: -webkit-gradient(linear, left top, right top, from(#8880), to(#888C));
-  background-image: linear-gradient(to right, #8880, #888C);
+  background-image: -webkit-gradient(linear, left top, right top, from(#8880), to(#888c));
+  background-image: linear-gradient(to right, #8880, #888c);
   grid-row: 1 / -1;
   grid-column: -3 / span 2;
 }
@@ -172,8 +174,8 @@
 }
 
 .th-slide-backdrop > .th-slide-navigation .th-slide-first {
-  background-image: -webkit-gradient(linear, right top, left top, from(#8880), to(#888F));
-  background-image: linear-gradient(to left, #8880, #888F);
+  background-image: -webkit-gradient(linear, right top, left top, from(#8880), to(#888f));
+  background-image: linear-gradient(to left, #8880, #888f);
   -ms-grid-column: 1;
   -ms-grid-column-span: 1;
   grid-column: 1 / span 1;
@@ -187,8 +189,8 @@
 }
 
 .th-slide-backdrop > .th-slide-navigation .th-slide-last {
-  background-image: -webkit-gradient(linear, left top, right top, from(#8880), to(#888F));
-  background-image: linear-gradient(to right, #8880, #888F);
+  background-image: -webkit-gradient(linear, left top, right top, from(#8880), to(#888f));
+  background-image: linear-gradient(to right, #8880, #888f);
   grid-column: -2 / span 1;
   -webkit-box-pack: end;
       -ms-flex-pack: end;
@@ -200,8 +202,8 @@
 }
 
 .th-slide-backdrop > .th-slide-navigation .th-slide-options {
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#8880), to(#888C));
-  background-image: linear-gradient(to bottom, #8880, #888C);
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#8880), to(#888c));
+  background-image: linear-gradient(to bottom, #8880, #888c);
   grid-row: -2 / span 1;
   grid-column: 1 / -1;
   -webkit-box-align: stretch;
@@ -283,4 +285,4 @@
 .th-contactsheet ~ * {
   display: none;
 }
-/*# sourceMappingURL=slide.css.map */
+/*# sourceMappingURL=style.css.map */

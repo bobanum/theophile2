@@ -34,6 +34,7 @@ export default class Transition {
             // "Scale",
         ].map(file => import(`./Transition${file}.js`))).then(data => {
             data.forEach(obj => {
+                console.log(`Transition ${obj.default.name} loaded`);
                 this[obj.default.name.slice(10)] = obj.default;
             });
         });

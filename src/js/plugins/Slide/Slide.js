@@ -1,5 +1,5 @@
-import Plugin from "./Plugin.js";
-import Transition from "./Transition.js";
+import Plugin from "../Plugin.js";
+import Transition from "../../Transition.js";
 /**
  * @export
  * @class Slide
@@ -234,10 +234,6 @@ export default class Slide extends Plugin {
      * @returns
      * @memberof Slide
      */
-    static prepare() {
-        console.log("Slide ready");
-        return Promise.resolve();
-    }
     static addElement(slide, element) {
         if (!slide && element.nodeType === 3) {
             if (element.textContent.trim() === "") {
@@ -300,6 +296,7 @@ export default class Slide extends Plugin {
         return this.contactsheet;
     }
     static async mount() {
+        super.mount()
         var slide;
         var ptr = document.body.firstChild;
         while (ptr) {
@@ -344,6 +341,7 @@ export default class Slide extends Plugin {
         localStorage.slideshow = "false";
     }
     static async clean() {
+        super.clean();
         window.addEventListener("keydown", e => {
             if (e.key === "Shift" || e.key === "Control" || e.key === "Alt" || e.key === "Meta") return;
             if (e.code === "Space") {
