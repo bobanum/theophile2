@@ -14,14 +14,11 @@ export default class Plugin {
         return Promise.resolve();
     }
     static cssLink(name) {
-        name = name || this.name.toLowerCase();
-        var path = new URL(import.meta.url).pathname.split("/").slice(0, -1);
-        path.push(this.name, "style.css")
-        var pathname = path.join("/");
+        var url = this.Theophile.appURL(`src/plugins/${this.name}/style.css`);
 
         const link = document.head.appendChild(document.createElement("link"));
         link.setAttribute("rel", "stylesheet");
-        link.setAttribute("href", pathname);
+        link.setAttribute("href", url);
         return link;
     }
     static init() {

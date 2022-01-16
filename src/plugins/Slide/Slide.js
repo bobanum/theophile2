@@ -1,5 +1,5 @@
 import Plugin from "../Plugin.js";
-import Transition from "../../Transition.js";
+import Transition from "../../transitions/Transition.js";
 /**
  * @export
  * @class Slide

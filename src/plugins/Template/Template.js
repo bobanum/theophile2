@@ -1,16 +1,7 @@
 import Plugin from "../Plugin.js";
 export default class Template extends Plugin {
     static get url() {
-        var url = new URL(location);
-        if (this.Theophile.root[0] === "/") {
-            var path = this.Theophile.root.split("/");
-        } else {
-            var path = url.pathname.split("/").slice(0, -1);
-            path.push(this.Theophile.root);
-        }
-        path.push("template.html");
-        url.pathname = path.join("/");
-        return url.href;
+        return this.Theophile.siteURL("template.html");
     }
     static async load() {
         return new Promise(resolve => {
@@ -24,11 +15,18 @@ export default class Template extends Plugin {
         });
     }
     static async prepare() {
-        return this.template = await this.load();
+        this.template = await this.load();
+        this.template.querySelectorAll("[src],[href],[data]").forEach(element => {
+            ["src", "href", "data"].forEach(name => {
+                const url = element.getAttribute(name);
+                if(url) {
+                    element.setAttribute(name, this.Theophile.siteURL(url));
+                }
+            });
+        });
     }
     static async mount() {
-        const template = await this.load();
-        const containers = template.querySelectorAll(".container");
+        const containers = this.template.querySelectorAll(".container");
         containers.forEach(container => {
             var selector = container.getAttribute("data-selector");
             var contents = document.querySelector(selector);
@@ -40,10 +38,10 @@ export default class Template extends Plugin {
                 container.appendChild(contents.firstChild);
             }
         });
-        while (template.body.firstChild) {
-            document.body.appendChild(template.body.firstChild);
+        while (this.template.body.firstChild) {
+            document.body.appendChild(this.template.body.firstChild);
         }
-        template.querySelectorAll("link,style,script").forEach(element => {
+        this.template.querySelectorAll("link,style,script").forEach(element => {
             document.head.appendChild(element);
         });
     }

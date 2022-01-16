@@ -1,4 +1,33 @@
 export default class Theophile {
+	static get root() {
+		return this._root;
+	}
+	static set root(val) {
+        if (val.match(/^[a-zA-Z0-9]+:\/\//)) {
+            return this._root = new URL(val);
+        }
+		var result = new URL(location);
+        if (val[0] === "/") {
+			result.pathname = val.replace(/\/*$/, "/");
+		} else {
+			var path = result.pathname.split("/").slice(0,-1);
+			path.push(val);
+			result.pathname = path.join("/");
+		}
+		return this._root = result;
+	}
+    static siteURL(url) {
+		if (url.match(/^[a-zA-Z0-9]+:\/\//)) {
+			return new URL(url);
+        }
+		var result = new URL(this.root);
+        if (url[0] === "/") {
+            result.pathname = url;
+			return result;
+        }
+		result.pathname += url;
+        return result;
+    }
 	static async prepare() {
 		await new Promise((resolve) => {
 			if (document.readyState === "complete" || document.readyState === "interactive") return resolve();
@@ -67,17 +96,25 @@ export default class Theophile {
 		console.log("Plugins cleaned");
 		return data;
 	}
-	static cssLink(name) {
-		name = name || this.name.toLowerCase();
-		var pathname = import.meta.url.slice(0, -15); // 15 = "js/Theophile.js"
-		pathname += "css/" + name + ".css";
+	static appURL(file) {
+		var url = new URL(import.meta.url);
+		var path = url.pathname.split("/").slice(0,-3);
+		if (file) {
+			path.push(file);
+		}
+		url.pathname = path.join("/");
+		return url;
+	}
+	static cssLink() {
+		var url = this.appURL("src/css/style.css");
 		const link = document.head.appendChild(document.createElement("link"));
 		link.setAttribute("rel", "stylesheet");
-		link.setAttribute("href", pathname);
+		link.setAttribute("href", url);
 		return link;
 	}
 	static async init(root = "./") {
-		this.root = root.replace(/\/*$/, "");
+		this._root = '';
+		this.root = root;
 		this.loaded = false;
 		this.headings = "h1, h2, h3";
 		this.ready = false;
