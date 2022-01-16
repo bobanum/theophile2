@@ -76,7 +76,8 @@ export default class Theophile {
 		link.setAttribute("href", pathname);
 		return link;
 	}
-	static async init() {
+	static async init(root = "./") {
+		this.root = root.replace(/\/*$/, "");
 		this.loaded = false;
 		this.headings = "h1, h2, h3";
 		this.ready = false;
@@ -95,6 +96,7 @@ export default class Theophile {
 				console.log(`Plugin ${obj.default.name} loaded`);
 				this[obj.default.name] = obj.default;
 				this.plugins[obj.default.name] = obj.default;
+				obj.default.Theophile = Theophile;
 			});
 		});
 		await this.prepare();
@@ -102,4 +104,3 @@ export default class Theophile {
 		await this.clean();
 	}
 }
-Theophile.init();

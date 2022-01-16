@@ -3,8 +3,8 @@
 	--nlines: 18;
 }
 .th-slideshow {
-	> * {
-		display: none;
+	> *:not(.th-slide-backdrop) {
+		display: none !important;
 	}
 	> .th-slide-backdrop {
 		display: flex;

@@ -7,8 +7,8 @@
   --font-size: calc(100vw / (var(--nlines) * var(--ratio)));
 }
 
-.th-slideshow > * {
-  display: none;
+.th-slideshow > *:not(.th-slide-backdrop) {
+  display: none !important;
 }
 
 .th-slideshow > .th-slide-backdrop {
