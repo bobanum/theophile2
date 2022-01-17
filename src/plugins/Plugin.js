@@ -1,16 +1,19 @@
-import Theophile from "../Theophile.js";
 export default class Plugin {
     static async prepare() {
         this.cssLink();
-        console.log("Plugin " + this.name + " ready");
+        console.trace("Plugin " + this.name + " ready");
+        return Promise.resolve();
+    }
+    static async process() {
+        console.trace("Plugin " + this.name + " processed");
         return Promise.resolve();
     }
     static async mount() {
-        console.log("Plugin " + this.name + " mounted");
+        console.trace("Plugin " + this.name + " mounted");
         return Promise.resolve();
     }
     static async clean() {
-        console.log("Plugin " + this.name + " cleaned");
+        console.trace("Plugin " + this.name + " cleaned");
         return Promise.resolve();
     }
     static cssLink(name) {

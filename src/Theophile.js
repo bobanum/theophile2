@@ -28,23 +28,6 @@ export default class Theophile {
 		result.pathname += url;
         return result;
     }
-	static async prepare() {
-		await new Promise((resolve) => {
-			if (document.readyState === "complete" || document.readyState === "interactive") return resolve();
-			window.addEventListener("DomContentLoaded", (e) => {
-				console.log("DomContent Loaded in prepare");
-				this.ready = true;
-				resolve();
-			});
-		});
-		console.log("Theophile ready");
-		const promises = Array.from(Object.values(this.plugins), (plugin) =>
-			plugin.prepare()
-		);
-		const data = await Promise.all(promises);
-		console.log("Plugins ready");
-		return data;
-	}
 	static processHeadings() {
 		var headings = document.querySelectorAll(this.headings);
 		headings.forEach((heading) => {
@@ -74,26 +57,50 @@ export default class Theophile {
 			.replace(/_+/g, "_");
 		return result;
 	}
+	static async prepare() {
+		await new Promise((resolve) => {
+			if (document.readyState === "complete" || document.readyState === "interactive") return resolve();
+			window.addEventListener("DomContentLoaded", (e) => {
+				console.trace("DomContent Loaded in prepare");
+				this.ready = true;
+				resolve();
+			});
+		});
+		console.trace("Theophile ready");
+		const promises = Array.from(Object.values(this.plugins), (plugin) =>
+			plugin.prepare()
+		);
+		const data = await Promise.all(promises);
+		console.trace("Plugins ready");
+		return data;
+	}
+	static async process() {
+		this.processHeadings();
+		console.trace("Theophile processed");
+		const promises = Array.from(Object.values(this.plugins), (plugin) =>
+			plugin.process()
+		);
+		const data = await Promise.all(promises);
+		console.trace("Plugins processed");
+		return data;
+	}
 	static async mount() {
 		this.processHeadings();
-		// await new Promise(resolve => {
-		//     resolve();
-		// });
-		console.log("Theophile mounted");
+		console.trace("Theophile mounted");
 		const promises = Array.from(Object.values(this.plugins), (plugin) =>
 			plugin.mount()
 		);
 		const data = await Promise.all(promises);
-		console.log("Plugins mounted");
+		console.trace("Plugins mounted");
 		return data;
 	}
 	static async clean() {
-		console.log("Theophile cleaned");
+		console.trace("Theophile cleaned");
 		const promises = Array.from(Object.values(this.plugins), (plugin) =>
 			plugin.clean()
 		);
 		const data = await Promise.all(promises);
-		console.log("Plugins cleaned");
+		console.trace("Plugins cleaned");
 		return data;
 	}
 	static appURL(file) {
@@ -120,7 +127,7 @@ export default class Theophile {
 		this.ready = false;
 		this.plugins = {};
 		window.addEventListener("DOMContentLoaded", (e) => {
-			console.log("DOMContent loaded");
+			console.trace("DOMContent loaded");
 		});
 		this.cssLink();
 
@@ -130,13 +137,14 @@ export default class Theophile {
 			)
 		).then((data) => {
 			data.forEach((obj) => {
-				console.log(`Plugin ${obj.default.name} loaded`);
+				console.trace(`Plugin ${obj.default.name} loaded`);
 				this[obj.default.name] = obj.default;
 				this.plugins[obj.default.name] = obj.default;
 				obj.default.Theophile = Theophile;
 			});
 		});
 		await this.prepare();
+		await this.process();
 		await this.mount();
 		await this.clean();
 	}
