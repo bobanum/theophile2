@@ -105,7 +105,7 @@ export default class Theophile {
 	}
 	static appURL(file) {
 		var url = new URL(import.meta.url);
-		var path = url.pathname.split("/").slice(0,-3);
+		var path = url.pathname.split("/").slice(0,-2);
 		if (file) {
 			path.push(file);
 		}
