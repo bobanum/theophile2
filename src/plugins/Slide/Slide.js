@@ -1,5 +1,5 @@
 import Plugin from "../Plugin.js";
-import Transition from "../../Transition.js";
+import Transition from "../../transitions/Transition.js";
 /**
  * @export
  * @class Slide
@@ -295,8 +295,8 @@ export default class Slide extends Plugin {
         this.contactsheet = contactsheet;
         return this.contactsheet;
     }
-    static async mount() {
-        super.mount()
+    static async process() {
+        super.process()
         var slide;
         var ptr = document.body.firstChild;
         while (ptr) {

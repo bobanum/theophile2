@@ -1,5 +1,4 @@
 import Plugin from "../Plugin.js";
-// import Theophile from "./Theophile.js";
 export default class Reference extends Plugin {
     static findReferences() {
         var refs = Array.from(document.querySelectorAll(".th-references"));
