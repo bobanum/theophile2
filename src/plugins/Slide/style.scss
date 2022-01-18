@@ -9,15 +9,17 @@
 	> .th-slide-backdrop {
 		display: flex;
 	}
-	--font-size: calc(100vw / (var(--th-slide-nlines) * var(--th-slide-ratio)));
-	@media screen and (min-aspect-ratio: 16 / 9) {
-		--font-size: calc(100vh / var(--th-slide-nlines));
+	.th-slide {
+		--font-size: calc(100vw / (var(--th-slide-nlines) * var(--th-slide-ratio)));
+		font-size: var(--font-size);
+		@media screen and (min-aspect-ratio: 16 / 9) {
+			--font-size: calc(100vh / var(--th-slide-nlines));
+		}
 	}
 }
 .th-slide-backdrop {
 	align-items: center;
 	justify-content: center;
-	font-size: var(--font-size);
 	overflow: hidden;
 	position: absolute;
 	top: 0;

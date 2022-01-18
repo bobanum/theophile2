@@ -37,6 +37,8 @@ export default class Slide extends Plugin {
 		 * @private
 		 */
 		this._html = null;
+		this.idx = this.constructor.slides.length;
+		this.constructor.slides.push(this);
 	}
 	/**
 	 *
@@ -163,13 +165,17 @@ export default class Slide extends Plugin {
 						this.stopSlideshow();
 					}
 			}
+			e.preventDefault();
 			e.stopPropagation();
 		});
 	}
 	static async showSlide(slide) {
 		if (slide === this.backdrop.slide) return;
 		// await Promise.all(Object.values(this.animations));
-		var transition = new Transition[this.transition](this.backdrop.slide, slide);
+		var transition = new Transition[this.transition](
+			this.backdrop.slide,
+			slide
+		);
 		transition.reverse = slide.idx < this.backdrop.slide.idx;
 		transition.options = this.transitionOptions;
 		transition.duration = this.transitionDuration;
@@ -274,6 +280,7 @@ export default class Slide extends Plugin {
 				slide = new this();
 			}
 			element.slide = slide;
+			slide.trigger = element;
 			slide.heading = element;
 			slide.id = element.getAttribute("id");
 			return slide;
@@ -287,6 +294,7 @@ export default class Slide extends Plugin {
 				slide = new this();
 			}
 			element.slide = slide;
+			slide.trigger = element;
 			slide.continued = true;
 			return slide;
 		}
@@ -312,19 +320,25 @@ export default class Slide extends Plugin {
 	}
 	static async process() {
 		await super.process();
-		document.documentElement.style.setProperty("--th-slide-nlines", this.nlines);
-		document.documentElement.style.setProperty("--th-slide-ratio", this.ratio);
-		Array.from(document.getElementById("th-Slide-style").sheet.cssRules).filter(rule => rule instanceof CSSMediaRule).forEach(rule => {
-			rule.conditionText = rule.conditionText.replace(/min-aspect-ratio: *[0-9\.\-\+]+ *\/ *[0-9\.\-\+]+/, `min-aspect-ratio: ${this.ratio} / 1`);
-		});
+		document.documentElement.style.setProperty(
+			"--th-slide-nlines",
+			this.nlines
+		);
+		document.documentElement.style.setProperty(
+			"--th-slide-ratio",
+			this.ratio
+		);
+		var style = document.head.appendChild(document.createElement("style"));
+		style.media = `(min-aspect-ratio: ${this.ratio} / 1)`;
+		style.innerHTML =
+			".th-slide {--font-size: calc(100vh / var(--th-slide-nlines));}";
+		// Array.from(document.getElementById("th-Slide-style").sheet.cssRules).filter(rule => rule instanceof CSSMediaRule).forEach(rule => {
+		// 	rule.conditionText = rule.conditionText.replace(/min-aspect-ratio: *[0-9\.\-\+]+ *\/ *[0-9\.\-\+]+/, `min-aspect-ratio: ${this.ratio} / 1`);
+		// });
 		var slide;
 		var ptr = document.body.firstChild;
 		while (ptr) {
 			slide = this.addElement(slide, ptr);
-			if (slide) {
-				slide.idx = this.slides.length;
-				this.slides.push(slide);
-			}
 			ptr = ptr.nextSibling;
 		}
 		this.first = slide.first;
@@ -339,13 +353,21 @@ export default class Slide extends Plugin {
 	static get state() {
 		return document.body.classList.contains("th-slideshow");
 	}
+	static findVisibleSlide() {
+		var triggers = this.slides.map((slide) => {
+			return([slide, slide.trigger.getBoundingClientRect().y]);
+		}).sort((a, b) => a[1] < b[1] ? -1 : 1);
+		var last = triggers.slice(-1)[0];
+		triggers = triggers.filter(trigger => trigger[1] >= 0);
+		return (triggers[0] || last)[0];
+	}
 	static startSlideshow(state = true) {
 		if (state) {
-			document.body.classList.add("th-slideshow");
 			this.backdrop = document.body.appendChild(this.html_backdrop());
-			this.backdrop.slide = this.slides[0];
+			this.backdrop.slide = this.findVisibleSlide();
 			this.backdrop.appendChild(this.backdrop.slide.html);
 			localStorage.slideshow = "true";
+			document.body.classList.add("th-slideshow");
 			setTimeout(() => {
 				this.backdrop.focus();
 			}, 100);
@@ -356,6 +378,8 @@ export default class Slide extends Plugin {
 	}
 	static stopSlideshow() {
 		document.body.classList.remove("th-slideshow");
+		var pos = this.backdrop.slide.trigger.offsetTop;
+		window.scroll(0, pos - 10);
 		this.backdrop.remove();
 		delete this.backdrop;
 		localStorage.slideshow = "false";
@@ -363,6 +387,7 @@ export default class Slide extends Plugin {
 	static async clean() {
 		super.clean();
 		window.addEventListener("keydown", (e) => {
+			console.log(e);
 			if (
 				e.key === "Shift" ||
 				e.key === "Control" ||
@@ -372,8 +397,9 @@ export default class Slide extends Plugin {
 				return;
 			if (e.code === "Space") {
 				// var visible = this.getVisible();
-				this.startSlideshow();
 				e.stopPropagation();
+				e.preventDefault();
+				this.startSlideshow();
 				return false;
 			}
 		});
@@ -433,11 +459,13 @@ export default class Slide extends Plugin {
 				set: (value) => {
 					this.transitionOptions = value;
 				},
-			}
+			},
 		});
 	}
 	static init(Theophile) {
 		super.init(Theophile);
+		this.nlines = 20;
+		this.ratio = 16 / 9;
 		this.transition = "Fade";
 		this.transitionDuration = 500;
 		this.transitionOptions = {};

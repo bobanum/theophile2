@@ -3,10 +3,6 @@
   --th-slide-nlines: 18;
 }
 
-.th-slideshow {
-  --font-size: calc(100vw / (var(--th-slide-nlines) * var(--th-slide-ratio)));
-}
-
 .th-slideshow > *:not(.th-slide-backdrop) {
   display: none !important;
 }
@@ -17,8 +13,13 @@
   display: flex;
 }
 
+.th-slideshow .th-slide {
+  --font-size: calc(100vw / (var(--th-slide-nlines) * var(--th-slide-ratio)));
+  font-size: var(--font-size);
+}
+
 @media screen and (min-aspect-ratio: 16 / 9) {
-  .th-slideshow {
+  .th-slideshow .th-slide {
     --font-size: calc(100vh / var(--th-slide-nlines));
   }
 }
@@ -30,7 +31,6 @@
   -webkit-box-pack: center;
       -ms-flex-pack: center;
           justify-content: center;
-  font-size: var(--font-size);
   overflow: hidden;
   position: absolute;
   top: 0;
