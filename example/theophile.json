@@ -1,4 +1,7 @@
 {
     "nlines": 30,
-    "ratio": [16, 9]
+    "ratio": [16, 9],
+    "transition": "slide",
+    "transition-duration": 500,
+    "transition-options": {"direction":"e", "mode":"stack"}
 }

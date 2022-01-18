@@ -27,6 +27,15 @@ export default class TransitionSlide extends Transition {
     get props() {
         return this.directions[(this.mode === "stack") ? this.direction : (this.direction + 4) % 8]
     }
+    get direction() {
+        return this._direction;
+    }
+    set direction(value) {
+        if (typeof value === "string") {
+            value = Math.max(["e", "se", "s", "sw", "w", "nw", "n", "ne"].indexOf(value), 0);
+        }
+        this._direction = value;
+    }
     start(prop) {
         return !(this.reverse  ^ this.mode === "stack") ? (this.box[prop] + "px") : "100%";
     }

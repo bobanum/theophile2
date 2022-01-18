@@ -169,8 +169,10 @@ export default class Slide extends Plugin {
 	static async showSlide(slide) {
 		if (slide === this.backdrop.slide) return;
 		// await Promise.all(Object.values(this.animations));
-		var transition = new Transition.Box(this.backdrop.slide, slide);
+		var transition = new Transition[this.transition](this.backdrop.slide, slide);
 		transition.reverse = slide.idx < this.backdrop.slide.idx;
+		transition.options = this.transitionOptions;
+		transition.duration = this.transitionDuration;
 		transition.go().then((data) => {
 			this.backdrop.slide = slide;
 		});
@@ -379,9 +381,8 @@ export default class Slide extends Plugin {
 			this.startSlideshow();
 		}
 	}
-	static init(Theophile) {
-		super.init(Theophile);
-		Object.defineProperties(Theophile, {
+	static defineProperties() {
+		Object.defineProperties(this.Theophile, {
 			nlines: {
 				get: () => {
 					return this.nlines;
@@ -401,7 +402,46 @@ export default class Slide extends Plugin {
 					this.ratio = value;
 				},
 			},
+			transition: {
+				get: () => {
+					return this.transition;
+				},
+				set: (value) => {
+					this.transition = value[0].toUpperCase() + value.slice(1);
+				},
+			},
+			"transition-duration": {
+				get: () => {
+					return this.transitionDuration;
+				},
+				set: (value) => {
+					this.transitionDuration = value;
+				},
+			},
+			transitionDuration: {
+				get: () => {
+					return this.transitionDuration;
+				},
+				set: (value) => {
+					this.transitionDuration = value;
+				},
+			},
+			"transition-options": {
+				get: () => {
+					return this.transitionOptions;
+				},
+				set: (value) => {
+					this.transitionOptions = value;
+				},
+			}
 		});
+	}
+	static init(Theophile) {
+		super.init(Theophile);
+		this.transition = "Fade";
+		this.transitionDuration = 500;
+		this.transitionOptions = {};
+		this.defineProperties();
 		this.contactsheet = null;
 		this.slides = [];
 		this.animations = {};

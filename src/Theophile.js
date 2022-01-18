@@ -202,6 +202,9 @@ export default class Theophile {
 		return Promise.all(promises);
 	}
 	static async exec(options = {}) {
+		if (typeof options === "string") {
+			options = {root : options};
+		}
 		await this.init(options.root);
 		delete options.root;
 		await this.prepare(options);

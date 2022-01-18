@@ -6,6 +6,16 @@ export default class Transition {
         this.duration = 500;
         this.Object = this.original.obj.constructor;
     }
+    get options() {
+        return {};
+    }
+    set options(value) {
+        for (const property in value) {
+            if (Object.hasOwnProperty.call(value, property)) {
+                this[property] = value[property]
+            }
+        }
+    }
     cancel() {
     }
     prepare() {
