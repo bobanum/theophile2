@@ -3,31 +3,31 @@ export default class Theophile {
 		return this._root;
 	}
 	static set root(val) {
-        if (val.match(/^[a-zA-Z0-9]+:\/\//)) {
-            return this._root = new URL(val);
-        }
+		if (val.match(/^[a-zA-Z0-9]+:\/\//)) {
+			return (this._root = new URL(val));
+		}
 		var result = new URL(location);
-        if (val[0] === "/") {
+		if (val[0] === "/") {
 			result.pathname = val.replace(/\/*$/, "/");
 		} else {
-			var path = result.pathname.split("/").slice(0,-1);
+			var path = result.pathname.split("/").slice(0, -1);
 			path.push(val);
 			result.pathname = path.join("/");
 		}
-		return this._root = result;
+		return (this._root = result);
 	}
-    static siteURL(url) {
+	static siteURL(url) {
 		if (url.match(/^[a-zA-Z0-9]+:\/\//)) {
 			return new URL(url);
-        }
+		}
 		var result = new URL(this.root);
-        if (url[0] === "/") {
-            result.pathname = url;
+		if (url[0] === "/") {
+			result.pathname = url;
 			return result;
-        }
+		}
 		result.pathname += url;
-        return result;
-    }
+		return result;
+	}
 	static processHeadings() {
 		var headings = document.querySelectorAll(this.headings);
 		headings.forEach((heading) => {
@@ -57,9 +57,20 @@ export default class Theophile {
 			.replace(/_+/g, "_");
 		return result;
 	}
-	static async prepare() {
+	static async prepare(options = {}) {
+		for (let property in options) {
+			this[property] = options[property];
+		}
+		for (let property in this.config) {
+			this[property] = this.config[property];
+		}
+
 		await new Promise((resolve) => {
-			if (document.readyState === "complete" || document.readyState === "interactive") return resolve();
+			if (
+				document.readyState === "complete" ||
+				document.readyState === "interactive"
+			)
+				return resolve();
 			window.addEventListener("DomContentLoaded", (e) => {
 				console.trace("DomContent Loaded in prepare");
 				this.ready = true;
@@ -105,7 +116,7 @@ export default class Theophile {
 	}
 	static appURL(file) {
 		var url = new URL(import.meta.url);
-		var path = url.pathname.split("/").slice(0,-2);
+		var path = url.pathname.split("/").slice(0, -2);
 		if (file) {
 			path.push(file);
 		}
@@ -119,31 +130,81 @@ export default class Theophile {
 		link.setAttribute("href", url);
 		return link;
 	}
-	static async init(root = "./") {
-		this._root = '';
+	static async loadPlugin(name) {
+		const obj = await import(`./plugins/${name}/${name}.js`);
+		const plugin = obj.default;
+		console.trace(`Plugin ${plugin.name} loaded`);
+		this[plugin.name] = plugin;
+		this.plugins[plugin.name] = plugin;
+		return plugin.init(this);
+	}
+	static loadJson(url) {
+		return new Promise((resolve, reject) => {
+			var xhr = new XMLHttpRequest();
+			xhr.open("get", url);
+			xhr.responseType = "json";
+			xhr.addEventListener("load", (e) => {
+				if (e.target.status === 404) {
+					return reject(e.target.statusText);
+				}
+				return resolve(e.target.response);
+			});
+			xhr.addEventListener("error", (e) => {
+				reject(e.target);
+			});
+			xhr.onerror = function () {
+				console.error("XHR error " + xhr.status);
+			};
+			xhr.upload.onloadstart = function () {
+				console.log("onloadstart" + xhr.status);
+			};
+			xhr.upload.onloadend = function () {
+				console.log("onloadend" + xhr.status);
+			};
+			xhr.upload.onerror = function () {
+				console.log("error" + xhr.status);
+			};
+			try {
+				xhr.send(null);
+			} catch (err) {
+				reject(err);
+			}
+		});
+	}
+	static async loadConfig() {
+		var data;
+		try {
+			data = await this.loadJson(this.siteURL("theophile.json"));
+		} catch (err) {
+			data = {};
+		}
+
+		this.config = data;
+		return data;
+	}
+	static init(root = ".") {
+		if (this.loaded) {
+			return Promise.resolve();
+		}
+		this.loaded = true;
+		this._root = "";
 		this.root = root;
-		this.loaded = false;
 		this.headings = "h1, h2, h3";
 		this.ready = false;
 		this.plugins = {};
-		window.addEventListener("DOMContentLoaded", (e) => {
-			console.trace("DOMContent loaded");
-		});
 		this.cssLink();
 
-		await Promise.all(
-			["Template", "Reference", "Slide", "Toc"].map((file) =>
-				import(`./plugins/${file}/${file}.js`)
-			)
-		).then((data) => {
-			data.forEach((obj) => {
-				console.trace(`Plugin ${obj.default.name} loaded`);
-				this[obj.default.name] = obj.default;
-				this.plugins[obj.default.name] = obj.default;
-				obj.default.Theophile = Theophile;
-			});
+		const plugins = ["Template", "Reference", "Slide", "Toc"];
+		const promises = plugins.map(async (file) => {
+			return this.loadPlugin(file);
 		});
-		await this.prepare();
+		promises.push(this.loadConfig());
+		return Promise.all(promises);
+	}
+	static async exec(options = {}) {
+		await this.init(options.root);
+		delete options.root;
+		await this.prepare(options);
 		await this.process();
 		await this.mount();
 		await this.clean();

@@ -1,10 +1,10 @@
 :root {
-  --ratio: 1.78;
-  --nlines: 18;
+  --th-slide-ratio: 1.78;
+  --th-slide-nlines: 18;
 }
 
 .th-slideshow {
-  --font-size: calc(100vw / (var(--nlines) * var(--ratio)));
+  --font-size: calc(100vw / (var(--th-slide-nlines) * var(--th-slide-ratio)));
 }
 
 .th-slideshow > *:not(.th-slide-backdrop) {
@@ -17,9 +17,9 @@
   display: flex;
 }
 
-@media (min-aspect-ratio: 16 / 9) {
+@media screen and (min-aspect-ratio: 16 / 9) {
   .th-slideshow {
-    --font-size: calc(100vh / var(--nlines));
+    --font-size: calc(100vh / var(--th-slide-nlines));
   }
 }
 
@@ -48,8 +48,8 @@
 .th-slide-backdrop .th-slide {
   background-color: black;
   color: white;
-  width: calc(1em * var(--nlines) * var(--ratio));
-  height: calc(1em * var(--nlines));
+  width: calc(1em * var(--th-slide-nlines) * var(--th-slide-ratio));
+  height: calc(1em * var(--th-slide-nlines));
   display: -ms-grid;
   display: grid;
   -ms-grid-rows: auto 1fr auto;
@@ -278,8 +278,8 @@
   display: -ms-grid;
   display: grid;
   gap: 1em;
-  -ms-grid-columns: (minmax(calc(1em * var(--nlines) * var(--ratio)), 1fr))[auto-fit];
-      grid-template-columns: repeat(auto-fit, minmax(calc(1em * var(--nlines) * var(--ratio)), 1fr));
+  -ms-grid-columns: (minmax(calc(1em * var(--th-slide-nlines) * var(--th-slide-ratio)), 1fr))[auto-fit];
+      grid-template-columns: repeat(auto-fit, minmax(calc(1em * var(--th-slide-nlines) * var(--th-slide-ratio)), 1fr));
 }
 
 .th-contactsheet ~ * {

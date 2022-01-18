@@ -53,9 +53,8 @@ export default class Reference extends Plugin {
         const data = await this.findReferences();
         return data;
     }
-    static init() {
-        super.init();
+    static init(Theophile) {
+        super.init(Theophile);
         this.refsDocuments = {}
     }
 }
-Reference.init();

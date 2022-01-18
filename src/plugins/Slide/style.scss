@@ -1,6 +1,6 @@
 :root {
-	--ratio: 1.78;
-	--nlines: 18;
+	--th-slide-ratio: 1.78;
+	--th-slide-nlines: 18;
 }
 .th-slideshow {
 	> *:not(.th-slide-backdrop) {
@@ -9,9 +9,9 @@
 	> .th-slide-backdrop {
 		display: flex;
 	}
-	--font-size: calc(100vw / (var(--nlines) * var(--ratio)));
-	@media (min-aspect-ratio: 16 / 9) {
-		--font-size: calc(100vh / var(--nlines));
+	--font-size: calc(100vw / (var(--th-slide-nlines) * var(--th-slide-ratio)));
+	@media screen and (min-aspect-ratio: 16 / 9) {
+		--font-size: calc(100vh / var(--th-slide-nlines));
 	}
 }
 .th-slide-backdrop {
@@ -38,8 +38,8 @@
 	.th-slide {
 		background-color: black;
 		color: white;
-		width: calc(1em * var(--nlines) * var(--ratio));
-		height: calc(1em * var(--nlines));
+		width: calc(1em * var(--th-slide-nlines) * var(--th-slide-ratio));
+		height: calc(1em * var(--th-slide-nlines));
 		display: grid;
 		grid-template-rows: auto 1fr auto;
 		align-content: space-between;
@@ -197,7 +197,7 @@
 	gap: 1em;
 	grid-template-columns: repeat(
 		auto-fit,
-		minmax(calc(1em * var(--nlines) * var(--ratio)), 1fr)
+		minmax(calc(1em * var(--th-slide-nlines) * var(--th-slide-ratio)), 1fr)
 	);
 	& ~ * {
 		display: none;

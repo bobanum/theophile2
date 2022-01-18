@@ -20,11 +20,12 @@ export default class Plugin {
         var url = this.Theophile.appURL(`src/plugins/${this.name}/style.css`);
 
         const link = document.head.appendChild(document.createElement("link"));
+        link.id = `th-${this.name}-style`;
         link.setAttribute("rel", "stylesheet");
         link.setAttribute("href", url);
         return link;
     }
-    static init() {
-
+    static init(Theophile) {
+        this.Theophile = Theophile;
     }
 }
