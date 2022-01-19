@@ -10,7 +10,9 @@
 		display: flex;
 	}
 	.th-slide {
-		--font-size: calc(100vw / (var(--th-slide-nlines) * var(--th-slide-ratio)));
+		--font-size: calc(
+			100vw / (var(--th-slide-nlines) * var(--th-slide-ratio))
+		);
 		font-size: var(--font-size);
 		@media screen and (min-aspect-ratio: 16 / 9) {
 			--font-size: calc(100vh / var(--th-slide-nlines));

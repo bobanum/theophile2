@@ -72,7 +72,7 @@ export default class Slide extends Plugin {
 	html_body() {
 		const body = document.createElement("div");
 		body.classList.add("th-slide-body");
-		this.contents.forEach((content) => {
+		this.contents.forEach(content => {
 			body.appendChild(content.cloneNode(true));
 		});
 		return body;
@@ -84,16 +84,16 @@ export default class Slide extends Plugin {
 		navigation.classList.add("th-slide-navigation");
 		const previous = navigation.appendChild(document.createElement("div"));
 		previous.classList.add("th-slide-previous");
-		previous.addEventListener("click", (e) => this.showPrevious());
+		previous.addEventListener("click", e => this.showPrevious());
 		const next = navigation.appendChild(document.createElement("div"));
 		next.classList.add("th-slide-next");
-		next.addEventListener("click", (e) => this.showNext());
+		next.addEventListener("click", e => this.showNext());
 		const first = navigation.appendChild(document.createElement("div"));
 		first.classList.add("th-slide-first");
-		first.addEventListener("click", (e) => this.showFirst());
+		first.addEventListener("click", e => this.showFirst());
 		const last = navigation.appendChild(document.createElement("div"));
 		last.classList.add("th-slide-last");
-		last.addEventListener("click", (e) => this.showLast());
+		last.addEventListener("click", e => this.showLast());
 		navigation.appendChild(this.html_options());
 		this.addKeydownEvents(backdrop);
 		backdrop.Slide = this;
@@ -114,14 +114,14 @@ export default class Slide extends Plugin {
 		print.classList.add("th-option-print");
 		var stop = options.appendChild(document.createElement("span"));
 		stop.classList.add("th-option-stopslideshow");
-		stop.addEventListener("click", (e) => {
+		stop.addEventListener("click", e => {
 			this.stopSlideshow();
 		});
 		return options;
 	}
 	static addKeydownEvents(backdrop) {
 		backdrop.tabIndex = "0";
-		backdrop.addEventListener("keydown", (e) => {
+		backdrop.addEventListener("keydown", e => {
 			if (
 				e.key === "Control" ||
 				e.key === "Alt" ||
@@ -182,26 +182,24 @@ export default class Slide extends Plugin {
 		transition.reverse = slide.idx < this.backdrop.slide.idx;
 		transition.options = this.transitionOptions;
 		transition.duration = this.transitionDuration;
-		transition.go().then((data) => {
+		transition.go().then(data => {
 			this.backdrop.slide = slide;
 		});
 	}
 	static async cancelAnimations() {
-		Object.values(this.animations).forEach((animation) =>
-			animation.cancel()
-		);
+		Object.values(this.animations).forEach(animation => animation.cancel());
 		return await Promise.all(
-			Object.values(this.animations).map((animation) => animation.promise)
+			Object.values(this.animations).map(animation => animation.promise)
 		);
 	}
 	static async waitTransitions(cancel = true) {
 		if (cancel) {
-			Object.values(this.animations).forEach((animation) =>
+			Object.values(this.animations).forEach(animation =>
 				animation.cancel()
 			);
 		}
 		return Promise.all(
-			Object.values(this.animations).map((animation) => animation.promise)
+			Object.values(this.animations).map(animation => animation.promise)
 		);
 	}
 	static async showNext(n = 1) {
@@ -330,7 +328,7 @@ export default class Slide extends Plugin {
 	}
 	static async prepare() {
 		await super.prepare();
-		document.body.querySelectorAll("script").forEach((script) => {
+		document.body.querySelectorAll("script").forEach(script => {
 			if (script.innerHTML.indexOf("For SVG support") >= 0) {
 				script.remove();
 			}
@@ -370,19 +368,20 @@ export default class Slide extends Plugin {
 	}
 	static findVisibleSlide() {
 		var triggers = this.slides
-			.map((slide) => {
+			.map(slide => {
 				return [slide, slide.trigger.getBoundingClientRect().y];
 			})
 			.sort((a, b) => (a[1] < b[1] ? -1 : 1));
 		var last = triggers.slice(-1)[0];
-		triggers = triggers.filter((trigger) => trigger[1] >= 0);
+		triggers = triggers.filter(trigger => trigger[1] >= 0);
 		return (triggers[0] || last)[0];
 	}
 	ajustZoom() {
-		var backdrop = document.body.appendChild(this.constructor.html_backdrop());
+		var backdrop = document.body.appendChild(
+			this.constructor.html_backdrop()
+		);
 		backdrop.appendChild(this.html);
 		var body = this.html.querySelector(".th-slide-body");
-		// body = document.body.querySelector(".th-slide-body");
 		body.style.position = "relative";
 		var relativeRect = body.getBoundingClientRect();
 		body.style.position = "absolute";
@@ -394,27 +393,27 @@ export default class Slide extends Plugin {
 			body.style.overflow = "hidden";
 			if (body.scrollHeight < relativeRect.height) {
 				while (body.scrollHeight < relativeRect.height) {
-					zoom += .05;
+					zoom += 0.05;
 					body.style.fontSize = zoom + "em";
 				}
 				while (body.scrollHeight > relativeRect.height) {
-					zoom -= .01;
+					zoom -= 0.01;
 					body.style.fontSize = zoom + "em";
 				}
 			} else {
 				while (body.scrollHeight > relativeRect.height) {
-					zoom -= .05;
+					zoom -= 0.05;
 					body.style.fontSize = zoom + "em";
 				}
-				
+
 				while (body.scrollHeight < relativeRect.height) {
-					zoom += .01;
+					zoom += 0.01;
 					body.style.fontSize = zoom + "em";
 				}
-				zoom -= .01;
+				zoom -= 0.01;
 			}
-			body.style.removeProperty('align-self');
-			body.style.removeProperty('overflow');
+			body.style.removeProperty("align-self");
+			body.style.removeProperty("overflow");
 		} else {
 			zoom = Math.min(
 				relativeRect.width / absoluteRect.width,
@@ -456,7 +455,7 @@ export default class Slide extends Plugin {
 	}
 	static async clean() {
 		super.clean();
-		window.addEventListener("keydown", (e) => {
+		window.addEventListener("keydown", e => {
 			if (
 				e.key === "Shift" ||
 				e.key === "Control" ||
@@ -472,8 +471,8 @@ export default class Slide extends Plugin {
 				return false;
 			}
 		});
-		document.querySelectorAll(".th-slide-start").forEach((element) => {
-			element.addEventListener("click", (e) => {
+		document.querySelectorAll(".th-slide-start").forEach(element => {
+			element.addEventListener("click", e => {
 				e.preventDefault();
 				e.stopPropagation();
 				this.startSlideshow();
@@ -487,30 +486,30 @@ export default class Slide extends Plugin {
 	}
 	static defineProperties() {
 		Object.defineProperties(this.Theophile, {
-			nlines: {
+			"nlines": {
 				get: () => {
 					return this.nlines;
 				},
-				set: (value) => {
+				set: value => {
 					this.nlines = value;
 				},
 			},
-			ratio: {
+			"ratio": {
 				get: () => {
 					return this.ratio;
 				},
-				set: (value) => {
+				set: value => {
 					if (value instanceof Array) {
 						value = value[0] / value[1];
 					}
 					this.ratio = value;
 				},
 			},
-			transition: {
+			"transition": {
 				get: () => {
 					return this.transition;
 				},
-				set: (value) => {
+				set: value => {
 					this.transition = value[0].toUpperCase() + value.slice(1);
 				},
 			},
@@ -518,15 +517,15 @@ export default class Slide extends Plugin {
 				get: () => {
 					return this.transitionDuration;
 				},
-				set: (value) => {
+				set: value => {
 					this.transitionDuration = value;
 				},
 			},
-			transitionDuration: {
+			"transitionDuration": {
 				get: () => {
 					return this.transitionDuration;
 				},
-				set: (value) => {
+				set: value => {
 					this.transitionDuration = value;
 				},
 			},
@@ -534,7 +533,7 @@ export default class Slide extends Plugin {
 				get: () => {
 					return this.transitionOptions;
 				},
-				set: (value) => {
+				set: value => {
 					this.transitionOptions = value;
 				},
 			},

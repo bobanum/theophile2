@@ -30,7 +30,7 @@ export default class Theophile {
 	}
 	static processHeadings() {
 		var headings = document.querySelectorAll(this.headings);
-		headings.forEach((heading) => {
+		headings.forEach(heading => {
 			if (heading.hasAttribute("id")) {
 				return;
 			}
@@ -65,20 +65,20 @@ export default class Theophile {
 			this[property] = this.config[property];
 		}
 
-		await new Promise((resolve) => {
+		await new Promise(resolve => {
 			if (
 				document.readyState === "complete" ||
 				document.readyState === "interactive"
 			)
 				return resolve();
-			window.addEventListener("DomContentLoaded", (e) => {
+			window.addEventListener("DomContentLoaded", e => {
 				console.trace("DomContent Loaded in prepare");
 				this.ready = true;
 				resolve();
 			});
 		});
 		console.trace("Theophile ready");
-		const promises = Array.from(Object.values(this.plugins), (plugin) =>
+		const promises = Array.from(Object.values(this.plugins), plugin =>
 			plugin.prepare()
 		);
 		const data = await Promise.all(promises);
@@ -88,7 +88,7 @@ export default class Theophile {
 	static async process() {
 		this.processHeadings();
 		console.trace("Theophile processed");
-		const promises = Array.from(Object.values(this.plugins), (plugin) =>
+		const promises = Array.from(Object.values(this.plugins), plugin =>
 			plugin.process()
 		);
 		const data = await Promise.all(promises);
@@ -98,7 +98,7 @@ export default class Theophile {
 	static async mount() {
 		this.processHeadings();
 		console.trace("Theophile mounted");
-		const promises = Array.from(Object.values(this.plugins), (plugin) =>
+		const promises = Array.from(Object.values(this.plugins), plugin =>
 			plugin.mount()
 		);
 		const data = await Promise.all(promises);
@@ -107,7 +107,7 @@ export default class Theophile {
 	}
 	static async clean() {
 		console.trace("Theophile cleaned");
-		const promises = Array.from(Object.values(this.plugins), (plugin) =>
+		const promises = Array.from(Object.values(this.plugins), plugin =>
 			plugin.clean()
 		);
 		const data = await Promise.all(promises);
@@ -143,13 +143,13 @@ export default class Theophile {
 			var xhr = new XMLHttpRequest();
 			xhr.open("get", url);
 			xhr.responseType = "json";
-			xhr.addEventListener("load", (e) => {
+			xhr.addEventListener("load", e => {
 				if (e.target.status === 404) {
 					return reject(e.target.statusText);
 				}
 				return resolve(e.target.response);
 			});
-			xhr.addEventListener("error", (e) => {
+			xhr.addEventListener("error", e => {
 				reject(e.target);
 			});
 			xhr.onerror = function () {
@@ -195,7 +195,7 @@ export default class Theophile {
 		this.cssLink();
 
 		const plugins = ["Template", "Reference", "Slide", "Toc"];
-		const promises = plugins.map(async (file) => {
+		const promises = plugins.map(async file => {
 			return this.loadPlugin(file);
 		});
 		promises.push(this.loadConfig());
@@ -203,7 +203,7 @@ export default class Theophile {
 	}
 	static async exec(options = {}) {
 		if (typeof options === "string") {
-			options = {root : options};
+			options = { root: options };
 		}
 		await this.init(options.root);
 		delete options.root;

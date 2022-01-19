@@ -1,3 +1,2 @@
 import Plugin from "../Plugin.js";
-export default class Toc extends Plugin {
-}
+export default class Toc extends Plugin {}
