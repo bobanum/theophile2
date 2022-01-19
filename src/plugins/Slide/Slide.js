@@ -159,18 +159,21 @@ export default class Slide extends Plugin {
 					break;
 				case " ":
 				case "Escape":
+					e.preventDefault();
 					if (Object.values(this.animations).length > 0) {
 						this.cancelAnimations();
 					} else {
 						this.stopSlideshow();
 					}
 			}
-			e.preventDefault();
 			e.stopPropagation();
 		});
 	}
 	static async showSlide(slide) {
 		if (slide === this.backdrop.slide) return;
+		if (!slide.zoom) {
+			slide.ajustZoom();
+		}
 		// await Promise.all(Object.values(this.animations));
 		var transition = new Transition[this.transition](
 			this.backdrop.slide,
@@ -241,6 +244,9 @@ export default class Slide extends Plugin {
 		}
 		const result = document.createElement("header");
 		result.appendChild(ptr.heading.cloneNode(true));
+		if (this.continued) {
+			result.append("...suite");
+		}
 		return result;
 	}
 	html_footer() {
@@ -272,6 +278,10 @@ export default class Slide extends Plugin {
 			return slide;
 		}
 		if (element.matches("h1,h2")) {
+			if (element.matches("h1+h2")) {
+				slide.contents.push(element);
+				return slide;
+			}
 			if (slide) {
 				slide.next = new this();
 				slide.next.previous = slide;
@@ -318,6 +328,14 @@ export default class Slide extends Plugin {
 		this.contactsheet = contactsheet;
 		return this.contactsheet;
 	}
+	static async prepare() {
+		await super.prepare();
+		document.body.querySelectorAll("script").forEach((script) => {
+			if (script.innerHTML.indexOf("For SVG support") >= 0) {
+				script.remove();
+			}
+		});
+	}
 	static async process() {
 		await super.process();
 		document.documentElement.style.setProperty(
@@ -332,9 +350,6 @@ export default class Slide extends Plugin {
 		style.media = `(min-aspect-ratio: ${this.ratio} / 1)`;
 		style.innerHTML =
 			".th-slide {--font-size: calc(100vh / var(--th-slide-nlines));}";
-		// Array.from(document.getElementById("th-Slide-style").sheet.cssRules).filter(rule => rule instanceof CSSMediaRule).forEach(rule => {
-		// 	rule.conditionText = rule.conditionText.replace(/min-aspect-ratio: *[0-9\.\-\+]+ *\/ *[0-9\.\-\+]+/, `min-aspect-ratio: ${this.ratio} / 1`);
-		// });
 		var slide;
 		var ptr = document.body.firstChild;
 		while (ptr) {
@@ -354,23 +369,78 @@ export default class Slide extends Plugin {
 		return document.body.classList.contains("th-slideshow");
 	}
 	static findVisibleSlide() {
-		var triggers = this.slides.map((slide) => {
-			return([slide, slide.trigger.getBoundingClientRect().y]);
-		}).sort((a, b) => a[1] < b[1] ? -1 : 1);
+		var triggers = this.slides
+			.map((slide) => {
+				return [slide, slide.trigger.getBoundingClientRect().y];
+			})
+			.sort((a, b) => (a[1] < b[1] ? -1 : 1));
 		var last = triggers.slice(-1)[0];
-		triggers = triggers.filter(trigger => trigger[1] >= 0);
+		triggers = triggers.filter((trigger) => trigger[1] >= 0);
 		return (triggers[0] || last)[0];
+	}
+	ajustZoom() {
+		var backdrop = document.body.appendChild(this.constructor.html_backdrop());
+		backdrop.appendChild(this.html);
+		var body = this.html.querySelector(".th-slide-body");
+		// body = document.body.querySelector(".th-slide-body");
+		body.style.position = "relative";
+		var relativeRect = body.getBoundingClientRect();
+		body.style.position = "absolute";
+		var absoluteRect = body.getBoundingClientRect();
+		body.style.removeProperty("position");
+		if (relativeRect.width === absoluteRect.width) {
+			var zoom = 1;
+			body.style.alignSelf = "start";
+			body.style.overflow = "hidden";
+			if (body.scrollHeight < relativeRect.height) {
+				while (body.scrollHeight < relativeRect.height) {
+					zoom += .05;
+					body.style.fontSize = zoom + "em";
+				}
+				while (body.scrollHeight > relativeRect.height) {
+					zoom -= .01;
+					body.style.fontSize = zoom + "em";
+				}
+			} else {
+				while (body.scrollHeight > relativeRect.height) {
+					zoom -= .05;
+					body.style.fontSize = zoom + "em";
+				}
+				
+				while (body.scrollHeight < relativeRect.height) {
+					zoom += .01;
+					body.style.fontSize = zoom + "em";
+				}
+				zoom -= .01;
+			}
+			body.style.removeProperty('align-self');
+			body.style.removeProperty('overflow');
+		} else {
+			zoom = Math.min(
+				relativeRect.width / absoluteRect.width,
+				relativeRect.height / absoluteRect.height
+			);
+		}
+		body.style.fontSize = zoom + "em";
+		this.zoom = zoom;
+		backdrop.remove();
+		return this;
 	}
 	static startSlideshow(state = true) {
 		if (state) {
-			this.backdrop = document.body.appendChild(this.html_backdrop());
-			this.backdrop.slide = this.findVisibleSlide();
-			this.backdrop.appendChild(this.backdrop.slide.html);
+			const slide = this.findVisibleSlide();
+			if (!slide.zoom) {
+				slide.ajustZoom();
+			}
 			localStorage.slideshow = "true";
 			document.body.classList.add("th-slideshow");
+			this.backdrop = document.body.appendChild(this.html_backdrop());
+			this.backdrop.slide = slide;
+			this.backdrop.appendChild(this.backdrop.slide.html);
 			setTimeout(() => {
 				this.backdrop.focus();
-			}, 100);
+				return;
+			}, 1000);
 		} else {
 			return this.stopSlideshow();
 		}
@@ -387,7 +457,6 @@ export default class Slide extends Plugin {
 	static async clean() {
 		super.clean();
 		window.addEventListener("keydown", (e) => {
-			console.log(e);
 			if (
 				e.key === "Shift" ||
 				e.key === "Control" ||
@@ -403,8 +472,17 @@ export default class Slide extends Plugin {
 				return false;
 			}
 		});
+		document.querySelectorAll(".th-slide-start").forEach((element) => {
+			element.addEventListener("click", (e) => {
+				e.preventDefault();
+				e.stopPropagation();
+				this.startSlideshow();
+			});
+		});
 		if (localStorage.slideshow === "true") {
-			this.startSlideshow();
+			setTimeout(() => {
+				this.startSlideshow();
+			}, 100);
 		}
 	}
 	static defineProperties() {
