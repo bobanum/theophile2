@@ -78,7 +78,7 @@
 .th-slide > header h3,
 .th-slide > header p {
   margin: 0 !important;
-  font-size: 2.2em !important;
+  font-size: inherit !important;
   background: none !important;
 }
 
@@ -102,7 +102,7 @@
   margin-bottom: 0;
 }
 
-> .th-slide-navigation {
+.th-slide-navigation {
   position: fixed;
   top: 0;
   bottom: 0;
@@ -120,7 +120,7 @@
   pointer-events: none;
 }
 
-> .th-slide-navigation > * {
+.th-slide-navigation > * {
   pointer-events: all;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -142,11 +142,11 @@
           transition-duration: 0.5s;
 }
 
-> .th-slide-navigation > *:hover {
+.th-slide-navigation > *:hover {
   opacity: 1;
 }
 
-> .th-slide-navigation .th-slide-previous {
+.th-slide-navigation .th-slide-previous {
   background-image: -webkit-gradient(linear, right top, left top, from(#8880), to(#888c));
   background-image: linear-gradient(to left, #8880, #888c);
   grid-row: 1 / -1;
@@ -155,40 +155,40 @@
   grid-column: 1 / span 2;
 }
 
-> .th-slide-navigation .th-slide-previous::before {
+.th-slide-navigation .th-slide-previous::before {
   font-size: 3em;
   content: "arrow_back";
 }
 
-> .th-slide-navigation .th-slide-next {
+.th-slide-navigation .th-slide-next {
   background-image: -webkit-gradient(linear, left top, right top, from(#8880), to(#888c));
   background-image: linear-gradient(to right, #8880, #888c);
   grid-row: 1 / -1;
   grid-column: -3 / span 2;
 }
 
-> .th-slide-navigation .th-slide-next::before {
+.th-slide-navigation .th-slide-next::before {
   font-size: 3em;
   content: "arrow_forward";
 }
 
-> .th-slide-navigation .th-slide-first,
-> .th-slide-navigation .th-slide-last {
+.th-slide-navigation .th-slide-first,
+.th-slide-navigation .th-slide-last {
   grid-row: 1 / -1;
 }
 
-> .th-slide-navigation .th-slide-first::before,
-> .th-slide-navigation .th-slide-last::before {
+.th-slide-navigation .th-slide-first::before,
+.th-slide-navigation .th-slide-last::before {
   position: absolute;
   font-size: 3em;
 }
 
-> .th-slide-navigation .th-slide-first:not(:hover)::before,
-> .th-slide-navigation .th-slide-last:not(:hover)::before {
+.th-slide-navigation .th-slide-first:not(:hover)::before,
+.th-slide-navigation .th-slide-last:not(:hover)::before {
   display: none;
 }
 
-> .th-slide-navigation .th-slide-first {
+.th-slide-navigation .th-slide-first {
   background-image: -webkit-gradient(linear, right top, left top, from(#8880), to(#888f));
   background-image: linear-gradient(to left, #8880, #888f);
   -ms-grid-column: 1;
@@ -199,11 +199,11 @@
           justify-content: start;
 }
 
-> .th-slide-navigation .th-slide-first::before {
+.th-slide-navigation .th-slide-first::before {
   content: "first_page";
 }
 
-> .th-slide-navigation .th-slide-last {
+.th-slide-navigation .th-slide-last {
   background-image: -webkit-gradient(linear, left top, right top, from(#8880), to(#888f));
   background-image: linear-gradient(to right, #8880, #888f);
   grid-column: -2 / span 1;
@@ -212,11 +212,11 @@
           justify-content: end;
 }
 
-> .th-slide-navigation .th-slide-last::before {
+.th-slide-navigation .th-slide-last::before {
   content: "last_page";
 }
 
-> .th-slide-navigation .th-slide-options {
+.th-slide-navigation .th-slide-options {
   background-image: -webkit-gradient(linear, left top, left bottom, from(#8880), to(#888c));
   background-image: linear-gradient(to bottom, #8880, #888c);
   grid-row: -2 / span 1;
@@ -226,7 +226,7 @@
           align-items: stretch;
 }
 
-> .th-slide-navigation .th-slide-options > * {
+.th-slide-navigation .th-slide-options > * {
   padding: 0.25em;
   cursor: pointer;
   -webkit-box-flex: 1;
@@ -245,45 +245,45 @@
           justify-content: center;
 }
 
-> .th-slide-navigation .th-slide-options > *:hover {
+.th-slide-navigation .th-slide-options > *:hover {
   opacity: 1;
   background-image: -webkit-gradient(linear, left top, left bottom, from(#fff0), to(#fff4));
   background-image: linear-gradient(to bottom, #fff0, #fff4);
 }
 
-> .th-slide-navigation .th-slide-options .th-option-contactsheet::before {
+.th-slide-navigation .th-slide-options .th-option-contactsheet::before {
   content: "calendar_view_month";
 }
 
-> .th-slide-navigation .th-slide-options .th-option-stopslideshow {
+.th-slide-navigation .th-slide-options .th-option-stopslideshow {
   -webkit-box-flex: 0;
       -ms-flex-positive: 0;
           flex-grow: 0;
 }
 
-> .th-slide-navigation .th-slide-options .th-option-stopslideshow::before {
+.th-slide-navigation .th-slide-options .th-option-stopslideshow::before {
   content: "cancel_presentation";
 }
 
-> .th-slide-navigation .th-slide-options .th-option-slideshow::before {
+.th-slide-navigation .th-slide-options .th-option-slideshow::before {
   content: "crop_16_9";
 }
 
-> .th-slide-navigation .th-slide-options .th-option-continous::before {
+.th-slide-navigation .th-slide-options .th-option-continous::before {
   content: "splitscreen";
 }
 
-> .th-slide-navigation .th-slide-options .th-option-print::before {
+.th-slide-navigation .th-slide-options .th-option-print::before {
   content: "print";
 }
 
-> .th-slide-navigation .th-slide-options .th-option-menu {
+.th-slide-navigation .th-slide-options .th-option-menu {
   -webkit-box-flex: 0;
       -ms-flex-positive: 0;
           flex-grow: 0;
 }
 
-> .th-slide-navigation .th-slide-options .th-option-menu::before {
+.th-slide-navigation .th-slide-options .th-option-menu::before {
   content: "menu";
 }
 

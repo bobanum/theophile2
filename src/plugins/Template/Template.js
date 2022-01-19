@@ -63,10 +63,6 @@ export default class Template extends Plugin {
 			.forEach((element) => {
 				document.head.appendChild(element);
 			});
-		console.log(
-			this.template.querySelectorAll("script"),
-			document.body.querySelectorAll("script")
-		);
 	}
 	static async clean() {
 		document.querySelectorAll(".th-contrast").forEach((element) => {
@@ -79,6 +75,29 @@ export default class Template extends Plugin {
 					var backgroundColor = style.backgroundColor;
 					element.style.color = backgroundColor;
 					element.style.backgroundColor = color;
+				});
+				console.log(e);
+				// this.startSlideshow();
+			});
+		});
+		document.querySelectorAll(".th-size").forEach((element) => {
+			element.addEventListener("click", (e) => {
+				e.preventDefault();
+				e.stopPropagation();
+				document.querySelectorAll(".main").forEach((element) => {
+                    if (e.ctrlKey) {
+                        element.style.removeProperty("font-size");
+                        return;
+                    }
+					var size = parseFloat(element.style.fontSize) || 1;
+                    size += (e.shiftKey) ? -.5 : .5;
+                    if (size > 2) {
+                        size = .5;
+                    }
+                    if (size <.5) {
+                        size = 2;
+                    }
+					element.style.fontSize = size + 'em';
 				});
 				console.log(e);
 				// this.startSlideshow();
