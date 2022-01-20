@@ -6,11 +6,26 @@ import Transition from "../../transitions/Transition.js";
  * @extends {Plugin}
  */
 export default class Slide extends Plugin {
+	static init(Theophile) {
+		super.init(Theophile);
+		this.include = "h1,h2";
+		this.split = "br,.th-slide-split";
+		this.exclude = "h1+h2, .th-slide-skip";
+		this.nlines = 20;
+		this.ratio = 16 / 9;
+		this.transition = "Fade";
+		this.transitionDuration = 500;
+		this.transitionOptions = {};
+		this.defineProperties();
+		this.contactsheet = null;
+		this.slides = [];
+		this.animations = {};
+	}
 	/**
 	 * Creates an instance of Slide.
 	 * @memberof Slide
 	 */
-	constructor() {
+	constructor(heading) {
 		super();
 		/**
 		 * id of the slide
@@ -37,8 +52,19 @@ export default class Slide extends Plugin {
 		 * @private
 		 */
 		this._html = null;
+		this.zoom = "auto";	// "auto", "none", "enlarge", "reduce", "1", "[1,1]"
+		this.zoomRatio = undefined;	// Will be defined on render
 		this.idx = this.constructor.slides.length;
 		this.constructor.slides.push(this);
+		heading.slide = this;
+		this.trigger = heading;
+		if (heading.matches("br, .th-slide-split")) {
+			this.continued = true;
+		} else {
+			this.heading = heading;
+			this.id = heading.getAttribute("id");
+		}
+		this.parseOptions(heading);
 	}
 	/**
 	 *
@@ -171,7 +197,7 @@ export default class Slide extends Plugin {
 	}
 	static async showSlide(slide) {
 		if (slide === this.backdrop.slide) return;
-		if (!slide.zoom) {
+		if (!slide.zoomRatio) {
 			slide.ajustZoom();
 		}
 		// await Promise.all(Object.values(this.animations));
@@ -275,35 +301,18 @@ export default class Slide extends Plugin {
 		if (element.nodeType !== 1) {
 			return slide;
 		}
-		if (element.matches("h1,h2")) {
-			if (element.matches("h1+h2")) {
+		if (element.matches(this.include + "," + this.split)) {
+			if (element.matches(this.exclude)) {
 				slide.contents.push(element);
 				return slide;
 			}
 			if (slide) {
-				slide.next = new this();
+				slide.next = new this(element);
 				slide.next.previous = slide;
 				slide = slide.next;
 			} else {
-				slide = new this();
+				slide = new this(element);
 			}
-			element.slide = slide;
-			slide.trigger = element;
-			slide.heading = element;
-			slide.id = element.getAttribute("id");
-			return slide;
-		}
-		if (element.matches("br")) {
-			if (slide) {
-				slide.next = new this();
-				slide.next.previous = slide;
-				slide = slide.next;
-			} else {
-				slide = new this();
-			}
-			element.slide = slide;
-			slide.trigger = element;
-			slide.continued = true;
 			return slide;
 		}
 		if (!slide) {
@@ -312,6 +321,22 @@ export default class Slide extends Plugin {
 		}
 		slide.contents.push(element);
 		return slide;
+	}
+	parseOptions(element) {
+		var options = element.getAttribute("data-th");
+		if (!options) return {};
+		options = options.split(/;/).reduce((result, option) => {
+			var parts = option.match(/\s*slide-([a-zA-z_-][a-zA-z0-9_-]*)\s*:\s*(.*)\s*/);
+			if (parts) {
+				result[parts[1]] = parts[2];
+			}
+			return result;
+		}, {});
+		for (const property in options) {
+			if (Object.hasOwnProperty.call(options, property)) {
+				this[property] = options[property];
+			}
+		}
 	}
 	static html_contactsheet() {
 		if (this.contactsheet) return this.contactsheet;
@@ -377,6 +402,12 @@ export default class Slide extends Plugin {
 		return (triggers[0] || last)[0];
 	}
 	ajustZoom() {
+		if (this.zoomRatio !== undefined) {
+			return this.zoomRatio;
+		}
+		if (this.zoom === "none") {
+			return this.zoomRatio = 1;
+		}
 		var backdrop = document.body.appendChild(
 			this.constructor.html_backdrop()
 		);
@@ -420,15 +451,33 @@ export default class Slide extends Plugin {
 				relativeRect.height / absoluteRect.height
 			);
 		}
-		body.style.fontSize = zoom + "em";
-		this.zoom = zoom;
+		let parts;
+		if (this.zoom === "auto") {
+			this.zoomRatio = zoom;
+		} else if (this.zoom === "enlarge") {
+			this.zoomRatio = Math.max(1, zoom);
+		} else if (this.zoom === "reduce") {
+			this.zoomRatio = Math.min(1, zoom);
+		} else if (parts = this.zoom.trim().match(/^[0-9\.]+$/)) {
+			this.zoomRatio = parseFloat(parts) || 1;
+		} else if (parts = this.zoom.match(/^\[([0-9\.]+),\s*([0-9\.]+)\]$/)) {
+			let min = parseFloat(parts[1]) || 1;
+			let max = parseFloat(parts[2]) || 1;
+			if (min > max) {
+				[min, max] = [max, min];
+			}
+			this.zoomRatio = Math.min(Math.max(zoom, min), max);
+		} else {
+			this.zoomRatio = 1;
+		}
+		body.style.fontSize = this.zoomRatio + "em";
 		backdrop.remove();
 		return this;
 	}
 	static startSlideshow(state = true) {
 		if (state) {
 			const slide = this.findVisibleSlide();
-			if (!slide.zoom) {
+			if (!slide.zoomRatio) {
 				slide.ajustZoom();
 			}
 			localStorage.slideshow = "true";
@@ -538,17 +587,5 @@ export default class Slide extends Plugin {
 				},
 			},
 		});
-	}
-	static init(Theophile) {
-		super.init(Theophile);
-		this.nlines = 20;
-		this.ratio = 16 / 9;
-		this.transition = "Fade";
-		this.transitionDuration = 500;
-		this.transitionOptions = {};
-		this.defineProperties();
-		this.contactsheet = null;
-		this.slides = [];
-		this.animations = {};
 	}
 }
