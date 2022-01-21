@@ -40,6 +40,7 @@ export default class Transition {
 				"Fade",
 				"Box",
 				"Flip",
+				"Mask",
 				// "Push",
 				// "Scale",
 			].map(file => import(`./Transition${file}.js`))

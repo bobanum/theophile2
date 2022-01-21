@@ -9,23 +9,11 @@ export default class TransitionBox extends Transition {
 		this.direction = 0; // E, N, W, S
 	}
 	start() {
-		return (
-			"translateZ(-" +
-			this.middle[this.axis] +
-			"px) rotate" +
-			this.axis +
-			"(0deg)"
+		return ( "translateZ(-" + this.middle[this.axis] + "px) rotate" + this.axis + "(0deg)"
 		);
 	}
 	end() {
-		return (
-			"translateZ(-" +
-			this.middle[this.axis] +
-			"px) rotate" +
-			this.axis +
-			"(" +
-			(this.reverse ^ (this.direction > 1) ? 90 : -90) +
-			"deg)"
+		return ( "translateZ(-" + this.middle[this.axis] + "px) rotate" + this.axis + "(" + (this.reverse ^ (this.direction > 1) ? 90 : -90) + "deg)"
 		);
 	}
 	cancel() {

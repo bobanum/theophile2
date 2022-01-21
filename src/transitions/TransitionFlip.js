@@ -12,12 +12,7 @@ export default class TransitionFlip extends Transition {
 		return "rotate" + this.axis + "(0deg)";
 	}
 	end() {
-		return (
-			"rotate" +
-			this.axis +
-			"(" +
-			(this.reverse ^ (this.direction > 1) ? 180 : -180) +
-			"deg)"
+		return ( "rotate" + this.axis + "(" + (this.reverse ^ (this.direction > 1) ? 180 : -180) + "deg)"
 		);
 	}
 	cancel() {
@@ -36,12 +31,7 @@ export default class TransitionFlip extends Transition {
 		this.original.style.transform = "rotate" + this.axis + "(0deg)";
 		this.replacement.style.position = "absolute";
 		this.replacement.style.backfaceVisibility = "hidden";
-		this.replacement.style.transform =
-			"rotate" +
-			this.axis +
-			"(" +
-			(this.reverse ^ (this.direction > 1) ? 180 : -180) +
-			"deg)";
+		this.replacement.style.transform = "rotate" + this.axis + "(" + (this.reverse ^ (this.direction > 1) ? 180 : -180) + "deg)";
 		box.style.transitionDuration = this.duration + "ms";
 		box.style.transitionProperty = "transform";
 		this.box = box;
