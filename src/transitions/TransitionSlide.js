@@ -34,10 +34,7 @@ export default class TransitionSlide extends Transition {
 	}
 	set direction(value) {
 		if (typeof value === "string") {
-			value = Math.max(
-				["e", "se", "s", "sw", "w", "nw", "n", "ne"].indexOf(value),
-				0
-			);
+			value = Math.max(["e", "se", "s", "sw", "w", "nw", "n", "ne"].indexOf(value), 0);
 		}
 		this._direction = value;
 	}
