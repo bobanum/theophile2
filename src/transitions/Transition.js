@@ -36,11 +36,13 @@ export default class Transition {
 	static init() {
 		Promise.all(
 			[
+				"None",
 				"Slide",
 				"Fade",
 				"Box",
 				"Flip",
 				"Mask",
+				"Blur",
 				// "Push",
 				// "Scale",
 			].map(file => import(`./Transition${file}.js`))
