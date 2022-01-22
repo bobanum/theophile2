@@ -307,6 +307,7 @@ export default class Slide extends Plugin {
 			status.appendChild(this.html_timeSlideshow());
 			status.addEventListener("click", e => {
 				var next = (e.target.nextSibling || e.currentTarget.firstChild);
+				e.target.style.display = "none";
 				next.style.display = "";
 			});
 			Array.from(status.children).forEach(element => element.style.display = "none");
@@ -330,7 +331,6 @@ export default class Slide extends Plugin {
 		result.classList.add("th-slide-clock");
 		var update = () => {
 			var time = new Date();
-			console.log(time.toTimeString());
 			result.innerHTML = time.toTimeString().split(" ")[0].slice(0, -3);
 		};
 		setInterval(update, 1000);
