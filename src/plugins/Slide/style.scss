@@ -47,6 +47,7 @@
 	grid-template-rows: auto 1fr auto;
 	align-content: space-between;
 	position: relative;
+	box-sizing: border-box;
 	& > header {
 		padding: 0 1ch;
 		order: -1000;

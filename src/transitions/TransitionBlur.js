@@ -57,10 +57,12 @@ export default class TransitionBlur extends Transition {
 		this.replacement.style.removeProperty("z-index");
 		this.replacement.style.removeProperty("transition");
 		this.replacement.style.removeProperty("filter");
+		this.replacement.style.removeProperty("opacity");
 		this.original.style.removeProperty("position");
 		this.original.style.removeProperty("z-index");
 		this.original.style.removeProperty("transition");
 		this.original.style.removeProperty("filter");
+		this.original.style.removeProperty("opacity");
 		["transitionend", "transitioncancel"].forEach(evt => {
 			this.original.removeEventListener(evt, this.evt_transitionend_on);
 			this.replacement.removeEventListener(evt, this.evt_transitionend_off);

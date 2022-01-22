@@ -28,4 +28,36 @@ export default class Plugin {
 	static init(Theophile) {
 		this.Theophile = Theophile;
 	}
+	static parseStyle(style = {}) {
+		if (style === null) {
+			return {};
+		}
+		if (typeof style === "object") {
+			return style;
+		}
+		if (typeof style === "string") {
+			style = style.replace(/\s*;\s*$/, "").split(/\s*;\s*/);
+		}
+		if (style instanceof Array) {
+			style = style.reduce((compil, property) => {
+				if (typeof property === "string") {
+					var property = property.match(/^([a-zA-Z0-9_-]+)\s*:\s*(.*)$/);
+					if (!property) return compil;
+					property = property.slice(1);
+				}
+				compil[property[0]] = property[1];
+				return compil;
+			}, {});
+		}
+		return style;
+	}
+	static applyStyle(style, element) {
+		style = this.parseStyle(style);
+		for (const property in style) {
+			if (Object.hasOwnProperty.call(style, property)) {
+				element.style.setProperty(property, style[property]);
+			}
+		}
+		return this;
+	}
 }

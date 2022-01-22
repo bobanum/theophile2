@@ -95,7 +95,8 @@ export default class Slide extends Plugin {
 		html.classList.add("th-slide");
 		html.appendChild(this.html_header());
 		html.appendChild(this.html_footer());
-		html.appendChild(this.html_body());
+		var body = html.appendChild(this.html_body());
+		this.parseElementStyle(this.heading, body);
 		html.obj = this;
 		return html;
 	}
@@ -105,7 +106,22 @@ export default class Slide extends Plugin {
 		this.contents.forEach(content => {
 			body.appendChild(content.cloneNode(true));
 		});
+		this.applyStyles(body);
 		return body;
+	}
+	applyStyles(container) {
+		container.querySelectorAll("[data-th-slide-style]").forEach(element => {
+			this.parseElementStyle(element)
+		});
+		return this;
+	}
+	parseElementStyle(from, to) {
+		if (!to) {
+			to = from;
+		}
+		Slide.applyStyle(from.getAttribute("data-th-slide-style"), to);
+		from.removeAttribute("data-th-slide-style");
+		return this;
 	}
 	static html_backdrop() {
 		const backdrop = document.createElement("div");
