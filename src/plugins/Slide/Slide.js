@@ -1,5 +1,6 @@
 import Plugin from "../Plugin.js";
 import Transition from "../../transitions/Transition.js";
+import Properties from "./Properties.js";
 /**
  * @export
  * @class Slide
@@ -16,10 +17,12 @@ export default class Slide extends Plugin {
 		this.transition = "Fade";
 		this.transitionDuration = 500;
 		this.transitionOptions = {};
-		this.defineProperties();
 		this.contactsheet = null;
 		this.slides = [];
 		this.animations = {};
+		this.timestamp = null;
+		this.timestampSlide = null;
+		Properties.defineProperties.call(this);
 	}
 	/**
 	 * Creates an instance of Slide.
@@ -56,6 +59,7 @@ export default class Slide extends Plugin {
 		this.zoomRatio = undefined;	// Will be defined on render
 		this.idx = this.constructor.slides.length;
 		this.constructor.slides.push(this);
+		this.footerText = "I'm the footer";
 		heading.slide = this;
 		this.trigger = heading;
 		if (heading.matches("br, .th-slide-split")) {
@@ -122,6 +126,19 @@ export default class Slide extends Plugin {
 		last.addEventListener("click", e => this.showLast());
 		navigation.appendChild(this.html_options());
 		this.addKeydownEvents(backdrop);
+		const config = { attributes: false, childList: true, subtree: false };
+		const callback = (mutationsList, observer) => {
+			const mutations = mutationsList.filter(mutation => mutation.addedNodes.length > 0);
+			var slides = mutations.reduce((compil, mutation) => {
+				compil.push(...Array.from(mutation.addedNodes).filter(node => node.matches(".th-slide")));
+				return compil;
+			}, []);
+			if (slides.length) {
+				slides[0].querySelector("footer").appendChild(this.html_status);
+			}
+		};
+		const observer = new MutationObserver(callback);
+		observer.observe(backdrop, config);
 		backdrop.Slide = this;
 		return backdrop;
 	}
@@ -197,10 +214,11 @@ export default class Slide extends Plugin {
 	}
 	static async showSlide(slide) {
 		if (slide === this.backdrop.slide) return;
+		Slide.timestampSlide = new Date().getTime();
 		if (!slide.zoomRatio) {
 			slide.ajustZoom();
 		}
-		// await Promise.all(Object.values(this.animations));
+
 		var transition = new Transition[this.transition](
 			this.backdrop.slide,
 			slide
@@ -274,8 +292,70 @@ export default class Slide extends Plugin {
 		return result;
 	}
 	html_footer() {
-		const result = document.createElement("footer");
-		result.innerHTML = "&copy; 2038 My pretty course";
+		const footer = document.createElement("footer");
+		var copyright = footer.appendChild(document.createElement("div"));
+		copyright.innerHTML = Slide.footerText;
+		var slideNumber = footer.appendChild(this.html_slideNumber());
+		return footer;
+	}
+	static get html_status() {
+		if (!this._html_status) {
+			var status = document.createElement("div");
+			status.classList.add("th-slide-status");
+			status.appendChild(this.html_clock());
+			status.appendChild(this.html_timeSlide());
+			status.appendChild(this.html_timeSlideshow());
+			status.addEventListener("click", e => {
+				var next = (e.target.nextSibling || e.currentTarget.firstChild);
+				next.style.display = "";
+			});
+			Array.from(status.children).forEach(element => element.style.display = "none");
+			status.firstChild.style.display = "";
+			this._html_status = status;
+		}
+		return this._html_status;
+	}
+	html_slideNumber() {
+		var slideNumber = document.createElement("div");
+		slideNumber.classList.add("th-slide-number");
+		var number = slideNumber.appendChild(document.createElement("span"));
+		number.innerHTML = this.idx + 1;
+		slideNumber.append("/");
+		var length = slideNumber.appendChild(document.createElement("span"));
+		length.innerHTML = Slide.slides.length;
+		return slideNumber;
+	}
+	static html_clock() {
+		var result = document.createElement("div");
+		result.classList.add("th-slide-clock");
+		var update = () => {
+			var time = new Date();
+			console.log(time.toTimeString());
+			result.innerHTML = time.toTimeString().split(" ")[0].slice(0, -3);
+		};
+		setInterval(update, 1000);
+		update();
+		return result;
+	}
+	static html_timeSlide() {
+		var result = document.createElement("div");
+		result.classList.add("th-slide-time");
+		var update = () => {
+			var time = new Date(new Date().getTime() - this.timestampSlide + new Date().getTimezoneOffset() * 60000);
+			result.innerHTML = time.toTimeString().split(" ")[0].slice(3);
+		};
+		setInterval(update, 1000);
+		return result;
+	}
+	static html_timeSlideshow() {
+		var result = document.createElement("div");
+		result.classList.add("th-slideshow-time");
+		var update = () => {
+			var time = new Date(new Date().getTime() - this.timestamp + new Date().getTimezoneOffset() * 60000);
+			result.innerHTML = time.toTimeString().split(" ")[0].slice(3);
+		};
+		setInterval(update, 1000);
+		update();
 		return result;
 	}
 	/**
@@ -476,10 +556,12 @@ export default class Slide extends Plugin {
 	}
 	static startSlideshow(state = true) {
 		if (state) {
+			this.timestamp = new Date().getTime();
 			const slide = this.findVisibleSlide();
 			if (!slide.zoomRatio) {
 				slide.ajustZoom();
 			}
+			this.timestampSlide = new Date().getTime();
 			localStorage.slideshow = "true";
 			document.body.classList.add("th-slideshow");
 			this.backdrop = document.body.appendChild(this.html_backdrop());
@@ -532,60 +614,5 @@ export default class Slide extends Plugin {
 				this.startSlideshow();
 			}, 100);
 		}
-	}
-	static defineProperties() {
-		Object.defineProperties(this.Theophile, {
-			"nlines": {
-				get: () => {
-					return this.nlines;
-				},
-				set: value => {
-					this.nlines = value;
-				},
-			},
-			"ratio": {
-				get: () => {
-					return this.ratio;
-				},
-				set: value => {
-					if (value instanceof Array) {
-						value = value[0] / value[1];
-					}
-					this.ratio = value;
-				},
-			},
-			"transition": {
-				get: () => {
-					return this.transition;
-				},
-				set: value => {
-					this.transition = value[0].toUpperCase() + value.slice(1);
-				},
-			},
-			"transition-duration": {
-				get: () => {
-					return this.transitionDuration;
-				},
-				set: value => {
-					this.transitionDuration = value;
-				},
-			},
-			"transitionDuration": {
-				get: () => {
-					return this.transitionDuration;
-				},
-				set: value => {
-					this.transitionDuration = value;
-				},
-			},
-			"transition-options": {
-				get: () => {
-					return this.transitionOptions;
-				},
-				set: value => {
-					this.transitionOptions = value;
-				},
-			},
-		});
 	}
 }

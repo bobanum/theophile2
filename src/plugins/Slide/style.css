@@ -14,9 +14,7 @@
 }
 
 .th-slideshow .th-slide {
-  --font-size: calc(
-			100vw / (var(--th-slide-nlines) * var(--th-slide-ratio))
-		);
+  --font-size: calc(100vw / (var(--th-slide-nlines) * var(--th-slide-ratio)));
   font-size: var(--font-size);
 }
 
@@ -301,5 +299,83 @@
 
 .th-contactsheet ~ * {
   display: none;
+}
+
+.th-slide-number {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  gap: 0.25ch;
+  -webkit-box-pack: end;
+      -ms-flex-pack: end;
+          justify-content: end;
+}
+
+.th-slide-number::after {
+  font-family: Material Icons;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  width: 1.5em;
+  height: 1em;
+}
+
+.th-slide-number::after {
+  content: "auto_stories";
+}
+
+.th-slide-clock::after {
+  content: "schedule";
+}
+
+.th-slide-time::after {
+  content: "watch";
+}
+
+.th-slideshow-time::after {
+  content: "av_timer";
+}
+
+.th-slide-status {
+  width: 6ch;
+  color: #fff2;
+  cursor: pointer;
+}
+
+.th-slide-status > * {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  gap: 0.25ch;
+  -webkit-box-pack: end;
+      -ms-flex-pack: end;
+          justify-content: end;
+}
+
+.th-slide-status > *::after {
+  font-family: Material Icons;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  width: 1.5em;
+  height: 1em;
 }
 /*# sourceMappingURL=style.css.map */

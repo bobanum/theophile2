@@ -10,9 +10,7 @@
 		display: flex;
 	}
 	.th-slide {
-		--font-size: calc(
-			100vw / (var(--th-slide-nlines) * var(--th-slide-ratio))
-		);
+		--font-size: calc(100vw / (var(--th-slide-nlines) * var(--th-slide-ratio)));
 		font-size: var(--font-size);
 		@media screen and (min-aspect-ratio: 16 / 9) {
 			--font-size: calc(100vh / var(--th-slide-nlines));
@@ -209,11 +207,45 @@
 	font-size: 5pt;
 	display: grid;
 	gap: 1em;
-	grid-template-columns: repeat(
-		auto-fit,
-		minmax(calc(1em * var(--th-slide-nlines) * var(--th-slide-ratio)), 1fr)
-	);
+	grid-template-columns: repeat(auto-fit, minmax(calc(1em * var(--th-slide-nlines) * var(--th-slide-ratio)), 1fr));
 	& ~ * {
 		display: none;
+	}
+}
+@mixin icon-after {
+	display: flex;
+	align-items: center;
+	gap: 0.25ch;
+	justify-content: end;
+	&::after {
+		font-family: Material Icons;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 1.5em;
+		height: 1em;
+	}
+}
+.th-slide-number {
+	@include icon-after();
+	&::after {
+		content: "auto_stories";
+	}
+}
+.th-slide-clock::after {
+	content: "schedule";
+}
+.th-slide-time::after {
+	content: "watch";
+}
+.th-slideshow-time::after {
+	content: "av_timer";
+}
+.th-slide-status {
+	width: 6ch;
+	color: #fff2;
+	cursor: pointer;
+	> * {
+		@include icon-after();
 	}
 }
