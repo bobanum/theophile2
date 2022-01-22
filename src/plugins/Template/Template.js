@@ -4,7 +4,6 @@ export default class Template extends Plugin {
 	static init(Theophile) {
 		super.init(Theophile);
 		this._processIframes = true;
-		console.log(this.Theophile);
 		Properties.defineProperties.call(this);
 	}
 	static get url() {
@@ -70,7 +69,9 @@ export default class Template extends Plugin {
 		this.template.querySelectorAll("link,style,script").forEach(element => {
 			document.head.appendChild(element);
 		});
-		this.processIframes(document.body);
+		if (this._processIframes) {
+			this.processIframes(document.body);
+		}
 	}
 	static async clean() {
 		document.querySelectorAll(".th-contrast").forEach(element => {

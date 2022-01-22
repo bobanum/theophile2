@@ -1,6 +1,7 @@
 import Plugin from "../Plugin.js";
 import Transition from "../../transitions/Transition.js";
 import Properties from "./Properties.js";
+import Theophile from "../../Theophile.js";
 /**
  * @export
  * @class Slide
@@ -419,18 +420,21 @@ export default class Slide extends Plugin {
 		return slide;
 	}
 	parseOptions(element) {
-		var options = element.getAttribute("data-th");
-		if (!options) return {};
-		options = options.split(/;/).reduce((result, option) => {
-			var parts = option.match(/\s*slide-([a-zA-z_-][a-zA-z0-9_-]*)\s*:\s*(.*)\s*/);
-			if (parts) {
-				result[parts[1]] = parts[2];
-			}
-			return result;
-		}, {});
+		var options = Theophile.parseConfigString(element.getAttribute("data-th"));
+		element.removeAttribute("data-th");
 		for (const property in options) {
 			if (Object.hasOwnProperty.call(options, property)) {
-				this[property] = options[property];
+				if (property.slice(0, 6) === "slide-") {
+					this[property.slice(6)] = options[property];
+				}
+			}
+		}
+		var data = Theophile.loadDataSet(element);
+		for (const property in data) {
+			if (Object.hasOwnProperty.call(data, property)) {
+				if (property.slice(0, 5) === "slide") {
+					this[property.slice(5,6).toLowerCase() + property.slice(6)] = data[property];
+				}
 			}
 		}
 	}

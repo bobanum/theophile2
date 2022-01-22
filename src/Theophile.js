@@ -1,4 +1,25 @@
 export default class Theophile {
+	static init(root = ".") {
+		if (this.loaded) {
+			return Promise.resolve();
+		}
+		this.loaded = true;
+		this._root = "";
+		this.root = root;
+		this.headings = "h1, h2, h3";
+		this.ready = false;
+		this.plugins = {};
+		this.config = {};
+		this.cssLink();
+
+		const plugins = ["Template", "Reference", "Slide", "Toc"];
+		const promises = plugins.map(async file => {
+			return this.loadPlugin(file);
+		});
+		promises.push(this.loadConfig(this.config));
+		promises.push(this.loadDataSet(document.documentElement, this.config));
+		return Promise.all(promises);
+	}
 	static get root() {
 		return this._root;
 	}
@@ -171,35 +192,55 @@ export default class Theophile {
 			}
 		});
 	}
-	static async loadConfig() {
+	static async loadConfig(to) {
 		var data;
 		try {
 			data = await this.loadJson(this.siteURL("theophile.json"));
 		} catch (err) {
 			data = {};
 		}
-
-		this.config = data;
+		if (!to) return data;
+		for (let property in data) {
+			to[property] = data[property];
+		}
 		return data;
 	}
-	static init(root = ".") {
-		if (this.loaded) {
-			return Promise.resolve();
+	static loadDataSet(dataset, to) {
+		if (dataset === undefined) {
+			dataset = document.documentElement.dataset;
 		}
-		this.loaded = true;
-		this._root = "";
-		this.root = root;
-		this.headings = "h1, h2, h3";
-		this.ready = false;
-		this.plugins = {};
-		this.cssLink();
-
-		const plugins = ["Template", "Reference", "Slide", "Toc"];
-		const promises = plugins.map(async file => {
-			return this.loadPlugin(file);
-		});
-		promises.push(this.loadConfig());
-		return Promise.all(promises);
+		dataset = dataset.dataset || dataset;
+		to = to || {};
+		for (let property in dataset) {
+			if (property.slice(0, 2) === "th") {
+				let value = dataset[property];
+				property = property.slice(2, 3).toLowerCase() + property.slice(3);
+				if (property === "") {
+					this.parseConfigString(value, to);
+				} else {
+					to[property] = value;
+				}
+			}
+		}
+		return to;
+	}
+	static parseConfigString(data, to) {
+		if (!data) return {};
+		data = data.replace(/\s*;\s*$/, "").split(/;/).reduce((result, option) => {
+			var parts = option.match(/\s*([a-zA-z_-][a-zA-z0-9_-]*)\s*:\s*(.*)\s*/);
+			if (parts) {
+				result[parts[1]] = parts[2];
+			}
+			return result;
+		}, {});
+		//TODO Normalize
+		if (!to) return data;
+		for (const property in data) {
+			if (Object.hasOwnProperty.call(data, property)) {
+				to[property] = data[property];
+			}
+		}
+		return data;
 	}
 	static async exec(options = {}) {
 		if (typeof options === "string") {

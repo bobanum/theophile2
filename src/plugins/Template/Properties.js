@@ -16,12 +16,22 @@ export default class Properties {
 			// }
 		});
 		Object.defineProperties(this.Theophile, {
+			"processIframes": {
+				get: () => {
+					return this._processIframes || false;
+				},
+				set: value => {
+					this._processIframes = value !== "false";
+				},
+			},
+		});
+		Object.defineProperties(this.Theophile, {
 			"process-iframes": {
 				get: () => {
 					return this._processIframes || false;
 				},
 				set: value => {
-					this._processIframes = value;
+					this._processIframes = value !== "false";
 				},
 			},
 		});
