@@ -1,5 +1,12 @@
 import Plugin from "../Plugin.js";
+import Properties from "./Properties.js";
 export default class Template extends Plugin {
+	static init(Theophile) {
+		super.init(Theophile);
+		this._processIframes = true;
+		console.log(this.Theophile);
+		Properties.defineProperties.call(this);
+	}
 	static get url() {
 		return this.Theophile.siteURL("template.html");
 	}
@@ -15,6 +22,7 @@ export default class Template extends Plugin {
 		});
 	}
 	static async prepare() {
+		await super.prepare();
 		this.template = await this.load();
 		// this.template.querySelectorAll("script").forEach(script => {
 		//     if (script.innerHTML.indexOf('For SVG support') >= 0) {
@@ -58,9 +66,11 @@ export default class Template extends Plugin {
 				document.body.appendChild(this.template.body.firstChild);
 			}
 		}
+		//TODO : Never been tested... TEST!
 		this.template.querySelectorAll("link,style,script").forEach(element => {
 			document.head.appendChild(element);
 		});
+		this.processIframes(document.body);
 	}
 	static async clean() {
 		document.querySelectorAll(".th-contrast").forEach(element => {
@@ -97,5 +107,35 @@ export default class Template extends Plugin {
 				});
 			});
 		});
+	}
+	static processIframes(domain) {
+		domain.querySelectorAll("iframe").forEach(iframe => {
+			this.processIframe(iframe);
+		});
+	}
+	static processIframe(iframe) {
+		if (iframe.classList.contains("th-no-figure") || iframe.getAttribute("data-th-no-figure")) return iframe;
+		var figure = document.createElement("figure");
+		figure.classList.add("iframe");
+		if (iframe.style.width) {
+			figure.style.width = iframe.style.width;
+		} else {
+			//TODO Is it OK?
+			var style = window.getComputedStyle(iframe);
+			figure.style.width = style.width;
+		}
+		iframe.parentNode.insertBefore(figure, iframe);
+		figure.appendChild(iframe);
+		var figcaption = figure.appendChild(document.createElement("figcaption"));
+		figcaption.innerHTML = iframe.title;
+		iframe.title = "";
+		var a = figcaption.appendChild(document.createElement("a"));
+		a.classList.add("open-in-new");
+		a.target = "_blank";
+		a.href = iframe.src;
+		var span = a.appendChild(document.createElement("span"));
+		//TODO : Localize
+		a.title = span.innerHTML = "Ouvrir dans un nouvel onglet";
+		return figure;
 	}
 }

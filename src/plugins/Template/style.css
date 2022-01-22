@@ -1,1 +1,44 @@
-/* No CSS *//*# sourceMappingURL=style.css.map */
+figure.iframe {
+  margin: 0;
+  padding: 0;
+}
+
+figure.iframe iframe {
+  border: none;
+}
+
+figure.iframe figcaption {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 1fr auto;
+      grid-template-columns: 1fr auto;
+  -webkit-box-align: start;
+      -ms-flex-align: start;
+          align-items: start;
+}
+
+figure.iframe a.open-in-new {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  margin-left: auto;
+  gap: .5ch;
+  text-decoration: none;
+  color: inherit;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  opacity: .5;
+  -webkit-transition: opacity 200ms;
+  transition: opacity 200ms;
+}
+
+figure.iframe a.open-in-new:hover {
+  opacity: 1;
+}
+
+figure.iframe a.open-in-new::before {
+  font-family: 'Material Icons';
+  content: "open_in_new";
+}
+/*# sourceMappingURL=style.css.map */

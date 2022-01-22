@@ -1,0 +1,29 @@
+figure.iframe {
+    margin: 0;
+    padding: 0;
+    iframe {
+        border: none;
+    }
+    figcaption {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: start;
+    }
+    a.open-in-new {
+        display: flex;
+        margin-left: auto;
+        gap: .5ch;
+        text-decoration: none;
+        color: inherit;
+        align-items: center;
+        opacity: .5;
+        transition: opacity 200ms;
+        &:hover {
+            opacity: 1;
+        }
+        &::before {
+            font-family: 'Material Icons';
+            content: "open_in_new";
+        }
+    }
+}
