@@ -590,7 +590,7 @@ export default class Slide extends Plugin {
 			setTimeout(() => {
 				this.backdrop.focus();
 				return;
-			}, 1000);
+			}, 10);
 		} else {
 			return this.stopSlideshow();
 		}
@@ -616,9 +616,14 @@ export default class Slide extends Plugin {
 				return;
 			if (e.code === "Space") {
 				// var visible = this.getVisible();
+				if (this.backdrop) {
+					return;
+				}
 				e.stopPropagation();
 				e.preventDefault();
 				this.startSlideshow();
+				console.log(this.backdrop);
+
 				return false;
 			}
 		});
