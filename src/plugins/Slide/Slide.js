@@ -379,7 +379,7 @@ export default class Slide extends Plugin {
 	 *
 	 *
 	 * @static
-	 * @returns
+	 * @returns {Slide}
 	 * @memberof Slide
 	 */
 	static addElement(slide, element) {
@@ -514,6 +514,11 @@ export default class Slide extends Plugin {
 		backdrop.appendChild(this.html);
 		var body = this.html.querySelector(".th-slide-body");
 		body.style.position = "relative";
+		var alignSelf = body.style.alignSelf;
+		if (alignSelf) {
+			body.style.removeProperty("align-self");
+		}
+		// var justifySelf = body.style.justifySelf;
 		var relativeRect = body.getBoundingClientRect();
 		body.style.position = "absolute";
 		var absoluteRect = body.getBoundingClientRect();
@@ -545,6 +550,10 @@ export default class Slide extends Plugin {
 			}
 			body.style.removeProperty("align-self");
 			body.style.removeProperty("overflow");
+			if (alignSelf) {
+				body.style.alignSelf = alignSelf;
+			}
+			// var justifySelf = body.style.justifySelf;
 		} else {
 			zoom = Math.min(
 				relativeRect.width / absoluteRect.width,
