@@ -124,25 +124,13 @@ export default class Slide extends Plugin {
 		from.removeAttribute("data-th-slide-style");
 		return this;
 	}
-	static html_backdrop() {
+	static html_backdrop(navigation = true) {
 		const backdrop = document.createElement("div");
 		backdrop.classList.add("th-slide-backdrop");
-		const navigation = backdrop.appendChild(document.createElement("div"));
-		navigation.classList.add("th-slide-navigation");
-		const previous = navigation.appendChild(document.createElement("div"));
-		previous.classList.add("th-slide-previous");
-		previous.addEventListener("click", e => this.showPrevious());
-		const next = navigation.appendChild(document.createElement("div"));
-		next.classList.add("th-slide-next");
-		next.addEventListener("click", e => this.showNext());
-		const first = navigation.appendChild(document.createElement("div"));
-		first.classList.add("th-slide-first");
-		first.addEventListener("click", e => this.showFirst());
-		const last = navigation.appendChild(document.createElement("div"));
-		last.classList.add("th-slide-last");
-		last.addEventListener("click", e => this.showLast());
-		navigation.appendChild(this.html_options());
-		this.addKeydownEvents(backdrop);
+		if (navigation) {
+			backdrop.appendChild(this.html_navigation());
+			this.addKeydownEvents(backdrop);
+		}
 		const config = { attributes: false, childList: true, subtree: false };
 		const callback = (mutationsList, observer) => {
 			const mutations = mutationsList.filter(mutation => mutation.addedNodes.length > 0);
@@ -158,6 +146,24 @@ export default class Slide extends Plugin {
 		observer.observe(backdrop, config);
 		backdrop.Slide = this;
 		return backdrop;
+	}
+	static html_navigation() {
+		const navigation = document.createElement("div");
+		navigation.classList.add("th-slide-navigation");
+		const previous = navigation.appendChild(document.createElement("div"));
+		previous.classList.add("th-slide-previous");
+		previous.addEventListener("click", e => this.showPrevious());
+		const next = navigation.appendChild(document.createElement("div"));
+		next.classList.add("th-slide-next");
+		next.addEventListener("click", e => this.showNext());
+		const first = navigation.appendChild(document.createElement("div"));
+		first.classList.add("th-slide-first");
+		first.addEventListener("click", e => this.showFirst());
+		const last = navigation.appendChild(document.createElement("div"));
+		last.classList.add("th-slide-last");
+		last.addEventListener("click", e => this.showLast());
+		navigation.appendChild(this.html_options());
+		return navigation;
 	}
 	static html_options() {
 		const options = document.createElement("div");
@@ -433,7 +439,7 @@ export default class Slide extends Plugin {
 		for (const property in data) {
 			if (Object.hasOwnProperty.call(data, property)) {
 				if (property.slice(0, 5) === "slide") {
-					this[property.slice(5,6).toLowerCase() + property.slice(6)] = data[property];
+					this[property.slice(5, 6).toLowerCase() + property.slice(6)] = data[property];
 				}
 			}
 		}
@@ -514,11 +520,12 @@ export default class Slide extends Plugin {
 		backdrop.appendChild(this.html);
 		var body = this.html.querySelector(".th-slide-body");
 		body.style.position = "relative";
-		var alignSelf = body.style.alignSelf;
-		if (alignSelf) {
-			body.style.removeProperty("align-self");
-		}
-		// var justifySelf = body.style.justifySelf;
+		var backupProperties = ["align-self", "justify-self"];
+		var backup = backupProperties.reduce((compil, property) => {
+			compil[property] = body.style.getPropertyValue(property);
+			body.style.removeProperty(property);
+			return compil;
+		}, {});
 		var relativeRect = body.getBoundingClientRect();
 		body.style.position = "absolute";
 		var absoluteRect = body.getBoundingClientRect();
@@ -550,15 +557,14 @@ export default class Slide extends Plugin {
 			}
 			body.style.removeProperty("align-self");
 			body.style.removeProperty("overflow");
-			if (alignSelf) {
-				body.style.alignSelf = alignSelf;
-			}
-			// var justifySelf = body.style.justifySelf;
 		} else {
 			zoom = Math.min(
 				relativeRect.width / absoluteRect.width,
 				relativeRect.height / absoluteRect.height
 			);
+		}
+		for (let property in backup) {
+			body.style.setProperty(property, backup[property]);
 		}
 		let parts;
 		if (this.zoom === "auto") {
