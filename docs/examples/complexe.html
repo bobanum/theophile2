@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+	<meta charset="utf-8" />
+	<script src="../../App.js"></script>
+	<script>
+		App.cfg({
+			'cours': 'Exemple',
+			'titre': 'Complexe',
+			'version': '',
+		});
+	</script>
+	<title>Exemple</title>
+</head>
+
+<body data-questions-alea="false">
+	<div><a href="../docs/index.html#complexe" target="_blank">Documentation</a></div>
+	<div class="qr-question-complexe" id="complexe">
+		<header>
+			<p>Lorem ipsum dolor sit amet.</p>
+		</header>
+		<div class="qr-body qr-ligne">
+			<div>
+				<p>Lorem ipsum dolor sit amet.</p>
+				<div class="qr-reponses">
+					<div class="qr-reponse"><span class="qr-solution">fkfldlfkdl</span></div>
+					<div class="qr-reponse"><span class="qr-solution">fkfldlfkdl</span></div>
+				</div>
+			</div>
+
+			<div>
+				<p>Cum, modi voluptatum consectetur velit.</p>
+				<div>
+					<div class="qr-reponse"><span class="qr-solution">donner un pointage</span></div>
+					<div class="qr-reponse"><span class="qr-solution">fkfldlfkdl</span></div>
+				</div>
+
+			</div>
+
+			<div>
+				<p>Corporis quos voluptas quam, minus?</p>
+				<div class="qr-reponses">
+					<div><span class="qr-solution">solution dans un span.qr-solution</span></div>
+					<div data-solution="solution en attribut"></div>
+				</div>
+			</div>
+			<div>
+				<p>Corporis ipsum dolor sit amet.</p>
+			</div>
+		</div>
+	</div>
+<!--
+	div.qr-question-complexe[id][data-valeur][data-poids]>(header>p>lorem5)+div.qr-body>(div>(p>lorem5)+div.qr-reponses>(div>span.qr-solution>lorem2)+(div[data-solution=solution]))*2
+-->
+
+</body>
+
+</html>

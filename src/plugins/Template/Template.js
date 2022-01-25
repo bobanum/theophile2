@@ -115,6 +115,12 @@ export default class Template extends Plugin {
 		});
 	}
 	static processIframe(iframe) {
+		if (!iframe.src) {
+			var src = 'data:text/html,<!DOCTYPE html><meta charset="UTF-8">' + iframe.textContent;
+			iframe.setAttribute('src', src);
+			iframe.setAttribute("scrolling", "no");
+			iframe.style.overflow = "hidden";
+		}
 		if (iframe.classList.contains("th-no-figure") || iframe.getAttribute("data-th-no-figure")) return iframe;
 		var figure = document.createElement("figure");
 		figure.classList.add("iframe");

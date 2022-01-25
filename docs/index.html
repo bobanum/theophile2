@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="docs.css" />
+	<script src="docs.js"></script>
+	<title>Documentation</title>
+</head>
+
+<body>
+	<div class="interface">
+		<header>
+			<h1>Documentation</h1>
+			<a href="api">API</a>
+		</header>
+		<footer>
+			&copy; Martin Boudreau
+		</footer>
+		<div class="body">
+			<div class="colonne">
+
+			</div>
+			<div class="contenu">
+				<ul>
+					<li>
+						<h2 id="the_files">The Files</h2>
+						<ul class="enum">
+							<!-- <li><a href="#choix_multiple">choix.js</a> (Type de question)</li>
+							<li><a href="#complexe">complexe.js</a> (Type de question)</li>
+							<li><a href="#corriger">corriger.js</a> (Type de question)</li>
+							<li><a href="#courtes">courtes.js</a> (Type de question)</li>
+							<li><a href="#crypt">crypt.php</a> (???)</li>
+							<li><a href="#doc">doc.html</a> (Ce fichier)</li>
+							<li><a href="#favicon">favicon.png</a> (QR)</li>
+							<li><a href="#index">index.html</a> (La page pour tester la version)</li>
+							<li><a href="#match">match.js</a> (Type de question)</li>
+							<li><a href="#qr">qr.css</a> (Feuille de style portant sur la mécanique avec une mise en page simple)</li>
+							<li><a href="#qr">qr.js</a> (Classe principale)</li>
+							<li><a href="#qr">qr.less</a> ()</li>
+							<li><a href="#question">question.js</a> (Classe principale)</li>
+							<li><a href="#quisuisje">quisuisje.js</a> (Type de question)</li>
+							<li><a href="#randomseed">randomseed.js</a> ()</li>
+							<li><a href="#style">style.css</a> ()</li>
+							<li><a href="#style">style.less</a> ()</li>
+							<li><a href="#temp">temp.html</a> ()</li>
+							<li><a href="#trous">trous.js</a> (Type de question)</li>
+							<li><a href="#vraifaux">vraifaux.js</a> (Type de question)</li> -->
+						</ul>
+					</li>
+					<li>
+						<h2>Starting Point</h2>
+						<div class="bloccode">
+							<div>&lt;!DOCTYPE html&gt;</div>
+							<div>&lt;html lang="fr"&gt;</div>
+							<div>&lt;head&gt;</div>
+							<div>    &lt;meta charset="UTF-8"&gt;</div>
+							<div>    &lt;link rel="shortcut icon" href="../favicon.ico" type="image/x-icon"&gt;</div>
+							<div>    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</div>
+							<div>    &lt;title&gt;My first document&lt;/title&gt;</div>
+							<div>    &lt;script type="module"&gt;</div>
+							<div>        import App from "https://bobanum.github.io/theophile2/App.js";</div>
+							<div>        await App.exec();</div>
+							<div>    &lt;/script&gt;</div>
+							<div>&lt;/head&gt;</div>
+							<div>&lt;body&gt;</div>
+							<div>    &lt;h1&gt;My first document&lt;/h1&gt;</div>
+							<div>    &lt;p&gt;Will be in an "intro" slide. (or not)&lt;/p&gt;</div>
+							<div>    &lt;h2&gt;My first slide&lt;/h2&gt;</div>
+							<div>    &lt;p&gt;Molestias magni eveniet porro perferendis, officia maxime ducimus quibusdam ut itaque! Voluptatum nam eius libero tempora. Ullam nam eaque magni reprehenderit repudiandae!&lt;/p&gt;</div>
+							<div>    &lt;h3&gt;Part of a slide&lt;/h3&gt;</div>
+							<div>    &lt;p&gt;Lorem ipsum dolor sit amet consectetur adipisicing elit. Nulla ducimus neque eaque dolor accusantium vitae magnam modi consequatur, minus voluptate quas minima nemo autem cumque laborum et eum doloribus asperiores!&lt;/p&gt;</div>
+							<div>    &lt;br/&gt;</div>
+							<div>    &lt;h3&gt;Other part of a slide&lt;/h3&gt;</div>
+							<div>    &lt;p&gt;Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam quaerat, necessitatibus dignissimos ratione similique aliquid veritatis qui itaque ducimus tempora exercitationem sunt tempore labore accusantium quibusdam optio eos eius ipsa?&lt;/p&gt;</div>
+							<div>    &lt;h2&gt;My second slide&lt;/h2&gt;</div>
+							<div>    &lt;p&gt;Place an image here&lt;/p&gt;</div>
+							<div>    &lt;div class="th-references"&gt;</div>
+							<div>        &lt;a href="page2.html"&gt;Another document as a reference&lt;/a&gt;</div>
+							<div>    &lt;/div&gt;</div>
+							<div>&lt;/body&gt;</div>
+							<div>&lt;/html&gt;</div>
+						</div>
+					</li>
+					<li>
+						<h2>Les types de question</h2>
+						<ul class="encadres">
+							<li class="encadre">
+								<h3>Question de base</h3>
+								<p>Est la base des autres types de questions</p>
+								<ul>
+									<li><b>Fichier</b> <span>Question.js</span></li>
+									<li><b>Propriétés</b>
+										<ul class="enum">
+											<li>self.style</li>
+											<li>actif</li>
+											<li>valeur*</li>
+											<li>poids*</li>
+											<li>melanger*</li>
+											<li>selecteurMelanger*</li>
+											<li>choisir*</li>
+										</ul>
+									</li>
+									<li>
+										<b>Classes et attributs utilisés</b>
+										<ul class="enum">
+											<li>.qr-question</li>
+											<li>.qr-body</li>
+											<li>.off</li>
+											<li>[data-proprietes]</li>
+											<li>[data-pointage] <em>ajouté automatiquement</em></li>
+											<li>[data-pts] <em>appliqué à l'intérieur du body</em></li>
+										</ul>
+									</li>
+									<li>
+										<b>Emmet</b>
+										<div>
+											<code>div.qr-question[id][data-valeur][data-poids][data-proprietes]&gt;(header&gt;p&gt;lorem5)+div.qr-body</code>
+										</div>
+									</li>
+								</ul>
+							</li>
+							<li class="encadre">
+								<h3>Choix multiple</h3>
+								<ul>
+									<li><b>Fichier</b> <span>Choix.js</span></li>
+									<li><b>Propriétés</b>
+										<ul class="enum">
+											<li>largeur</li>
+											<li>inverse</li>
+										</ul>
+									</li>
+									<li>
+										<b>Classes et attributs utilisés</b>
+										<ul class="enum">
+											<li>[data-solution] <em>('v' pour bonne reponse)</em></li>
+											<li>qr-body.qr-ligne</li>
+											<li>qr-body.qr-droite</li>
+										</ul>
+									</li>
+									<li>
+										<b>Remarque</b>
+										<div>L'attribut <code>[data-solution]</code> est nécessaire pour afficher les coches.</div>
+									</li>
+									<li>
+										<b>Emmet</b>
+										<div>
+											<code>div.qr-question-choix[id][data-valeur][data-poids][data-alea=true]&gt;(header&gt;p&gt;lorem5)+div.qr-body&gt;div[data-solution=f]&gt;lorem5</code>
+										</div>
+									</li>
+								</ul>
+							</li>
+							<li class="encadre">
+								<h3>Complexe</h3>
+								<p>Permet de mettre des sous-questions</p>
+								<ul>
+									<li><b>Fichier</b><span>Complexe.js</span></li>
+									<li>
+										<b>Propriétés</b>
+										<ul class="enum">
+											<li>à faire</li>
+										</ul>
+									</li>
+									<li><b>Classes et attributs utilisés</b>
+										<ul class="enum">
+											<li>à faire</li>
+										</ul>
+									</li>
+									<li><b>Remarque</b>
+										<div></div>
+									</li>
+									<li><b>Emmet</b>
+										<div><code>div.qr-question-complexe[id][data-valeur][data-poids]&gt;(header&gt;p&gt;lorem5)+div.qr-body&gt;(div&gt;(p&gt;lorem5)+div.qr-reponses&gt;(div&gt;span.qr-solution&gt;lorem2)+(div[data-solution=solution]))*2</code></div>
+									</li>
+								</ul>
+							</li>
+							<li class="encadre">
+								<h3>Corriger</h3>
+								<p></p>
+								<ul>
+									<li><b>Fichier</b><span>Corriger.js</span></li>
+									<li>
+										<b>Propriétés</b>
+										<ul class="enum">
+											<li>à faire</li>
+										</ul>
+									</li>
+									<li><b>Classes et attributs utilisés</b>
+										<ul class="enum">
+											<li>[data-solution]</li>
+											<li>table.standard</li>
+										</ul>
+									</li>
+
+									<li><b>Remarque</b>
+										<div>Crée un tableau</div>
+									</li>
+
+									<li><b>Emmet</b>
+										<div><code>à faire</code></div>
+									</li>
+								</ul>
+							</li>
+							<li class="encadre">
+								<h3>Courtes</h3>
+								<p>Série de questions courtes disposées sur une ligne.</p>
+								<ul>
+									<li><b>Fichier</b><span>Courtes.js</span></li>
+									<li>
+										<b>Propriétés</b>
+										<ul class="enum">
+											<li>largeur</li>
+											<li>largeurEnonce</li>
+											<li>aleaSelecteur</li>
+											<li>alea</li>
+											<li>numero [ none | decimal | (lower-|upper-)<strong>alpha</strong> | (lower-|upper-)roman]</li>
+										</ul>
+									</li>
+									<li><b>Classes et attributs utilisés</b>
+										<ul class="enum">
+											<li>.qr-enonce</li>
+											<li>.qr-reponse</li>
+											<li>span.qr-solution</li>
+											<li>div.qr-inverse</li>
+										</ul>
+									</li>
+									<li><b>Remarque</b>
+										<div></div>
+									</li>
+									<li><b>Emmet</b>
+										<p><code>div.qr-question-courtes[id][data-valeur][data-poids][data-largeur][data-largeur-enonce][data-inverse][data-alea=true]&gt;(header&gt;p&gt;lorem5)+div.qr-body&gt;(div[data-solution]&gt;lorem5)*5</code></p>
+									</li>
+								</ul>
+							</li>
+							<li class="encadre">
+								<h3>Match</h3>
+								<p></p>
+								<ul>
+									<li><b>Fichier</b><span>Match.js</span></li>
+									<li>
+										<b>Propriétés</b>
+										<ul class="enum">
+											<li>largeur</li>
+											<li>inverse</li>
+											<li>selecteurChoisir</li>
+											<li>selecteurGarder</li>
+										</ul>
+									</li>
+									<li>
+										<b>Classes et attributs utilisés</b>
+										<ul class="enum">
+											<li>line.qr-solution</li>
+											<li>div.col</li>
+										</ul>
+									</li>
+									<li>
+										<b>Remarque</b>
+										<div>Utilise du SVG pour les solutions</div>
+									</li>
+									<li><b>Emmet</b>
+										<div><code></code></div>
+									</li>
+								</ul>
+							</li>
+							<li class="encadre">
+								<h3>Qui suis-je?</h3>
+								<p></p>
+								<ul>
+									<li><b>Fichier</b><span>Quisuisje.js</span></li>
+									<li>
+										<b>Propriétés</b>
+										<ul class="enum">
+											<li>melanger</li>
+											<li>largeur</li>
+											<li>inverse</li>
+										</ul>
+									</li>
+									<li>
+										<b>Classes et attributs utilisés</b>
+										<ul class="enum">
+											<li>table.flat</li>
+											<li>colgroup.qr-reponses</li>
+											<li>[data-solution]</li>
+											<li>.qr-reponse</li>
+										</ul>
+									</li>
+									<li>
+										<b>Remarque</b>
+										<div>Crée un tableau (todo: Transformer en flex)</div>
+									</li>
+									<li><b>Emmet</b>
+										<div><code>div.qr-question-quisuisje[id][data-valeur][data-poids][data-proprietes]&gt;(header&gt;p&gt;lorem5)+div.qr-body&gt;(div[data-solution="lorem"]&gt;lorem5)*5</code></div>
+									</li>
+								</ul>
+							</li>
+							<li class="encadre">
+								<h3>Trous</h3>
+								<p></p>
+								<ul>
+									<li><b>Fichier</b><span>Trous.js</span></li>
+									<li>
+										<b>Propriétés</b>
+										<ul class="enum">
+											<li>ratio5</li>
+											<li>unite</li>
+											<li>largeur</li>
+										</ul>
+									</li>
+									<li>
+										<b>Classes et attributs utilisés</b>
+										<ul class="enum">
+											<li>.qr-reponse</li>
+											<li>.qr-trou</li>
+											<li>.off</li>
+											<li>[data-solution]</li>
+										</ul>
+									</li>
+									<!--
+									<li>
+										<b>Remarque</b>
+										<div></div>
+									</li>
+-->
+									<li><b>Emmet</b>
+										<div><code>div.qr-question-trous[id][data-valeur][data-poids][data-proprietes]&gt;(header&gt;p&gt;lorem5)+div.qr-body&gt;(p&gt;lorem3+(span.qr-trou&gt;lorem2)+lorem3)*3</code></div>
+									</li>
+								</ul>
+							</li>
+							<li class="encadre">
+								<h3>Vrai ou faux</h3>
+								<p></p>
+								<ul>
+									<li><b>Fichier</b><span>Vraifaux.js</span></li>
+									<li>
+										<b>Propriétés</b>
+										<ul class="enum">
+											<li>à faire</li>
+										</ul>
+									</li>
+									<li>
+										<b>Classes et attributs utilisés</b>
+										<ul class="enum">
+											<li>[data-solution] <em>('v', 'f')</em></li>
+											<li>col.qr-vraifaux</li>
+											<li>table.standard</li>
+										</ul>
+									</li>
+									<li>
+										<b>Remarque</b>
+										<div>Crée un tableau</div>
+									</li>
+									<li>
+										<b>Emmet</b>
+										<div><code>div.qr-question-vraifaux[id][data-valeur][data-poids][data-proprietes]&gt;(header&gt;p&gt;lorem5)+div.qr-body&gt;(div[data-solution="vf"]&gt;lorem5)*5</code></div>
+									</li>
+								</ul>
+							</li>
+							<!--
+							li.encadre>h3+p+ul>(li>b{Fichier}+span)+(li>b{Propriétés}+ul.enum>li)+(li>b{Classes et attributs utilisés}+ul.enum>li)+(li>b{Remarque}+div)+(li>b{Emmet}+div>code)
+-->
+						</ul>
+
+					</li>
+<!--
+					<li>
+						<h2>Les propriétés (Très brute)</h2>
+						<ul class="encadres">
+							<li>
+								<h3>actif</h3>
+								<p>Indique si une question est utilisée dans le questionnaire. Équivalent (moins sûr) de la mettre en commentaire.</p>
+								<h4>Utilisée par</h4>
+								<ul class="enum">
+									<li>Toutes les questions</li>
+								</ul>
+							</li>
+							<li>
+								<h3>alea (courtes.js)</h3>
+								<h4>Utilisée par</h4>
+								<ul class="enum">
+									<li>Toutes les questions</li>
+								</ul>
+							</li>
+							<li>
+								<h3>aleaSelecteur (courtes.js)</h3>
+								<h4>Utilisée par</h4>
+								<ul class="enum">
+									<li>Toutes les questions</li>
+								</ul>
+							</li>
+							<li>
+								<h3>choisir* (question.js)</h3>
+								<h4>Utilisée par</h4>
+								<ul class="enum">
+									<li>Toutes les questions</li>
+								</ul>
+							</li>
+							<li>
+								<h3>inverse (choix.js)</h3>
+								<h4>Utilisée par</h4>
+								<ul class="enum">
+									<li>Toutes les questions</li>
+								</ul>
+							</li>
+							<li>
+								<h3>inverse (match.js)</h3>
+								<h4>Utilisée par</h4>
+								<ul class="enum">
+									<li>Toutes les questions</li>
+								</ul>
+							</li>
+							<li>
+								<h3>inverse (quisuisje.js)</h3>
+								<h4>Utilisée par</h4>
+								<ul class="enum">
+									<li>Toutes les questions</li>
+								</ul>
+							</li>
+							<li>
+								<h3>largeur (choix.js)</h3>
+								<h4>Utilisée par</h4>
+								<ul class="enum">
+									<li>Toutes les questions</li>
+								</ul>
+							</li>
+							<li>
+								<h3>largeur (courtes.js)</h3>
+								<h4>Utilisée par</h4>
+								<ul class="enum">
+									<li>Toutes les questions</li>
+								</ul>
+							</li>
+							<li>
+								<h3>largeur (match.js)</h3>
+								<h4>Utilisée par</h4>
+								<ul class="enum">
+									<li>Toutes les questions</li>
+								</ul>
+							</li>
+							<li>
+								<h3>largeur (quisuisje.js)</h3>
+								<h4>Utilisée par</h4>
+								<ul class="enum">
+									<li>Toutes les questions</li>
+								</ul>
+							</li>
+							<li>
+								<h3>largeur (trous.js)</h3>
+								<h4>Utilisée par</h4>
+								<ul class="enum">
+									<li>Toutes les questions</li>
+								</ul>
+							</li>
+							<li>
+								<h3>largeurEnonce (courtes.js)</h3>
+								<h4>Utilisée par</h4>
+								<ul class="enum">
+									<li>Toutes les questions</li>
+								</ul>
+							</li>
+							<li>
+								<h3>melanger (quisuisje.js)</h3>
+								<h4>Utilisée par</h4>
+								<ul class="enum">
+									<li>Toutes les questions</li>
+								</ul>
+							</li>
+							<li>
+								<h3>melanger* (question.js)</h3>
+								<h4>Utilisée par</h4>
+								<ul class="enum">
+									<li>Toutes les questions</li>
+								</ul>
+							</li>
+							<li>
+								<h3>numero [ none | decimal | (lower-|upper-)<strong>alpha</strong> | (lower-|upper-)roman] (courtes.js)</h3>
+								<h4>Utilisée par</h4>
+								<ul class="enum">
+									<li>Toutes les questions</li>
+								</ul>
+							</li>
+							<li>
+								<h3>poids* (question.js)</h3>
+								<h4>Utilisée par</h4>
+								<ul class="enum">
+									<li>Toutes les questions</li>
+								</ul>
+							</li>
+							<li>
+								<h3>ratio5 (trous.js)</h3>
+								<h4>Utilisée par</h4>
+								<ul class="enum">
+									<li>Toutes les questions</li>
+								</ul>
+							</li>
+							<li>
+								<h3>selecteurChoisir (match.js)</h3>
+								<h4>Utilisée par</h4>
+								<ul class="enum">
+									<li>Toutes les questions</li>
+								</ul>
+							</li>
+							<li>
+								<h3>selecteurGarder (match.js)</h3>
+								<h4>Utilisée par</h4>
+								<ul class="enum">
+									<li>Toutes les questions</li>
+								</ul>
+							</li>
+							<li>
+								<h3>selecteurMelanger* (question.js)</h3>
+								<h4>Utilisée par</h4>
+								<ul class="enum">
+									<li>Toutes les questions</li>
+								</ul>
+							</li>
+							<li>
+								<h3>self.style (question.js)</h3>
+								<h4>Utilisée par</h4>
+								<ul class="enum">
+									<li>Toutes les questions</li>
+								</ul>
+							</li>
+							<li>
+								<h3>unite (trous.js)</h3>
+								<h4>Utilisée par</h4>
+								<ul class="enum">
+									<li>Toutes les questions</li>
+								</ul>
+							</li>
+							<li>
+								<h3>valeur* (question.js)</h3>
+								<h4>Utilisée par</h4>
+								<ul class="enum">
+									<li>Toutes les questions</li>
+								</ul>
+							</li>
+						</ul>
+					</li>
+-->
+<!--
+					<li>
+						<h2>Classes et attributs (Très brute)</h2>
+						<ul class="encadres">
+							<li>
+								<h3>.off (question.js)</h3>
+								<h4>Utilisée par</h4>
+								<ul class="enum">
+									<li>Toutes les questions</li>
+								</ul>
+							</li>
+							<li>
+								<h3>.off (trous.js)</h3>
+								<h4>Utilisée par</h4>
+								<ul class="enum">
+									<li>Toutes les questions</li>
+								</ul>
+							</li>
+							<li>
+								<h3>.qr-body (question.js)</h3>
+								<h4>Utilisée par</h4>
+								<ul class="enum">
+									<li>Toutes les questions</li>
+								</ul>
+							</li>
+							<li>
+								<h3>.qr-enonce (courtes.js)</h3>
+								<h4>Utilisée par</h4>
+								<ul class="enum">
+									<li>Toutes les questions</li>
+								</ul>
+							</li>
+							<li>
+								<h3>.qr-question (question.js)</h3>
+								<h4>Utilisée par</h4>
+								<ul class="enum">
+									<li>Toutes les questions</li>
+								</ul>
+							</li>
+							<li>
+								<h3>.qr-reponse (courtes.js)</h3>
+								<h4>Utilisée par</h4>
+								<ul class="enum">
+									<li>Toutes les questions</li>
+								</ul>
+							</li>
+							<li>
+								<h3>.qr-reponse (quisuisje.js)</h3>
+								<h4>Utilisée par</h4>
+								<ul class="enum">
+									<li>Toutes les questions</li>
+								</ul>
+							</li>
+							<li>
+								<h3>.qr-reponse (trous.js)</h3>
+								<h4>Utilisée par</h4>
+								<ul class="enum">
+									<li>Toutes les questions</li>
+								</ul>
+							</li>
+							<li>
+								<h3>.qr-trou (trous.js)</h3>
+								<h4>Utilisée par</h4>
+								<ul class="enum">
+									<li>Toutes les questions</li>
+								</ul>
+							</li>
+							<li>
+								<h3>[data-pointage] <em>ajouté automatiquement</em> (question.js)</h3>
+								<h4>Utilisée par</h4>
+								<ul class="enum">
+									<li>Toutes les questions</li>
+								</ul>
+							</li>
+							<li>
+								<h3>[data-proprietes] (question.js)</h3>
+								<h4>Utilisée par</h4>
+								<ul class="enum">
+									<li>Toutes les questions</li>
+								</ul>
+							</li>
+							<li>
+								<h3>[data-pts] <em>appliqué à l'intérieur du body</em> (question.js)</h3>
+								<h4>Utilisée par</h4>
+								<ul class="enum">
+									<li>Toutes les questions</li>
+								</ul>
+							</li>
+							<li>
+								<h3>[data-solution] (corriger.js)</h3>
+								<h4>Utilisée par</h4>
+								<ul class="enum">
+									<li>Toutes les questions</li>
+								</ul>
+							</li>
+							<li>
+								<h3>[data-solution] (quisuisje.js)</h3>
+								<h4>Utilisée par</h4>
+								<ul class="enum">
+									<li>Toutes les questions</li>
+								</ul>
+							</li>
+							<li>
+								<h3>[data-solution] (trous.js)</h3>
+								<h4>Utilisée par</h4>
+								<ul class="enum">
+									<li>Toutes les questions</li>
+								</ul>
+							</li>
+							<li>
+								<h3>[data-solution] <em>('v' pour bonne reponse)</em> (choix.js)</h3>
+								<h4>Utilisée par</h4>
+								<ul class="enum">
+									<li>Toutes les questions</li>
+								</ul>
+							</li>
+							<li>
+								<h3>colgroup.qr-reponses (quisuisje.js)</h3>
+								<h4>Utilisée par</h4>
+								<ul class="enum">
+									<li>Toutes les questions</li>
+								</ul>
+							</li>
+							<li>
+								<h3>div.col (match.js)</h3>
+								<h4>Utilisée par</h4>
+								<ul class="enum">
+									<li>Toutes les questions</li>
+								</ul>
+							</li>
+							<li>
+								<h3>div.qr-inverse (courtes.js)</h3>
+								<h4>Utilisée par</h4>
+								<ul class="enum">
+									<li>Toutes les questions</li>
+								</ul>
+							</li>
+							<li>
+								<h3>line.qr-solution (match.js)</h3>
+								<h4>Utilisée par</h4>
+								<ul class="enum">
+									<li>Toutes les questions</li>
+								</ul>
+							</li>
+							<li>
+								<h3>qr-body.qr-droite (choix.js)</h3>
+								<h4>Utilisée par</h4>
+								<ul class="enum">
+									<li>Toutes les questions</li>
+								</ul>
+							</li>
+							<li>
+								<h3>qr-body.qr-ligne (choix.js)</h3>
+								<h4>Utilisée par</h4>
+								<ul class="enum">
+									<li>Toutes les questions</li>
+								</ul>
+							</li>
+							<li>
+								<h3>span.qr-solution (courtes.js)</h3>
+								<h4>Utilisée par</h4>
+								<ul class="enum">
+									<li>Toutes les questions</li>
+								</ul>
+							</li>
+							<li>
+								<h3>table.flat (quisuisje.js)</h3>
+								<h4>Utilisée par</h4>
+								<ul class="enum">
+									<li>Toutes les questions</li>
+								</ul>
+							</li>
+							<li>
+								<h3>table.standard (corriger.js)</h3>
+								<h4>Utilisée par</h4>
+								<ul class="enum">
+									<li>Toutes les questions</li>
+								</ul>
+							</li>
+							<li>
+								<h3>[data-solution] <em>('v', 'f')</em> (vraifaux.js)</h3>
+								<h4>Utilisée par</h4>
+								<ul class="enum">
+									<li>Toutes les questions</li>
+								</ul>
+								<p></p>
+							</li>
+							<li>
+								<h3>col.qr-vraifaux (vraifaux.js)</h3>
+								<h4>Utilisée par</h4>
+								<ul class="enum">
+									<li>Toutes les questions</li>
+								</ul>
+							</li>
+							<li>
+								<h3>table.standard (vraifaux.js)</h3>
+								<h4>Utilisée par</h4>
+								<ul class="enum">
+									<li>Toutes les questions</li>
+								</ul>
+							</li>
+						</ul>
+					</li>
+-->
+					<li>
+						<h2>Les classes et les attributs</h2>
+						<ul class="encadres">
+							<li><b><code>.qr-question</code></b> <span>Identifie la balise contenant une question.</span></li>
+							<li>
+								<b><code>.qr-body</code></b> <span>La zone contenant le corps de la question. Exclue habituellement l'énoncé.</span>
+							</li>
+							<li>
+								<div><b><code>.off</code></b> <span>Identifie une question désactivée.</span></div>
+								<p>S'applique à une question</p>
+							</li>
+							<li><b><code>[data-proprietes]</code></b></li>
+							<li><b><code>[data-pointage]</code></b> <span>Pour l'affichage de la valeur finale d'une question.</span>
+								<p> Est ajouté automatiquement.</p>
+							</li>
+							<li><b><code>[data-pts] appliqué à l'intérieur du body</code></b></li>
+						</ul>
+					</li>
+					<li>
+						<h2>Modifier les propriétés du questionnaire</h2>
+						<ul>
+							<li>
+								<h3>La version</h3>
+								<p>La propriété <code>version</code> (accessible par l'adresse) permet de mélanger les questions autrement (change le seed de base). </p>
+								<p>Si la <code>version</code> contient un pipe <code>|</code>, la portion de gauche sera le seed et la portion de droite sera affichée.</p>
+								<p>L'affichage se place dans la propriété <code>version_label</code></p>
+							</li>
+						</ul>
+					</li>
+					<li>
+						<h2>Modifier les propriétés des questions</h2>
+						<p>*Utilisation de <code>data-...</code> pour modifier une propriété de la question : format = <code>data-ma-prop="abc"</code> pour la propritété <code>this.maProp</code>. ATTENTION: Il n'y a pas de validation de l'inocuité de la propriété.</p>
+						<p>Utilisation de <code>data-proprietes</code> : a priorité sur les data spécifiques. format = <code>"maProp1=abc&amp;amp;maProp2=123</code>". ATTENTION: Il n'y a pas de validation de l'inocuité de la propriété.</p>
+					</li>
+					<li>
+						<h2>Pour marquer les points dans le solutionnaire</h2>
+						<p>Ajouter l'attribut <code>data-pts</code> à une balise. La valeur de l'attribut se retrouvera dans la puce rouge. On peut évidemment ajouter un span vide à cet effet.</p>
+						<p>Dans un attribut <code>data-solution</code>, ajouter des doubles crochets avec la valeur à l'intérieur. Ex.: [[2]]</p>
+					</li>
+					<li>
+						<h2>Utilisation de <code>data-valeur</code></h2>
+						<p><code>data-valeur="<var>n</var>"</code> pour la valeur de la question au complet</p>
+						<p><code>data-valeur="<var>n</var>#"</code> pour la valeur des sous-questions. (sera multiplié par le nombre de sous-questions)</p>
+						<p><code>data-poids="<var>n</var>"</code> est un multiplicateur qui permet de pondérer ou de modérer une question.</p>
+					</li>
+					<li>
+						<h2>Ajouter un style à une question</h2>
+						<p>Les balises <code>style</code> placées au début d'une question s'appliqueront à cette question uniquement. Il est important de donner un <code>id</code> à la question afin de bien viser celle-ci.</p>
+						<p>Pour viser la balise de la question, on utilise le <del>(faux) nom de balise "ici"</del> sélecteur <code>#question</code></p>
+						<p>On peut ajouter l'attribut <code>data-contexte</code> pour donner un contexte plus global aux règles.</p>
+						<h3>Exemples pour gérer les solutions</h3>
+						<h4>En utilisant le contexte</h4>
+						<div class="bloccode">
+							<div>&lt;style media="print" data-contexte="#qr-mode-solutionnaire:not(:checked) ~ div.qr"&gt;</div>
+							<div>  .question &gt; div:after {</div>
+							<div>    content: none;</div>
+							<div>  }</div>
+							<div>&lt;/style&gt;</div>
+						</div>
+						<div class="bloccode">
+							<div>&lt;style media="screen" data-contexte="#qr-mode-eleve:checked ~ div.qr"&gt;</div>
+							<div>  .question &gt; div:after {</div>
+							<div>    content: none;</div>
+							<div>  }</div>
+							<div>&lt;/style&gt;</div>
+						</div>
+						<h4>Nouvellement : des "media" personnalisés.</h4>
+						<div class="bloccode">
+							<div>&lt;style media="<strong>solutionnaire</strong>"&gt;</div>
+							<div>  .question &gt; div:after {</div>
+							<div>    content: none;</div>
+							<div>  }</div>
+							<div>&lt;/style&gt;</div>
+						</div>
+						<p>Les règles ci-dessus vont s'appliquer lors de l'<strong>impression</strong> de la version pas "solutionnaire".</p>
+						<div class="bloccode">
+							<div>&lt;style media="<strong>eleve</strong>"&gt;</div>
+							<div>  .question &gt; div:after {</div>
+							<div>    content: none;</div>
+							<div>  }</div>
+							<div>&lt;/style&gt;</div>
+						</div>
+						<p>Les règles ci-dessus vont s'appliquer lors de l'<strong>affichage</strong> de la version "eleve".</p>
+						<div class="bloccode">
+							<div>&lt;style media="<strong>solution</strong>"&gt;</div>
+							<div>  .question &gt; div:after {</div>
+							<div>    content: none;</div>
+							<div>  }</div>
+							<div>&lt;/style&gt;</div>
+						</div>
+						<p>La feuille de style ci-dessus résume les 2 précédentes.</p>
+					</li>
+					<li>
+						<h2>Attributs spéciaux</h2>
+						<p>data-var: Permet de modifier aléatoirement des éléments (mots) d'un bloc. syntaxe: data-var="[A|B]|[Y|Z]". Dans le code de la question, on doit mettre des marqueurs de variable. {{0}} recevra le A ou le Y et {{1}} recevra le B ou le Z. Les séries de variables sont coordonnées</p>
+					</li>
+					<li>
+						<h2>Traitement des iframe</h2>
+						<p>On peut mettre le HTML d'un iframe directement dans celui-ci pour créer une mise en forme spéciale au lieu d'utiliser un fichier séparé. Le contenu du iframe sera placé par programmation dans le src sous forme de data.</p>
+					</li>
+					<li>
+						<h2>Créer des clones</h2>
+						<p>Lorsqu'un élément complexe revient plusieurs fois dans la page, on peut le cloner à l'aide de l'attribut <code>data-clone</code> avec come valeur le <code>id</code> d'un élément dans un <code>div</code> vide.</p>
+						<p>Exemple : <code>&lt;div data-clone="tableauABC"&gt;&lt;/div&gt;</code></p>
+						<p><em>À modifier : ajouter le # pour indiquer que c'est le id et éventuellement permettre des sélecteurs plus complexes</em></p>
+					</li>
+					<li>
+						<h2>Pour créer un nouveau type de question</h2>
+						<p>À faire</p>
+					</li>
+				</ul>
+			</div>
+
+		</div>
+	</div>
+</body>
+
+</html>
