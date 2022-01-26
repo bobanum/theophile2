@@ -380,4 +380,17 @@
   width: 1.5em;
   height: 1em;
 }
+
+.th-slide-feedback {
+  --size: .25in;
+  background-color: #fff2;
+  position: absolute;
+  padding: var(--size);
+  border-radius: var(--size);
+  margin-top: calc(-1 * var(--size));
+  margin-left: -var(--size);
+  -webkit-box-shadow: inset 0 0 var(--size) #fff5;
+          box-shadow: inset 0 0 var(--size) #fff5;
+  mix-blend-mode: exclusion;
+}
 /*# sourceMappingURL=style.css.map */

@@ -108,6 +108,17 @@ export default class Slide extends Plugin {
 			body.appendChild(content.cloneNode(true));
 		});
 		this.applyStyles(body);
+		body.querySelectorAll("iframe, object").forEach(element => {
+			element.addEventListener("load", e => {
+				["touchstart", "touchmove", "touchend", "touchcancel"].forEach(name => {
+					e.target.contentWindow.addEventListener(name, e => {
+						let e2 = new e.constructor(e.type, e);
+						e2.objectTarget = element;
+						body.dispatchEvent(e2);
+					});
+				})
+			})
+		})
 		return body;
 	}
 	applyStyles(container) {
@@ -127,9 +138,11 @@ export default class Slide extends Plugin {
 	static html_backdrop(navigation = true) {
 		const backdrop = document.createElement("div");
 		backdrop.classList.add("th-slide-backdrop");
+		backdrop.tabIndex = "0";
 		if (navigation) {
 			backdrop.appendChild(this.html_navigation());
 			this.addKeydownEvents(backdrop);
+			this.addTouchEvents(backdrop);
 		}
 		const config = { attributes: false, childList: true, subtree: false };
 		const callback = (mutationsList, observer) => {
@@ -186,7 +199,6 @@ export default class Slide extends Plugin {
 		return options;
 	}
 	static addKeydownEvents(backdrop) {
-		backdrop.tabIndex = "0";
 		backdrop.addEventListener("keydown", e => {
 			if (
 				e.key === "Control" ||
@@ -202,7 +214,6 @@ export default class Slide extends Plugin {
 			if (e.shiftKey) prefix += "Shift-";
 			var key = prefix + e.key;
 			// var code = prefix + e.code;
-			// console.log(key);
 			switch (key) {
 				case "ArrowRight":
 				case "ArrowDown":
@@ -233,6 +244,68 @@ export default class Slide extends Plugin {
 					}
 			}
 			e.stopPropagation();
+		});
+	}
+	static point(e) {
+		var result = {
+			x: (e.touches[0] || e.changedTouches[0]).clientX,
+			y: (e.touches[0] || e.changedTouches[0]).clientY,
+		};
+		let target = e.objectTarget;
+		while (target) {
+			result.x += target.offsetLeft;
+			result.y += target.offsetTop;
+			target = target.offsetParent;
+		}
+		return result;
+	}
+	static addTouchEvents(backdrop) {
+		var start = null;
+		const feedback = document.createElement("div");
+		feedback.classList.add("th-slide-feedback");
+		backdrop.addEventListener("touchstart", e => {
+			start = this.point(e);
+			backdrop.appendChild(feedback);
+			feedback.style.left = start.x + "px";
+			feedback.style.top = start.y + "px";
+			feedback.style.width = "0px";
+			feedback.style.height = "0px";
+		});
+		backdrop.addEventListener("touchend", e => {
+			var point = this.point(e);
+			var w = feedback.clientWidth;
+			var h = feedback.clientHeight;
+			feedback.remove();
+			var distance = point.x - start.x;
+			start = null;
+			if (w < h * 4) return;
+			// if (Math.abs(distance) < window.innerWidth / 10) return;
+			if (distance < 0) {
+				this.showNext();
+			} else {
+				this.showPrevious();
+			}
+		});
+		backdrop.addEventListener("touchmove", e => {
+			if (!start) return;
+			var point = this.point(e);
+			var w = Math.abs(point.x - start.x);
+			var h = Math.abs(point.y - start.y);
+			if (w / h < this.ratio) {	// Vertical
+				feedback.style.width = `0px`;
+				feedback.style.height = `${h}px`;
+				feedback.style.left = `${start.x}px`;
+				feedback.style.top = `${(Math.min(point.y, start.y))}px`;
+			} else {
+				feedback.style.height = `0px`;
+				feedback.style.width = `${w}px`;
+				feedback.style.top = `${start.y}px`;
+				feedback.style.left = `${(Math.min(point.x, start.x))}px`;
+			}
+		});
+		backdrop.addEventListener("touchcancel", e => {
+			feedback.remove();
+			start = null;
 		});
 	}
 	static async showSlide(slide) {
@@ -622,13 +695,7 @@ export default class Slide extends Plugin {
 	static async clean() {
 		super.clean();
 		window.addEventListener("keydown", e => {
-			if (
-				e.key === "Shift" ||
-				e.key === "Control" ||
-				e.key === "Alt" ||
-				e.key === "Meta"
-			)
-				return;
+			if (e.key === "Shift" || e.key === "Control" || e.key === "Alt" || e.key === "Meta") return;
 			if (e.code === "Space") {
 				// var visible = this.getVisible();
 				if (this.backdrop) {
@@ -637,7 +704,6 @@ export default class Slide extends Plugin {
 				e.stopPropagation();
 				e.preventDefault();
 				this.startSlideshow();
-				console.log(this.backdrop);
 
 				return false;
 			}
@@ -647,6 +713,7 @@ export default class Slide extends Plugin {
 				e.preventDefault();
 				e.stopPropagation();
 				this.startSlideshow();
+				this.backdrop.requestFullscreen();
 			});
 		});
 		if (localStorage.slideshow === "true") {
