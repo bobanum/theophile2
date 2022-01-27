@@ -94,6 +94,8 @@ export default class Slide extends Plugin {
 	html_create() {
 		const html = document.createElement("div");
 		html.classList.add("th-slide");
+		html.classList.add(...this.heading.classList);
+		this.heading.classList.remove(...this.heading.classList);
 		html.appendChild(this.html_header());
 		html.appendChild(this.html_footer());
 		var body = html.appendChild(this.html_body());
@@ -593,20 +595,22 @@ export default class Slide extends Plugin {
 		backdrop.appendChild(this.html);
 		var body = this.html.querySelector(".th-slide-body");
 		body.style.position = "relative";
-		var backupProperties = ["align-self", "justify-self"];
+		var backupProperties = ["align-self", "justify-self", "overflow"];
 		var backup = backupProperties.reduce((compil, property) => {
 			compil[property] = body.style.getPropertyValue(property);
 			body.style.removeProperty(property);
 			return compil;
 		}, {});
+		body.style.alignSelf = "auto";
+		body.style.justifySelf = "auto";
 		var relativeRect = body.getBoundingClientRect();
 		body.style.position = "absolute";
 		var absoluteRect = body.getBoundingClientRect();
 		body.style.removeProperty("position");
 		if (relativeRect.width === absoluteRect.width) {
 			var zoom = 1;
-			body.style.alignSelf = "start";
 			body.style.overflow = "hidden";
+			body.style.alignSelf = "start";
 			if (body.scrollHeight < relativeRect.height) {
 				while (body.scrollHeight < relativeRect.height) {
 					zoom += 0.05;
@@ -628,7 +632,6 @@ export default class Slide extends Plugin {
 				}
 				zoom -= 0.01;
 			}
-			body.style.removeProperty("align-self");
 			body.style.removeProperty("overflow");
 		} else {
 			zoom = Math.min(
@@ -636,6 +639,8 @@ export default class Slide extends Plugin {
 				relativeRect.height / absoluteRect.height
 			);
 		}
+		body.style.removeProperty("align-self");
+		body.style.removeProperty("justify-self");
 		for (let property in backup) {
 			body.style.setProperty(property, backup[property]);
 		}

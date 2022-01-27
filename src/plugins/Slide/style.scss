@@ -70,12 +70,32 @@
 	& > .th-slide-body {
 		padding: 1em;
 		overflow: auto;
+		display: grid;
+		// align-items: center;
+		// justify-items: center;
+		align-content: center;
+		justify-content: center;
 		> :first-child {
 			margin-top: 0;
 		}
 		> :last-child {
 			margin-bottom: 0;
 		}
+	}
+	&.th-slide-no-header {
+		grid-template-rows: 1fr auto;
+		> header {
+			display: none;
+		}
+	}
+	&.th-slide-no-footer {
+		grid-template-rows: auto 1fr;
+		> footer {
+			display: none;
+		}
+	}
+	&.th-slide-no-header.th-slide-no-footer {
+		grid-template-rows: 1fr;
 	}
 }
 .th-slide-navigation {
