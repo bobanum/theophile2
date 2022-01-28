@@ -63,6 +63,7 @@ export default class Slide extends Plugin {
 		this.footerText = "I'm the footer";
 		heading.slide = this;
 		this.trigger = heading;
+		this.styles = [];
 		if (heading.matches("br, .th-slide-split")) {
 			this.continued = true;
 		} else {
@@ -95,6 +96,10 @@ export default class Slide extends Plugin {
 		const html = document.createElement("div");
 		html.classList.add("th-slide");
 		html.classList.add(...this.heading.classList);
+		this.styles.forEach(style => {
+			html.appendChild(style);
+		});
+		html.id = "slide_" + this.heading.id;
 		this.heading.classList.remove(...this.heading.classList);
 		html.appendChild(this.html_header());
 		html.appendChild(this.html_footer());
@@ -542,23 +547,22 @@ export default class Slide extends Plugin {
 	}
 	static async process() {
 		await super.process();
-		document.documentElement.style.setProperty(
-			"--th-slide-nlines",
-			this.nlines
-		);
-		document.documentElement.style.setProperty(
-			"--th-slide-ratio",
-			this.ratio
-		);
+		document.documentElement.style.setProperty("--th-slide-nlines", this.nlines);
+		document.documentElement.style.setProperty("--th-slide-ratio", this.ratio);
 		var style = document.head.appendChild(document.createElement("style"));
 		style.media = `(min-aspect-ratio: ${this.ratio} / 1)`;
-		style.innerHTML =
-			".th-slide {--font-size: calc(100vh / var(--th-slide-nlines));}";
+		style.innerHTML = ".th-slide {--font-size: calc(100vh / var(--th-slide-nlines));}";
 		var slide;
 		var ptr = document.body.firstChild;
 		while (ptr) {
-			slide = this.addElement(slide, ptr);
-			ptr = ptr.nextSibling;
+			let next = ptr.nextSibling;
+			if (ptr.tagName === "STYLE" && slide) {
+				slide.processStyle(ptr);
+				ptr.remove();
+			} else {
+				slide = this.addElement(slide, ptr);
+			}
+			ptr = next;
 		}
 		this.first = slide.first;
 		// document.body.insertBefore(this.html_contactsheet(), document.body.firstChild);
@@ -568,6 +572,47 @@ export default class Slide extends Plugin {
 		//     slide = slide.next;
 		// }
 		return this.slides;
+	}
+	processStyle(style) {
+		var cssText = this.processRules(style.sheet.cssRules)
+		if (style.media) {
+			cssText = `@media ${style.media} {${cssText}}`;
+		}
+		var result = document.createElement("style");
+		result.innerHTML = cssText;
+		this.styles.push(result);
+		return this;
+	}
+	processRules(rules) {
+		rules = Array.from(rules);
+		var result = rules.map(rule => {
+			if (rule instanceof CSSMediaRule) {
+				return `@media ${rule.conditionText} {${this.processRules(rule.cssRules)}}`;
+			} else if (rule instanceof CSSStyleRule) {
+				rule = rule.cssText.split(/\s*\{/);
+				rule[0] = this.processSelector(rule[0]);
+				rule = rule.join("{");
+				return rule;
+			} else {
+				console.warn(rule.constructor.name + ' not implemented');
+				return rule.cssText;
+			}
+		});
+		result = result.join(" ");
+		return result;
+	}
+	processSelector(selector) {
+		var resultat = [];
+		selector = selector.selectorText || selector;
+		var selectors = selector.trim().split(/\s*,\s*/);
+		var domain = "#slide_" + this.heading.id;
+		selectors = selectors.map(function (s) {
+			if (s.match(/^slide/)) {
+				return s.replace(/^slide/, domain);
+			}
+			return domain + " " + s;
+		});
+		return selectors.join(", ");
 	}
 	static get state() {
 		return document.body.classList.contains("th-slideshow");
