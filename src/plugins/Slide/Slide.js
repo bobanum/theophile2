@@ -658,37 +658,39 @@ export default class Slide extends Plugin {
 		body.style.position = "absolute";
 		var absoluteRect = body.getBoundingClientRect();
 		body.style.removeProperty("position");
-		console.log("adjustZoom");
 		if (relativeRect.width === absoluteRect.width) {
 			var zoom = 1;
 			body.style.overflow = "hidden";
 			body.style.alignSelf = "start";
+			let count = 0;
 			if (body.scrollHeight < relativeRect.height) {
+				count = 0;
 				while (body.scrollHeight < relativeRect.height) {
-					console.log("adjustZoom");
 					zoom += 0.05;
 					body.style.fontSize = zoom + "em";
+					if (count++ > 10) break;
 				}
+
+				count = 0;
 				while (body.scrollHeight > relativeRect.height) {
-					console.log("adjustZoom");
 					zoom -= 0.01;
 					body.style.fontSize = zoom + "em";
+					if (count++ > 10) break;
 				}
 			} else {
-				let count = 0
+				count = 0
 				while (body.scrollHeight > relativeRect.height) {
 					//TOFIX Makes an infinite loop when Theophile is on github.io, but not local
-					console.log("adjustZoom");
 					zoom -= 0.05;
 					body.style.fontSize = zoom + "em";
 					if (count++ > 10) break;
 				}
-				if (count > 10) zoom -= 0.05;
-
+				
+				count = 0;
 				while (body.scrollHeight < relativeRect.height) {
-					console.log("adjustZoom");
 					zoom += 0.01;
 					body.style.fontSize = zoom + "em";
+					if (count++ > 10) break;
 				}
 				zoom -= 0.01;
 			}
@@ -737,7 +739,6 @@ export default class Slide extends Plugin {
 			if (!slide.zoomRatio) {
 				slide.ajustZoom();
 			}
-			console.log(slide.zoomRatio);
 			this.timestampSlide = new Date().getTime();
 			// sessionStorage.slideshow = "true";
 			document.body.classList.add("th-slideshow");
