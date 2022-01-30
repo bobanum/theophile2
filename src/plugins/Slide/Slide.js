@@ -680,7 +680,7 @@ export default class Slide extends Plugin {
 			} else {
 				count = 0
 				while (body.scrollHeight > relativeRect.height) {
-					//TOFIX Makes an infinite loop when Theophile is on github.io, but not local
+					//TOFIX Makes an infinite loop when Theophile is on github.io, but not local. Could be caused by unscalable contents.
 					zoom -= 0.05;
 					body.style.fontSize = zoom + "em";
 					if (count++ > 10) break;
@@ -700,6 +700,7 @@ export default class Slide extends Plugin {
 				relativeRect.height / absoluteRect.height
 			);
 		}
+		//TOFIX Some zoom is miscalculated. This line makes sure contents fits in.
 		zoom -= 0.02;
 		body.style.removeProperty("align-self");
 		body.style.removeProperty("justify-self");
