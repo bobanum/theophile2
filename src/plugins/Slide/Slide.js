@@ -735,7 +735,6 @@ export default class Slide extends Plugin {
 			sessionStorage.currentSlide = slide.id;
 			debugger;
 			if (!slide.zoomRatio) {
-				console.log(zoomRatio);
 				slide.ajustZoom();
 			}
 			console.log(zoomRatio);
