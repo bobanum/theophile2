@@ -120,7 +120,7 @@ export default class Slide extends Plugin {
 			body.appendChild(content.cloneNode(true));
 		});
 		this.applyStyles(body);
-			body.querySelectorAll("iframe:not([src^='http']):not([src^='data:']), object").forEach(element => {
+		body.querySelectorAll("iframe:not([src^='http']):not([src^='data:']), object").forEach(element => {
 			element.addEventListener("load", e => {
 				["touchstart", "touchmove", "touchend", "touchcancel"].forEach(name => {
 					e.target.contentWindow.addEventListener(name, e => {
@@ -322,7 +322,7 @@ export default class Slide extends Plugin {
 	}
 	static async showSlide(slide) {
 		if (slide === this.backdrop.slide) return;
-		localStorage.currentSlide = slide.id;
+		sessionStorage.currentSlide = slide.id;
 		Slide.timestampSlide = new Date().getTime();
 		if (!slide.zoomRatio) {
 			slide.ajustZoom();
@@ -622,8 +622,8 @@ export default class Slide extends Plugin {
 		return document.body.classList.contains("th-slideshow");
 	}
 	static findVisibleSlide() {
-		if (localStorage.currentSlide) {
-			var slide = this.slides.find(slide => slide.id === localStorage.currentSlide);
+		if (sessionStorage.currentSlide) {
+			var slide = this.slides.find(slide => slide.id === sessionStorage.currentSlide);
 			if (slide) return slide;
 		}
 		var headings = this.slides.map(slide => {
@@ -662,26 +662,36 @@ export default class Slide extends Plugin {
 			var zoom = 1;
 			body.style.overflow = "hidden";
 			body.style.alignSelf = "start";
+			let count = 0;
 			if (body.scrollHeight < relativeRect.height) {
+				count = 0;
 				while (body.scrollHeight < relativeRect.height) {
 					zoom += 0.05;
 					body.style.fontSize = zoom + "em";
+					if (count++ > 10) break;
 				}
+
+				count = 0;
 				while (body.scrollHeight > relativeRect.height) {
 					zoom -= 0.01;
 					body.style.fontSize = zoom + "em";
+					if (count++ > 10) break;
 				}
 			} else {
+				count = 0
 				while (body.scrollHeight > relativeRect.height) {
+					//TOFIX Makes an infinite loop when Theophile is on github.io, but not local. Could be caused by unscalable contents.
 					zoom -= 0.05;
 					body.style.fontSize = zoom + "em";
+					if (count++ > 10) break;
 				}
-
+				
+				count = 0;
 				while (body.scrollHeight < relativeRect.height) {
 					zoom += 0.01;
 					body.style.fontSize = zoom + "em";
+					if (count++ > 10) break;
 				}
-				zoom -= 0.01;
 			}
 			body.style.removeProperty("overflow");
 		} else {
@@ -690,6 +700,8 @@ export default class Slide extends Plugin {
 				relativeRect.height / absoluteRect.height
 			);
 		}
+		//TOFIX Some zoom is miscalculated. This line makes sure contents fits in.
+		zoom -= 0.02;
 		body.style.removeProperty("align-self");
 		body.style.removeProperty("justify-self");
 		for (let property in backup) {
@@ -720,14 +732,15 @@ export default class Slide extends Plugin {
 	}
 	static startSlideshow(state = true) {
 		if (state) {
+			console.trace("Starting Slideshow");
 			this.timestamp = new Date().getTime();
 			const slide = this.findVisibleSlide();
-			localStorage.currentSlide = slide.id;
+			sessionStorage.currentSlide = slide.id;
 			if (!slide.zoomRatio) {
 				slide.ajustZoom();
 			}
 			this.timestampSlide = new Date().getTime();
-			localStorage.slideshow = "true";
+			sessionStorage.slideshow = "true";
 			document.body.classList.add("th-slideshow");
 			this.backdrop = document.body.appendChild(this.html_backdrop());
 			this.backdrop.slide = slide;
@@ -747,8 +760,8 @@ export default class Slide extends Plugin {
 		window.scroll(0, pos - 10);
 		this.backdrop.remove();
 		delete this.backdrop;
-		delete localStorage.currentSlide;
-		localStorage.slideshow = "false";
+		delete sessionStorage.currentSlide;
+		sessionStorage.slideshow = "false";
 	}
 	static async clean() {
 		super.clean();
@@ -774,7 +787,7 @@ export default class Slide extends Plugin {
 				this.backdrop.requestFullscreen();
 			});
 		});
-		if (localStorage.slideshow === "true") {
+		if (sessionStorage.slideshow === "true") {
 			setTimeout(() => {
 				this.startSlideshow();
 			}, 100);
