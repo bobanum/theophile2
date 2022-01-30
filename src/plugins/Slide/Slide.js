@@ -700,7 +700,7 @@ export default class Slide extends Plugin {
 				relativeRect.height / absoluteRect.height
 			);
 		}
-		zoom -= 0.01;
+		zoom -= 0.02;
 		body.style.removeProperty("align-self");
 		body.style.removeProperty("justify-self");
 		for (let property in backup) {
