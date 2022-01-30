@@ -120,7 +120,7 @@ export default class Slide extends Plugin {
 			body.appendChild(content.cloneNode(true));
 		});
 		this.applyStyles(body);
-			body.querySelectorAll("iframe:not([src^='http']):not([src^='data:']), object").forEach(element => {
+		body.querySelectorAll("iframe:not([src^='http']):not([src^='data:']), object").forEach(element => {
 			element.addEventListener("load", e => {
 				["touchstart", "touchmove", "touchend", "touchcancel"].forEach(name => {
 					e.target.contentWindow.addEventListener(name, e => {
@@ -634,15 +634,19 @@ export default class Slide extends Plugin {
 		return (headings[0] || last)[0];
 	}
 	ajustZoom() {
+		console.log("adjustZoom");
 		if (this.zoomRatio !== undefined) {
 			return this.zoomRatio;
 		}
+		console.log("adjustZoom");
 		if (this.zoom === "none") {
 			return this.zoomRatio = 1;
 		}
+		console.log("adjustZoom");
 		var backdrop = document.body.appendChild(
 			this.constructor.html_backdrop()
 		);
+		console.log("adjustZoom");
 		backdrop.appendChild(this.html);
 		var body = this.html.querySelector(".th-slide-body");
 		body.style.position = "relative";
@@ -658,26 +662,31 @@ export default class Slide extends Plugin {
 		body.style.position = "absolute";
 		var absoluteRect = body.getBoundingClientRect();
 		body.style.removeProperty("position");
+		console.log("adjustZoom");
 		if (relativeRect.width === absoluteRect.width) {
 			var zoom = 1;
 			body.style.overflow = "hidden";
 			body.style.alignSelf = "start";
 			if (body.scrollHeight < relativeRect.height) {
 				while (body.scrollHeight < relativeRect.height) {
+					console.log("adjustZoom");
 					zoom += 0.05;
 					body.style.fontSize = zoom + "em";
 				}
 				while (body.scrollHeight > relativeRect.height) {
+					console.log("adjustZoom");
 					zoom -= 0.01;
 					body.style.fontSize = zoom + "em";
 				}
 			} else {
 				while (body.scrollHeight > relativeRect.height) {
+					console.log("adjustZoom");
 					zoom -= 0.05;
 					body.style.fontSize = zoom + "em";
 				}
 
 				while (body.scrollHeight < relativeRect.height) {
+					console.log("adjustZoom");
 					zoom += 0.01;
 					body.style.fontSize = zoom + "em";
 				}
@@ -724,7 +733,6 @@ export default class Slide extends Plugin {
 			this.timestamp = new Date().getTime();
 			const slide = this.findVisibleSlide();
 			sessionStorage.currentSlide = slide.id;
-			slide.zoomRatio = 1;
 			debugger;
 			if (!slide.zoomRatio) {
 				console.log(zoomRatio);
