@@ -701,6 +701,7 @@ export default class Slide extends Plugin {
 				relativeRect.width / absoluteRect.width,
 				relativeRect.height / absoluteRect.height
 			);
+			console.log("here");
 		}
 		body.style.removeProperty("align-self");
 		body.style.removeProperty("justify-self");
