@@ -677,7 +677,6 @@ export default class Slide extends Plugin {
 					body.style.fontSize = zoom + "em";
 					if (count++ > 10) break;
 				}
-				zoom -= 0.01;
 			} else {
 				count = 0
 				while (body.scrollHeight > relativeRect.height) {
@@ -693,7 +692,6 @@ export default class Slide extends Plugin {
 					body.style.fontSize = zoom + "em";
 					if (count++ > 10) break;
 				}
-				zoom -= 0.01;
 			}
 			body.style.removeProperty("overflow");
 		} else {
@@ -701,8 +699,8 @@ export default class Slide extends Plugin {
 				relativeRect.width / absoluteRect.width,
 				relativeRect.height / absoluteRect.height
 			);
-			zoom -= .1;
 		}
+		zoom -= 0.01;
 		body.style.removeProperty("align-self");
 		body.style.removeProperty("justify-self");
 		for (let property in backup) {
