@@ -692,7 +692,7 @@ export default class Slide extends Plugin {
 					body.style.fontSize = zoom + "em";
 					if (count++ > 10) break;
 				}
-				zoom -= 0.01;
+				zoom -= 0.02;
 			}
 			body.style.removeProperty("overflow");
 		} else {
