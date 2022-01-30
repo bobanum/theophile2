@@ -26,6 +26,9 @@ export default class Reference extends Plugin {
 		if (id) {
 			debugger; //TODO
 		} else {
+			doc.head.querySelectorAll("style,link").forEach(element => {
+				ref.ownerDocument.head.appendChild(element);
+			});
 			while (doc.body.firstChild) {
 				ref.parentNode.insertBefore(doc.body.firstChild, ref);
 			}

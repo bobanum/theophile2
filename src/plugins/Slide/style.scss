@@ -37,6 +37,9 @@
 	display: grid;
 	justify-items: center;
 	align-content: center;
+	.th-only-screen {
+		display: none;
+	}
 }
 .th-slide {
 	background-color: black;

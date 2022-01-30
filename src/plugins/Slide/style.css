@@ -45,6 +45,10 @@
       align-content: center;
 }
 
+.th-slide-backdrop .th-only-screen {
+  display: none;
+}
+
 .th-slide {
   background-color: black;
   color: white;
