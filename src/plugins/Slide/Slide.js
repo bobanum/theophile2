@@ -10,9 +10,9 @@ import Theophile from "../../Theophile.js";
 export default class Slide extends Plugin {
 	static init(Theophile) {
 		super.init(Theophile);
-		this.include = "h1,h2";
+		this.include = "h1,h2,h3";
 		this.split = "br,.th-slide-split";
-		this.exclude = "h1+h2, .th-slide-skip";
+		this.exclude = "h1:not(.th-slide-full)+h2, h2:not(.th-slide-full)+h3, h1:not(.th-slide-full)+h3, .th-slide-skip";
 		this.nlines = 20;
 		this.ratio = 16 / 9;
 		this.transition = "Fade";
@@ -62,12 +62,11 @@ export default class Slide extends Plugin {
 		this.constructor.slides.push(this);
 		this.footerText = "I'm the footer";
 		heading.slide = this;
-		this.trigger = heading;
+		this.heading = heading;
 		this.styles = [];
-		if (heading.matches("br, .th-slide-split")) {
+		if (heading.matches(Slide.split)) {
 			this.continued = true;
 		} else {
-			this.heading = heading;
 			this.id = heading.getAttribute("id");
 		}
 		this.parseOptions(heading);
@@ -93,29 +92,35 @@ export default class Slide extends Plugin {
 		return this._html;
 	}
 	html_create() {
-		const html = document.createElement("div");
-		html.classList.add("th-slide");
-		html.classList.add(...this.heading.classList);
+		const slide = document.createElement("div");
+		slide.classList.add("th-slide");
+		slide.classList.add(...this.heading.classList);
 		this.styles.forEach(style => {
-			html.appendChild(style);
+			slide.appendChild(style);
 		});
-		html.id = "slide_" + this.heading.id;
-		this.heading.classList.remove(...this.heading.classList);
-		html.appendChild(this.html_header());
-		html.appendChild(this.html_footer());
-		var body = html.appendChild(this.html_body());
+		slide.id = "slide_" + this.heading.id;
+		slide.appendChild(this.html_header());
+		slide.appendChild(this.html_footer());
+		var body = slide.appendChild(this.html_body());
 		this.parseElementStyle(this.heading, body);
-		html.obj = this;
-		return html;
+		this.heading.classList.remove(...this.heading.classList);
+		if (this.continued) {
+			slide.classList.add("th-slide-continued");
+		}
+		slide.obj = this;
+		return slide;
 	}
 	html_body() {
 		const body = document.createElement("div");
 		body.classList.add("th-slide-body");
+		if (this.heading.matches(".th-slide-full")) {
+			body.appendChild(this.heading.cloneNode(true));
+		}
 		this.contents.forEach(content => {
 			body.appendChild(content.cloneNode(true));
 		});
 		this.applyStyles(body);
-		body.querySelectorAll("iframe, object").forEach(element => {
+			body.querySelectorAll("iframe:not([src^='http']):not([src^='data:']), object").forEach(element => {
 			element.addEventListener("load", e => {
 				["touchstart", "touchmove", "touchend", "touchcancel"].forEach(name => {
 					e.target.contentWindow.addEventListener(name, e => {
@@ -317,6 +322,7 @@ export default class Slide extends Plugin {
 	}
 	static async showSlide(slide) {
 		if (slide === this.backdrop.slide) return;
+		localStorage.currentSlide = slide.id;
 		Slide.timestampSlide = new Date().getTime();
 		if (!slide.zoomRatio) {
 			slide.ajustZoom();
@@ -378,20 +384,15 @@ export default class Slide extends Plugin {
 		this.showSlide(slide);
 	}
 	html_header() {
-		var ptr = this;
-		if (ptr.continued) {
-			while (!ptr.heading && ptr.previous) {
+		if (this.continued) {
+			let ptr = this;
+			while (ptr.continued) {
 				ptr = ptr.previous;
 			}
-		}
-		if (!ptr.heading) {
-			return document.createTextNode("");
+			this.heading = ptr.heading.cloneNode(true);
 		}
 		const result = document.createElement("header");
-		result.appendChild(ptr.heading.cloneNode(true));
-		if (this.continued) {
-			result.append("...suite");
-		}
+		result.appendChild(this.heading.cloneNode(true));
 		return result;
 	}
 	html_footer() {
@@ -495,6 +496,9 @@ export default class Slide extends Plugin {
 				slide = slide.next;
 			} else {
 				slide = new this(element);
+			}
+			if (element.matches(this.split)) {
+				slide.contents.push(element);
 			}
 			return slide;
 		}
@@ -618,14 +622,16 @@ export default class Slide extends Plugin {
 		return document.body.classList.contains("th-slideshow");
 	}
 	static findVisibleSlide() {
-		var triggers = this.slides
-			.map(slide => {
-				return [slide, slide.trigger.getBoundingClientRect().y];
-			})
-			.sort((a, b) => (a[1] < b[1] ? -1 : 1));
-		var last = triggers.slice(-1)[0];
-		triggers = triggers.filter(trigger => trigger[1] >= 0);
-		return (triggers[0] || last)[0];
+		if (localStorage.currentSlide) {
+			var slide = this.slides.find(slide => slide.id === localStorage.currentSlide);
+			if (slide) return slide;
+		}
+		var headings = this.slides.map(slide => {
+			return [slide, slide.heading.getBoundingClientRect().y];
+		}).sort((a, b) => (a[1] < b[1] ? -1 : 1));
+		var last = headings.slice(-1)[0];
+		headings = headings.filter(heading => heading[1] >= 0);
+		return (headings[0] || last)[0];
 	}
 	ajustZoom() {
 		if (this.zoomRatio !== undefined) {
@@ -716,6 +722,7 @@ export default class Slide extends Plugin {
 		if (state) {
 			this.timestamp = new Date().getTime();
 			const slide = this.findVisibleSlide();
+			localStorage.currentSlide = slide.id;
 			if (!slide.zoomRatio) {
 				slide.ajustZoom();
 			}
@@ -736,10 +743,11 @@ export default class Slide extends Plugin {
 	}
 	static stopSlideshow() {
 		document.body.classList.remove("th-slideshow");
-		var pos = this.backdrop.slide.trigger.offsetTop;
+		var pos = this.backdrop.slide.heading.offsetTop;
 		window.scroll(0, pos - 10);
 		this.backdrop.remove();
 		delete this.backdrop;
+		delete localStorage.currentSlide;
 		localStorage.slideshow = "false";
 	}
 	static async clean() {

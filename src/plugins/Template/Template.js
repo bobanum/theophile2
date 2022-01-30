@@ -39,7 +39,23 @@ export default class Template extends Plugin {
 				});
 			});
 	}
+	static async process() {
+		await super.process();
+		if (this._processIframes) {
+			this.processIframes(document.body);
+		}
+	}
 	static async mount() {
+		var promises = Array.from(this.template.querySelectorAll("link"), link => {
+			return new Promise(resolve => {
+				link.addEventListener("load", e => {
+					resolve(e);
+				});
+			});
+		});
+		Promise.all(promises).then(data => {
+			document.documentElement.style.opacity = 1;
+		});
 		const containers = this.template.querySelectorAll(".container");
 		containers.forEach(container => {
 			var selector = container.getAttribute("data-selector");
@@ -69,9 +85,6 @@ export default class Template extends Plugin {
 		this.template.querySelectorAll("link,style,script").forEach(element => {
 			document.head.appendChild(element);
 		});
-		if (this._processIframes) {
-			this.processIframes(document.body);
-		}
 	}
 	static async clean() {
 		document.querySelectorAll(".th-contrast").forEach(element => {
@@ -116,7 +129,7 @@ export default class Template extends Plugin {
 	}
 	static processIframe(iframe) {
 		if (!iframe.src) {
-			var src = 'data:text/html,<!DOCTYPE html><meta charset="UTF-8">' + iframe.textContent;
+			var src = `data:text/html,<!DOCTYPE html><meta charset="UTF-8"><html><body>${iframe.textContent}</body></html>`;
 			iframe.setAttribute('src', src);
 			iframe.setAttribute("scrolling", "no");
 			iframe.style.overflow = "hidden";
