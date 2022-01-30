@@ -723,6 +723,7 @@ export default class Slide extends Plugin {
 			this.timestamp = new Date().getTime();
 			const slide = this.findVisibleSlide();
 			localStorage.currentSlide = slide.id;
+			slide.zoomRatio = 1;
 			if (!slide.zoomRatio) {
 				slide.ajustZoom();
 			}
