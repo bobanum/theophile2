@@ -634,19 +634,15 @@ export default class Slide extends Plugin {
 		return (headings[0] || last)[0];
 	}
 	ajustZoom() {
-		console.log("adjustZoom");
 		if (this.zoomRatio !== undefined) {
 			return this.zoomRatio;
 		}
-		console.log("adjustZoom");
 		if (this.zoom === "none") {
 			return this.zoomRatio = 1;
 		}
-		console.log("adjustZoom");
 		var backdrop = document.body.appendChild(
 			this.constructor.html_backdrop()
 		);
-		console.log("adjustZoom");
 		backdrop.appendChild(this.html);
 		var body = this.html.querySelector(".th-slide-body");
 		body.style.position = "relative";
@@ -687,6 +683,7 @@ export default class Slide extends Plugin {
 					body.style.fontSize = zoom + "em";
 					if (count++ > 10) break;
 				}
+				if (count > 10) zoom -= 0.05;
 
 				while (body.scrollHeight < relativeRect.height) {
 					console.log("adjustZoom");
