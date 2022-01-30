@@ -740,7 +740,7 @@ export default class Slide extends Plugin {
 			if (!slide.zoomRatio) {
 				slide.ajustZoom();
 			}
-			console.log(zoomRatio);
+			console.log(slide.zoomRatio);
 			this.timestampSlide = new Date().getTime();
 			// sessionStorage.slideshow = "true";
 			document.body.classList.add("th-slideshow");
