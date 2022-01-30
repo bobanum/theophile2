@@ -679,10 +679,13 @@ export default class Slide extends Plugin {
 					body.style.fontSize = zoom + "em";
 				}
 			} else {
+				let count = 0
 				while (body.scrollHeight > relativeRect.height) {
+					//TOFIX Makes an infinite loop when Theophile is on github.io, but not local
 					console.log("adjustZoom");
 					zoom -= 0.05;
 					body.style.fontSize = zoom + "em";
+					if (count++ > 10) break;
 				}
 
 				while (body.scrollHeight < relativeRect.height) {
