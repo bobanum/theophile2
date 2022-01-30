@@ -322,7 +322,7 @@ export default class Slide extends Plugin {
 	}
 	static async showSlide(slide) {
 		if (slide === this.backdrop.slide) return;
-		localStorage.currentSlide = slide.id;
+		sessionStorage.currentSlide = slide.id;
 		Slide.timestampSlide = new Date().getTime();
 		if (!slide.zoomRatio) {
 			slide.ajustZoom();
@@ -622,8 +622,8 @@ export default class Slide extends Plugin {
 		return document.body.classList.contains("th-slideshow");
 	}
 	static findVisibleSlide() {
-		if (localStorage.currentSlide) {
-			var slide = this.slides.find(slide => slide.id === localStorage.currentSlide);
+		if (sessionStorage.currentSlide) {
+			var slide = this.slides.find(slide => slide.id === sessionStorage.currentSlide);
 			if (slide) return slide;
 		}
 		var headings = this.slides.map(slide => {
@@ -720,15 +720,19 @@ export default class Slide extends Plugin {
 	}
 	static startSlideshow(state = true) {
 		if (state) {
+			console.trace("Starting Slideshow");
 			this.timestamp = new Date().getTime();
 			const slide = this.findVisibleSlide();
-			localStorage.currentSlide = slide.id;
+			sessionStorage.currentSlide = slide.id;
 			slide.zoomRatio = 1;
+			debugger;
 			if (!slide.zoomRatio) {
+				console.log(zoomRatio);
 				slide.ajustZoom();
 			}
+			console.log(zoomRatio);
 			this.timestampSlide = new Date().getTime();
-			localStorage.slideshow = "true";
+			sessionStorage.slideshow = "true";
 			document.body.classList.add("th-slideshow");
 			this.backdrop = document.body.appendChild(this.html_backdrop());
 			this.backdrop.slide = slide;
@@ -748,8 +752,8 @@ export default class Slide extends Plugin {
 		window.scroll(0, pos - 10);
 		this.backdrop.remove();
 		delete this.backdrop;
-		delete localStorage.currentSlide;
-		localStorage.slideshow = "false";
+		delete sessionStorage.currentSlide;
+		sessionStorage.slideshow = "false";
 	}
 	static async clean() {
 		super.clean();
@@ -775,7 +779,7 @@ export default class Slide extends Plugin {
 				this.backdrop.requestFullscreen();
 			});
 		});
-		if (localStorage.slideshow === "true") {
+		if (sessionStorage.slideshow === "true") {
 			setTimeout(() => {
 				this.startSlideshow();
 			}, 100);
