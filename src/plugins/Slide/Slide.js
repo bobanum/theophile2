@@ -736,12 +736,11 @@ export default class Slide extends Plugin {
 			this.timestamp = new Date().getTime();
 			const slide = this.findVisibleSlide();
 			sessionStorage.currentSlide = slide.id;
-			debugger;
 			if (!slide.zoomRatio) {
 				slide.ajustZoom();
 			}
 			this.timestampSlide = new Date().getTime();
-			// sessionStorage.slideshow = "true";
+			sessionStorage.slideshow = "true";
 			document.body.classList.add("th-slideshow");
 			this.backdrop = document.body.appendChild(this.html_backdrop());
 			this.backdrop.slide = slide;
