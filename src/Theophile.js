@@ -20,14 +20,21 @@ export default class Theophile {
 		this.headings = "h1, h2, h3";
 		this.ready = false;
 		this.plugins = {};
-		this.config = {};
+		this.config = this.loadDataSet();
 		this.cssLink();
-
-		const plugins = ["Template", "Reference", "Slide", "Toc"];
+		var plugins = ["Template", "Reference", "Slide", "Toc"];
+		if (this.config.include) {
+			plugins = this.config.include.trim().split(/\s*,\s*/).map(name => name[0].toUpperCase() + name.slice(1).toLowerCase());
+		}
+		if (this.config.exclude) {
+			const exclude = this.config.exclude.trim().split(/\s*,\s*/).map(name => name[0].toUpperCase() + name.slice(1).toLowerCase());
+			plugins = plugins.filter(name => exclude.indexOf(name) < 0);
+		}
 		const promises = plugins.map(async file => {
 			return this.loadPlugin(file);
 		});
 		promises.push(this.loadConfig(this.config));
+		// Loading DataSet again to prioritize Local properties
 		promises.push(this.loadDataSet(document.documentElement, this.config));
 		return Promise.all(promises);
 	}
@@ -61,7 +68,7 @@ export default class Theophile {
 		return result;
 	}
 	static processHeadings() {
-		var headings = document.querySelectorAll(this.headings);
+		var headings = Array.from(document.querySelectorAll(this.headings));
 		headings.forEach(heading => {
 			if (heading.hasAttribute("id")) {
 				return;
@@ -127,8 +134,16 @@ export default class Theophile {
 		console.trace("Plugins processed");
 		return data;
 	}
+	static async beforeMount() {
+		console.trace("Theophile before mount");
+		const promises = Array.from(Object.values(this.plugins), plugin =>
+			plugin.beforeMount()
+		);
+		const data = await Promise.all(promises);
+		console.trace("Plugins before mounte");
+		return data;
+	}
 	static async mount() {
-		this.processHeadings();
 		console.trace("Theophile mounted");
 		const promises = Array.from(Object.values(this.plugins), plugin =>
 			plugin.mount()
@@ -137,7 +152,17 @@ export default class Theophile {
 		console.trace("Plugins mounted");
 		return data;
 	}
+	static async afterMount() {
+		console.trace("Theophile after mount");
+		const promises = Array.from(Object.values(this.plugins), plugin =>
+			plugin.afterMount()
+		);
+		const data = await Promise.all(promises);
+		console.trace("Plugins after mount");
+		return data;
+	}
 	static async clean() {
+		document.documentElement.style.opacity = 1;
 		console.trace("Theophile cleaned");
 		const promises = Array.from(Object.values(this.plugins), plugin =>
 			plugin.clean()
@@ -257,11 +282,15 @@ export default class Theophile {
 		if (typeof options === "string") {
 			options = { root: options };
 		}
+		console.trace("Theophile BEGIN");
 		await this.init(options.root);
 		delete options.root;
 		await this.prepare(options);
 		await this.process();
+		await this.beforeMount();
 		await this.mount();
+		await this.afterMount();
 		await this.clean();
+		console.trace("Theophile END");
 	}
 }

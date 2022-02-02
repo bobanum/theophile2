@@ -1,0 +1,71 @@
+// html {
+//     scroll-behavior: smooth;
+// }
+#th-toc {
+    --width: 27ch;
+    --trigger-width: 1ch;
+    font-family: arial;
+    position: fixed;
+    box-sizing: border-box;
+    left: calc(-1 * var(--width) + var(--trigger-width));
+    top: 1em;
+    bottom: 1em;
+    overflow-y: auto;
+    background-color: hsl(0, 0%, 95%);
+    color: black;
+    padding: .5em .5ch;
+    border-top-right-radius: var(--trigger-width);
+    border-bottom-right-radius: var(--trigger-width);
+    border: 3px solid hsl(0, 0%, 80%);
+    border-left: none;
+    border-width: 1px 3px;
+    width: var(--width);
+    transition: left 200ms;
+    transition-timing-function: ease-out;
+    display: flex;
+    box-shadow: .2ch 0 .3ch #0008;
+    &:empty {
+        display: none;
+    }
+    &:hover {
+        // IN transition
+        // transition: left 20ms;
+        left: 0;
+    }
+    &::after {
+        content: "▸\0a▸\0a▸";
+        content: "⫶";
+        align-self: center;
+        white-space: pre;
+        position: absolute;
+        right: 0;
+        line-height: 1em;
+        opacity: .25;
+    }
+    ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        padding-left: 2ch;
+        ul {
+            font-size: .9em;
+        }
+    }
+    > ul {
+        padding-left: 0;
+    }
+    li > div {
+        &:hover {
+            background-color: #0001;
+        }
+    }
+    a {
+        color: inherit;
+        text-decoration: none;
+        display: block;
+        padding: 0 0.5ch;
+    }
+    .th-toc-level-1 li:not(:hover) > ul:not(div+ul) {
+        display: none;
+    }
+}

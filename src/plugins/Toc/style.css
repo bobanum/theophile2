@@ -1,1 +1,83 @@
-/* No CSS *//*# sourceMappingURL=style.css.map */
+@charset "UTF-8";
+#th-toc {
+  --width: 27ch;
+  --trigger-width: 1ch;
+  font-family: arial;
+  position: fixed;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  left: calc(-1 * var(--width) + var(--trigger-width));
+  top: 1em;
+  bottom: 1em;
+  overflow-y: auto;
+  background-color: #f2f2f2;
+  color: black;
+  padding: .5em .5ch;
+  border-top-right-radius: var(--trigger-width);
+  border-bottom-right-radius: var(--trigger-width);
+  border: 3px solid #cccccc;
+  border-left: none;
+  border-width: 1px 3px;
+  width: var(--width);
+  -webkit-transition: left 200ms;
+  transition: left 200ms;
+  -webkit-transition-timing-function: ease-out;
+          transition-timing-function: ease-out;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-shadow: .2ch 0 .3ch #0008;
+          box-shadow: .2ch 0 .3ch #0008;
+}
+
+#th-toc:empty {
+  display: none;
+}
+
+#th-toc:hover {
+  left: 0;
+}
+
+#th-toc::after {
+  content: "▸\0a▸\0a▸";
+  content: "⫶";
+  -ms-flex-item-align: center;
+      -ms-grid-row-align: center;
+      align-self: center;
+  white-space: pre;
+  position: absolute;
+  right: 0;
+  line-height: 1em;
+  opacity: .25;
+}
+
+#th-toc ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  padding-left: 2ch;
+}
+
+#th-toc ul ul {
+  font-size: .9em;
+}
+
+#th-toc > ul {
+  padding-left: 0;
+}
+
+#th-toc li > div:hover {
+  background-color: #0001;
+}
+
+#th-toc a {
+  color: inherit;
+  text-decoration: none;
+  display: block;
+  padding: 0 0.5ch;
+}
+
+#th-toc .th-toc-level-1 li:not(:hover) > ul {
+  display: none;
+}
+/*# sourceMappingURL=style.css.map */

@@ -46,15 +46,13 @@ export default class Template extends Plugin {
 		}
 	}
 	static async mount() {
+		await super.mount();
 		var promises = Array.from(this.template.querySelectorAll("link"), link => {
 			return new Promise(resolve => {
 				link.addEventListener("load", e => {
 					resolve(e);
 				});
 			});
-		});
-		Promise.all(promises).then(data => {
-			document.documentElement.style.opacity = 1;
 		});
 		const containers = this.template.querySelectorAll(".container");
 		containers.forEach(container => {
@@ -85,8 +83,11 @@ export default class Template extends Plugin {
 		this.template.querySelectorAll("link,style,script").forEach(element => {
 			document.head.appendChild(element);
 		});
+		// return 
+		Promise.all(promises);
 	}
 	static async clean() {
+		await super.clean();
 		document.querySelectorAll(".th-contrast").forEach(element => {
 			element.addEventListener("click", e => {
 				e.preventDefault();
