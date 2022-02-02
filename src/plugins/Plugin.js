@@ -8,8 +8,16 @@ export default class Plugin {
 		console.trace("Plugin " + this.name + " processed");
 		return Promise.resolve();
 	}
+	static async beforeMount() {
+		console.trace("Plugin " + this.name + " before mount");
+		return Promise.resolve();
+	}
 	static async mount() {
 		console.trace("Plugin " + this.name + " mounted");
+		return Promise.resolve();
+	}
+	static async afterMount() {
+		console.trace("Plugin " + this.name + " after mount");
 		return Promise.resolve();
 	}
 	static async clean() {
