@@ -1,3 +1,4 @@
+@charset "UTF-8";
 #th-toc {
   --width: 27ch;
   --trigger-width: 1ch;
@@ -40,7 +41,7 @@
 }
 
 #th-toc::after {
-  content: "toc";
+  content: "menu_open";
   font-family: 'Material Icons';
   position: absolute;
   left: 100%;
@@ -59,20 +60,25 @@
   opacity: 1;
 }
 
+#th-toc li::marker {
+  content: "⁃";
+}
+
 #th-toc ul {
-  list-style-type: none;
   margin: 0;
   padding: 0;
   padding-left: 2ch;
 }
 
-#th-toc ul ul {
-  font-size: .9em;
-}
-
 #th-toc > ul {
   padding-left: 0;
   overflow-y: auto;
+  height: 100%;
+}
+
+#th-toc > ul ul {
+  font-size: .9em;
+  list-style-type: disc;
 }
 
 #th-toc li > div:hover {
