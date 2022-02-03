@@ -469,43 +469,33 @@ export default class Slide extends Plugin {
 	 * @memberof Slide
 	 */
 	static addElement(slide, element) {
-		if (!slide && element.nodeType === 3) {
-			if (element.textContent.trim() === "") {
-				return slide;
-			} else {
-				slide = new this();
-				element.slide = slide;
-			}
+		if (!slide && element.nodeType === HTMLElement.TEXT_NODE) {
+			return undefined;
 		}
-		if (element.nodeType === 3) {
+		if (element.nodeType === HTMLElement.TEXT_NODE) {
 			slide.contents.push(element);
 			return slide;
 		}
-		if (element.nodeType !== 1) {
+		if (element.nodeType !== HTMLElement.ELEMENT_NODE) {
 			return slide;
 		}
-		if (element.matches(this.include + "," + this.split)) {
-			if (element.matches(this.exclude)) {
-				slide.contents.push(element);
-				return slide;
+		if (!element.matches(this.include + "," + this.split) || element.matches(this.exclude)) {
+			if (!slide) {
+				return undefined;
 			}
-			if (slide) {
-				slide.next = new this(element);
-				slide.next.previous = slide;
-				slide = slide.next;
-			} else {
-				slide = new this(element);
-			}
-			if (element.matches(this.split)) {
-				slide.contents.push(element);
-			}
+			slide.contents.push(element);
 			return slide;
 		}
-		if (!slide) {
-			slide = new this();
-			element.slide = slide;
+		if (slide) {
+			slide.next = new this(element);
+			slide.next.previous = slide;
+			slide = slide.next;
+		} else {
+			slide = new this(element);
 		}
-		slide.contents.push(element);
+		if (element.matches(this.split)) {
+			slide.contents.push(element);
+		}
 		return slide;
 	}
 	parseOptions(element) {

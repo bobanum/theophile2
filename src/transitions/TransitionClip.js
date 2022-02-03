@@ -6,7 +6,6 @@ export default class TransitionClip extends Transition {
 		this.type = this.type || "square";
 		this.reverse = false;
 		var circleRadius = 0.5 * Math.sqrt(this.original.clientWidth * this.original.clientWidth + this.original.clientWidth * this.original.clientWidth);
-		console.log(this.original);
 		this.values = {
 			square: ["inset(50%)", "inset(0%)"],
 			horizontal: ["inset(50% 0)", "inset(0% 0)"],
