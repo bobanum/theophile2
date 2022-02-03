@@ -34,8 +34,8 @@
         box-shadow: .2ch 0 .3ch #0008;
     }
     &::after {
-        // content: "⫶";
-        content: "toc";
+        // content: "toc";
+        content: "menu_open";
         // content: "menu_book";
         font-family: 'Material Icons';
         position: absolute;
@@ -53,18 +53,24 @@
     &:hover::after {
         opacity: 1;
     }
+    li::marker {
+        content: "⁃";
+    }
     ul {
-        list-style-type: none;
         margin: 0;
         padding: 0;
         padding-left: 2ch;
         ul {
-            font-size: .9em;
         }
     }
     > ul {
         padding-left: 0;
         overflow-y: auto;
+        height: 100%;
+        ul {
+            font-size: .9em;
+            list-style-type: disc;
+        }
     }
     li > div {
         &:hover {
