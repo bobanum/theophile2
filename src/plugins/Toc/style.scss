@@ -1,3 +1,18 @@
+.th-toc-pin {
+    body {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        height: auto;
+        gap: 1em;
+    }
+    #th-toc {
+        position: sticky;
+        order: -1;
+        top: .5ch;
+        bottom: .5ch;
+        align-self: flex-start;
+    }
+}
 // html {
 //     scroll-behavior: smooth;
 // }
@@ -22,6 +37,31 @@
     transition-timing-function: ease-in;
     transition-delay: 0ms;
     overflow: visible;
+    &.th-top-pin {
+        position: static;
+        order: -1;
+        .th-toc-btn-pin {
+            opacity: 1;
+            color: #ff0;
+        }
+    }
+    .th-toc-btn-pin {
+        position: absolute;
+        z-index: 1000;
+        right: .25ch;
+        top: .25em;
+        width: 1em;
+        height: 1em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: .5;
+
+        &::before {
+            content: "push_pin";
+            font-family: 'Material Icons';
+        }
+    }
     &:empty {
         display: none;
     }

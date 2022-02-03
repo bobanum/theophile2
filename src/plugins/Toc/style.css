@@ -1,4 +1,25 @@
 @charset "UTF-8";
+.th-toc-pin body {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: auto 1fr;
+      grid-template-columns: auto 1fr;
+  height: auto;
+  gap: 1em;
+}
+
+.th-toc-pin #th-toc {
+  position: -webkit-sticky;
+  position: sticky;
+  -webkit-box-ordinal-group: 0;
+      -ms-flex-order: -1;
+          order: -1;
+  top: .5ch;
+  bottom: .5ch;
+  -ms-flex-item-align: start;
+      align-self: flex-start;
+}
+
 #th-toc {
   --width: 27ch;
   --trigger-width: 1ch;
@@ -24,6 +45,42 @@
   -webkit-transition-delay: 0ms;
           transition-delay: 0ms;
   overflow: visible;
+}
+
+#th-toc.th-top-pin {
+  position: static;
+  -webkit-box-ordinal-group: 0;
+      -ms-flex-order: -1;
+          order: -1;
+}
+
+#th-toc.th-top-pin .th-toc-btn-pin {
+  opacity: 1;
+  color: #ff0;
+}
+
+#th-toc .th-toc-btn-pin {
+  position: absolute;
+  z-index: 1000;
+  right: .25ch;
+  top: .25em;
+  width: 1em;
+  height: 1em;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  opacity: .5;
+}
+
+#th-toc .th-toc-btn-pin::before {
+  content: "push_pin";
+  font-family: 'Material Icons';
 }
 
 #th-toc:empty {

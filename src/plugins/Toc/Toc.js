@@ -12,6 +12,11 @@ export default class Toc extends Plugin {
         await super.afterMount();
         const tocContainer = document.querySelector("#th-toc");
         if (!tocContainer) return;
+        const btnPin = tocContainer.appendChild(document.createElement("span"));
+        btnPin.classList.add("th-toc-btn-pin");
+        btnPin.addEventListener("click", e => {
+            document.documentElement.classList.toggle("th-toc-pin");
+        })
         tocContainer.appendChild(this.html);
     }
     static get html() {
