@@ -5,12 +5,12 @@
   position: fixed;
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
-  left: calc(-1 * var(--width) + .25px);
-  top: 1em;
-  bottom: 1em;
+  left: calc(-1 * var(--width) + 0.25px);
+  top: 0.5rem;
+  bottom: 0.5rem;
   background-color: #f2f2f2;
   color: black;
-  padding: .5em .5ch;
+  padding: 0.5em 0.5ch;
   border-top-right-radius: var(--trigger-width);
   border-bottom-right-radius: var(--trigger-width);
   border: 3px solid #cccccc;
@@ -36,32 +36,28 @@
   -webkit-transition-timing-function: ease-out;
           transition-timing-function: ease-out;
   left: 0;
-  -webkit-box-shadow: .2ch 0 .3ch #0008;
-          box-shadow: .2ch 0 .3ch #0008;
+  -webkit-box-shadow: 0.2ch 0 0.3ch #0008;
+          box-shadow: 0.2ch 0 0.3ch #0008;
 }
 
 #th-toc::after {
   content: "menu_open";
-  font-family: 'Material Icons';
+  font-family: "Material Icons";
   position: absolute;
   left: 100%;
   font-size: 1rem;
   line-height: 1em;
-  opacity: .5;
+  opacity: 0.5;
   top: 1rem;
   background-color: #fff4;
-  padding: .25rem;
-  border-top-right-radius: .25rem;
-  border-bottom-right-radius: .25rem;
+  padding: 0.25rem;
+  border-top-right-radius: 0.25rem;
+  border-bottom-right-radius: 0.25rem;
   color: white;
 }
 
 #th-toc:hover::after {
   opacity: 1;
-}
-
-#th-toc li::marker {
-  content: "⁃";
 }
 
 #th-toc ul {
@@ -77,12 +73,31 @@
 }
 
 #th-toc > ul ul {
-  font-size: .9em;
+  font-size: 0.9em;
   list-style-type: disc;
 }
 
+#th-toc > ul ul li::marker {
+  content: "⁃";
+}
+
+#th-toc li {
+  position: relative;
+}
+
+#th-toc li.th-toc-current::after {
+  content: "▸";
+  font-size: 1rem;
+  position: absolute;
+  right: 0;
+  top: 0;
+  line-height: 1;
+}
+
+#th-toc li.th-toc-current > div,
 #th-toc li > div:hover {
-  background-color: #0001;
+  color: #ff0;
+  background-color: #0008;
 }
 
 #th-toc a {
@@ -92,7 +107,12 @@
   padding: 0 0.5ch;
 }
 
-#th-toc .th-toc-level-1 li:not(:hover) > ul {
+#th-toc .th-toc-level-1 li:not(:hover):not(.th-toc-current-within) > ul {
   display: none;
+}
+
+#th-toc .th-toc-current-within li > ul,
+#th-toc :hover li > ul {
+  display: block !important;
 }
 /*# sourceMappingURL=style.css.map */
