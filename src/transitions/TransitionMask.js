@@ -1,8 +1,8 @@
 import Transition from "./Transition.js";
 
 export default class TransitionMask extends Transition {
-	constructor(original, replacement) {
-		super(original, replacement);
+	constructor(original, replacement, type) {
+		super(original, replacement, type);
 		this.direction = "s";
 		this.gradientDirections = ["right", "bottom", "left", "top"];
 		this.width = 50;

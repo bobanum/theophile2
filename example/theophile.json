@@ -1,7 +1,7 @@
 {
     "nlines": 20,
     "ratio": [16, 9],
-    "transition": "mask",
+    "transition": "clip-vertical",
     "transition-duration": 500,
     "transition-options": {"direction":"e", "mode":"stack"},
     "slide": {

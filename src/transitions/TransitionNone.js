@@ -1,8 +1,8 @@
 import Transition from "./Transition.js";
 
 export default class TransitionNone extends Transition {
-	constructor(original, replacement) {
-		super(original, replacement);
+	constructor(original, replacement, type) {
+		super(original, replacement, type);
 	}
 	cancel() {
 	}

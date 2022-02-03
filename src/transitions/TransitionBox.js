@@ -1,8 +1,8 @@
 import Transition from "./Transition.js";
 
 export default class TransitionBox extends Transition {
-	constructor(original, replacement) {
-		super(original, replacement);
+	constructor(original, replacement, type) {
+		super(original, replacement, type);
 		var boundingBox = this.original.getBoundingClientRect();
 		this.middle = { Y: boundingBox.width / 2, X: boundingBox.height / 2 };
 		this.reverse = false;

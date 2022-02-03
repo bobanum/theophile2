@@ -1,9 +1,10 @@
 export default class Transition {
-	constructor(original, replacement) {
+	constructor(original, replacement, type) {
 		this.id = "a" + new Date().getTime() + Math.random();
 		this.original = original.html;
 		this.replacement = replacement.html;
 		this.duration = 500;
+		this.type = type.toLowerCase();
 		this.Object = this.original.obj.constructor;
 	}
 	get options() {
@@ -43,6 +44,7 @@ export default class Transition {
 				"Flip",
 				"Mask",
 				"Blur",
+				"Clip"
 				// "Push",
 				// "Scale",
 			].map(file => import(`./Transition${file}.js`))

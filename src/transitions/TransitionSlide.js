@@ -1,8 +1,8 @@
 import Transition from "./Transition.js";
 
 export default class TransitionSlide extends Transition {
-	constructor(original, replacement) {
-		super(original, replacement);
+	constructor(original, replacement, type) {
+		super(original, replacement, type);
 		var boundingBox = this.original.getBoundingClientRect();
 		this.box = {
 			left: boundingBox.left,

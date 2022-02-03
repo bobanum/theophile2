@@ -328,10 +328,9 @@ export default class Slide extends Plugin {
 			slide.ajustZoom();
 		}
 
-		var transition = new Transition[this.transition](
-			this.backdrop.slide,
-			slide
-		);
+		const transitionParts = this.transition.split("-");
+		var transition = new Transition[transitionParts[0]](this.backdrop.slide, slide, transitionParts[1]);
+
 		transition.reverse = slide.idx < this.backdrop.slide.idx;
 		transition.options = this.transitionOptions;
 		transition.duration = this.transitionDuration;
@@ -685,7 +684,7 @@ export default class Slide extends Plugin {
 					body.style.fontSize = zoom + "em";
 					if (count++ > 10) break;
 				}
-				
+
 				count = 0;
 				while (body.scrollHeight < relativeRect.height) {
 					zoom += 0.01;
