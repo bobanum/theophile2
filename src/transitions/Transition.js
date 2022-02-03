@@ -1,5 +1,5 @@
 export default class Transition {
-	constructor(original, replacement, type) {
+	constructor(original, replacement, type = "") {
 		this.id = "a" + new Date().getTime() + Math.random();
 		this.original = original.html;
 		this.replacement = replacement.html;
