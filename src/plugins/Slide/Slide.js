@@ -197,6 +197,9 @@ export default class Slide extends Plugin {
 		menu.classList.add("th-option-menu");
 		var contactsheet = options.appendChild(document.createElement("span"));
 		contactsheet.classList.add("th-option-contactsheet");
+		contactsheet.addEventListener("click", e => {
+			this.showContactsheet();
+		})
 		var slideshow = options.appendChild(document.createElement("span"));
 		slideshow.classList.add("th-option-slideshow");
 		var continous = options.appendChild(document.createElement("span"));
@@ -210,16 +213,156 @@ export default class Slide extends Plugin {
 		});
 		return options;
 	}
+	static showContactsheet() {
+		document.documentElement.classList.add("th-contactsheet");
+		var contactsheet = document.body.appendChild(this.html_contactsheet());
+		this.highlightThumbnail(this.backdrop.slide);
+		contactsheet.querySelector(".th-contactsheet-grid").focus();
+	}
+	static hideContactsheet(showSlide) {
+		document.documentElement.classList.remove("th-contactsheet");
+		document.getElementById("th-contactsheet").remove();
+		if (showSlide) {
+			this.showSlide(showSlide);
+		}
+		this.backdrop.focus();
+	}
+	static highlightThumbnail(slide) {
+		document.querySelectorAll(".th-contactsheet-current").forEach(thumbnail => {
+			thumbnail.classList.remove("th-contactsheet-current");
+		});
+		slide.contactsheetThumbnail.classList.add("th-contactsheet-current");
+		setTimeout(() => {
+			slide.contactsheetThumbnail.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
+		}, 10);
+		this.contactsheetCurrent = slide;
+	}
+	static html_contactsheet() {
+		if (this._contactsheet) return this._contactsheet;
+		const contactsheet = document.createElement("div");
+		contactsheet.id = "th-contactsheet";
+		contactsheet.addEventListener("click", e => {
+			if (e.target === e.currentTarget) {
+				this.hideContactsheet();
+			}
+		});
+		const btnExit = contactsheet.appendChild(document.createElement("span"));
+		btnExit.classList.add("th-contactsheet-exit-btn");
+		btnExit.addEventListener("click", e => {
+			this.hideContactsheet();
+		});
+		const container = contactsheet.appendChild(document.createElement("div"));
+		container.classList.add("th-contactsheet-container");
+		const grid = container.appendChild(document.createElement("div"));
+		grid.classList.add("th-contactsheet-grid");
+		this.slides.forEach(slide => {
+			grid.appendChild(slide.contactsheetThumbnail);
+		});
+		grid.tabIndex = "0";
+		grid.addEventListener("keydown", e => {
+			// e.preventDefault();
+			// e.stopPropagation();
+			if (e.key === "Control" || e.key === "Alt" || e.key === "Shift" || e.key === "Meta") return;
+			var prefix = "";
+			if (e.altKey) prefix += "Alt-";
+			if (e.ctrlKey || e.metaKey) prefix += "Ctrl-";
+			if (e.shiftKey) prefix += "Shift-";
+			var key = prefix + e.key;
+			// var code = prefix + e.code;
+			var stop = false;
+			switch (key) {
+				case "ArrowLeft": case "Shift-Tab":
+					stop = true;
+					var previous = this.contactsheetCurrent.previous;
+					if (previous) {
+						this.highlightThumbnail(previous);
+					}
+					break;
+				case "ArrowDown":
+					stop = true;
+					this.contactsheetCurrent.contactsheetThumbnail.classList.remove("th-contactsheet-current");
+					var pos = Math.round(this.contactsheetCurrent.contactsheetThumbnail.getBoundingClientRect().x);
+					var next = this.contactsheetCurrent;
+					while (next.next) {
+						next = next.next;
+						if (pos === Math.round(next.contactsheetThumbnail.getBoundingClientRect().x)) {
+							break;
+						}
+					}
+					this.highlightThumbnail(next);
+					break;
+				case "ArrowUp":
+					stop = true;
+					this.contactsheetCurrent.contactsheetThumbnail.classList.remove("th-contactsheet-current");
+					var pos = Math.round(this.contactsheetCurrent.contactsheetThumbnail.getBoundingClientRect().x);
+					var previous = this.contactsheetCurrent;
+					while (previous.previous) {
+						previous = previous.previous;
+						if (pos === Math.round(previous.contactsheetThumbnail.getBoundingClientRect().x)) {
+							break;
+						}
+					}
+					this.highlightThumbnail(previous);
+					break;
+				case "ArrowRight": case "Tab":
+					stop = true;
+					var next = this.contactsheetCurrent.next;
+					if (next) {
+						this.highlightThumbnail(next);
+					}
+					break;
+				case "Home": {
+					stop = true;
+					this.highlightThumbnail(this.slides[0]);
+					break;
+				}
+				case "End": {
+					stop = true;
+					this.highlightThumbnail(this.slides.slice(-1)[0]);
+					break;
+				}
+				case "Enter":
+					stop = true;
+					this.hideContactsheet(this.contactsheetCurrent);
+					break;
+				case "Escape": case "#":
+					stop = true;
+					this.hideContactsheet(this.contactsheetCurrent);
+					break;
+			}
+			if (stop) {
+				e.preventDefault();
+				e.stopPropagation();
+			}
+		});
+		this._contactsheet = contactsheet;
+		return contactsheet;
+	}
+	get contactsheetThumbnail() {
+		if (this._contactsheetThumbnail) return this._contactsheetThumbnail;
+		const thumbnail = document.createElement("div");
+		thumbnail.classList.add("th-contactsheet-thumbnail");
+		thumbnail.appendChild(this.html.cloneNode(true));
+		if (this.heading.tagName === "H1") {
+			thumbnail.classList.add("th-contactsheet-group");
+		}
+		const number = thumbnail.appendChild(document.createElement("div"));
+		number.classList.add("th-contactsheet-number");
+		number.innerHTML = this.idx + 1;
+		const caption = thumbnail.appendChild(document.createElement("div"));
+		caption.classList.add("th-contactsheet-caption");
+		const title = caption.appendChild(document.createElement("div"));
+		title.classList.add("th-contactsheet-title");
+		title.innerHTML = this.heading.innerText;
+		thumbnail.addEventListener("click", e => {
+			Slide.hideContactsheet(this);
+		});
+		this._contactsheetThumbnail = thumbnail;
+		return thumbnail;
+	}
 	static addKeydownEvents(backdrop) {
 		backdrop.addEventListener("keydown", e => {
-			if (
-				e.key === "Control" ||
-				e.key === "Alt" ||
-				e.key === "Shift" ||
-				e.key === "Meta"
-			) {
-				return;
-			}
+			if (e.key === "Control" || e.key === "Alt" || e.key === "Shift" || e.key === "Meta") return;
 			var prefix = "";
 			if (e.altKey) prefix += "Alt-";
 			if (e.ctrlKey || e.metaKey) prefix += "Ctrl-";
@@ -254,6 +397,11 @@ export default class Slide extends Plugin {
 					} else {
 						this.stopSlideshow();
 					}
+					break;
+				case "#":
+					e.preventDefault();
+					this.showContactsheet();
+					break;
 			}
 			e.stopPropagation();
 		});
@@ -320,23 +468,29 @@ export default class Slide extends Plugin {
 			start = null;
 		});
 	}
-	static async showSlide(slide) {
+	static async showSlide(slide, transition = true) {
 		if (slide === this.backdrop.slide) return;
 		sessionStorage.currentSlide = slide.id;
 		Slide.timestampSlide = new Date().getTime();
 		if (!slide.zoomRatio) {
 			slide.ajustZoom();
 		}
+		if (transition && this.backdrop) {
+			const transitionParts = this.transition.split("-");
+			var transition = new Transition[transitionParts[0]](this.backdrop.slide, slide, transitionParts[1]);
 
-		const transitionParts = this.transition.split("-");
-		var transition = new Transition[transitionParts[0]](this.backdrop.slide, slide, transitionParts[1]);
-
-		transition.reverse = slide.idx < this.backdrop.slide.idx;
-		transition.options = this.transitionOptions;
-		transition.duration = this.transitionDuration;
-		transition.go().then(data => {
-			this.backdrop.slide = slide;
-		});
+			transition.reverse = slide.idx < this.backdrop.slide.idx;
+			transition.options = this.transitionOptions;
+			transition.duration = this.transitionDuration;
+			await transition.go();
+		} else {
+			if (this.backdrop.slide) {
+				this.backdrop.slide.html.remove();
+			}
+			this.backdrop.appendChild(slide.html);
+		}
+		this.backdrop.slide = slide;
+		this.backdrop.focus();
 	}
 	static async cancelAnimations() {
 		Object.values(this.animations).forEach(animation => animation.cancel());
@@ -517,19 +671,6 @@ export default class Slide extends Plugin {
 			}
 		}
 	}
-	static html_contactsheet() {
-		if (this.contactsheet) return this.contactsheet;
-		var contactsheet = document.createElement("section");
-		contactsheet.classList.add("th-contactsheet");
-		var slide = this.first;
-		while (slide) {
-			contactsheet.appendChild(slide.html.cloneNode(true));
-			slide = slide.next;
-		}
-		contactsheet.obj = this;
-		this.contactsheet = contactsheet;
-		return this.contactsheet;
-	}
 	static async prepare() {
 		await super.prepare();
 		document.body.querySelectorAll("script").forEach(script => {
@@ -558,12 +699,6 @@ export default class Slide extends Plugin {
 			ptr = next;
 		}
 		this.first = slide.first;
-		// document.body.insertBefore(this.html_contactsheet(), document.body.firstChild);
-		// slide = slide.first;
-		// while(slide) {
-		//     document.body.appendChild(slide.html);
-		//     slide = slide.next;
-		// }
 		return this.slides;
 	}
 	processStyle(style) {
@@ -684,10 +819,7 @@ export default class Slide extends Plugin {
 			}
 			body.style.removeProperty("overflow");
 		} else {
-			zoom = Math.min(
-				relativeRect.width / absoluteRect.width,
-				relativeRect.height / absoluteRect.height
-			);
+			zoom = Math.min(relativeRect.width / absoluteRect.width, relativeRect.height / absoluteRect.height);
 		}
 		//TOFIX Some zoom is miscalculated. This line makes sure contents fits in.
 		zoom -= 0.02;
@@ -732,21 +864,23 @@ export default class Slide extends Plugin {
 			sessionStorage.slideshow = "true";
 			document.body.classList.add("th-slideshow");
 			this.backdrop = document.body.appendChild(this.html_backdrop());
-			this.backdrop.slide = slide;
-			this.backdrop.appendChild(this.backdrop.slide.html);
-			setTimeout(() => {
-				this.backdrop.focus();
-				return;
-			}, 10);
+			this.showSlide(slide, false);
+			// setTimeout(() => {
+			// 	this.backdrop.focus();
+			// 	return;
+			// }, 10);
 		} else {
 			return this.stopSlideshow();
 		}
 		return this;
 	}
+	scrollTo(offset = 0) {
+		var pos = this.heading.offsetTop;
+		window.scroll(0, pos + offset);
+	}
 	static stopSlideshow() {
 		document.body.classList.remove("th-slideshow");
-		var pos = this.backdrop.slide.heading.offsetTop;
-		window.scroll(0, pos - 10);
+		this.backdrop.slide.scrollTo();
 		this.backdrop.remove();
 		delete this.backdrop;
 		delete sessionStorage.currentSlide;
