@@ -197,6 +197,9 @@ export default class Slide extends Plugin {
 		menu.classList.add("th-option-menu");
 		var contactsheet = options.appendChild(document.createElement("span"));
 		contactsheet.classList.add("th-option-contactsheet");
+		contactsheet.addEventListener("click", e => {
+			this.showContactsheet();
+		})
 		var slideshow = options.appendChild(document.createElement("span"));
 		slideshow.classList.add("th-option-slideshow");
 		var continous = options.appendChild(document.createElement("span"));
@@ -210,16 +213,60 @@ export default class Slide extends Plugin {
 		});
 		return options;
 	}
+	static showContactsheet() {
+		var contactsheet = document.body.appendChild(this.html_contactsheet());
+		contactsheet.focus();
+	}
+	static html_contactsheet() {
+		if (this._contactsheet) return this._contactsheet;
+		const contactsheet = document.createElement("div");
+		contactsheet.id = "th-contactsheet";
+		const grid = contactsheet.appendChild(document.createElement("div"));
+		grid.classList.add("th-contactsheet-grid");
+		this.slides.forEach((slide, i) => {
+			const thumbnail = grid.appendChild(document.createElement("div"));
+			thumbnail.classList.add("th-contactsheet-thumbnail");
+			thumbnail.appendChild(slide.html.cloneNode(true));
+			if (slide.heading.tagName === "H1") {
+				thumbnail.classList.add("th-contactsheet-group");
+			}
+			const number = thumbnail.appendChild(document.createElement("div"));
+			number.classList.add("th-contactsheet-number");
+			number.innerHTML = i + 1;
+			const caption = thumbnail.appendChild(document.createElement("div"));
+			caption.classList.add("th-contactsheet-caption");
+			const title = caption.appendChild(document.createElement("div"));
+			title.classList.add("th-contactsheet-title");
+			title.innerHTML = slide.heading.innerText;
+			thumbnail.addEventListener("click", e => {
+				this.showSlide(slide);
+				contactsheet.remove();
+			});
+		});
+		contactsheet.tabIndex = "0";
+		contactsheet.addEventListener("keydown", e => {
+			e.preventDefault();
+			e.stopPropagation();
+			if (e.key === "Control" || e.key === "Alt" || e.key === "Shift" || e.key === "Meta") return;
+			var prefix = "";
+			if (e.altKey) prefix += "Alt-";
+			if (e.ctrlKey || e.metaKey) prefix += "Ctrl-";
+			if (e.shiftKey) prefix += "Shift-";
+			var key = prefix + e.key;
+			// var code = prefix + e.code;
+			console.log(key);
+			switch (key) {
+				case "Escape":
+					console.log(123);
+					break;
+			}
+		});
+		this._contactsheet = contactsheet;
+		return contactsheet;
+	}
 	static addKeydownEvents(backdrop) {
 		backdrop.addEventListener("keydown", e => {
-			if (
-				e.key === "Control" ||
-				e.key === "Alt" ||
-				e.key === "Shift" ||
-				e.key === "Meta"
-			) {
-				return;
-			}
+			if (e.key === "Control" || e.key === "Alt" || e.key === "Shift" || e.key === "Meta") return;
 			var prefix = "";
 			if (e.altKey) prefix += "Alt-";
 			if (e.ctrlKey || e.metaKey) prefix += "Ctrl-";
@@ -254,6 +301,13 @@ export default class Slide extends Plugin {
 					} else {
 						this.stopSlideshow();
 					}
+					break;
+				case "#":
+					console.log();
+					debugger;
+					e.preventDefault();
+					this.showContactsheet();
+					break;
 			}
 			e.stopPropagation();
 		});
@@ -320,23 +374,29 @@ export default class Slide extends Plugin {
 			start = null;
 		});
 	}
-	static async showSlide(slide) {
+	static async showSlide(slide, transition = true) {
 		if (slide === this.backdrop.slide) return;
 		sessionStorage.currentSlide = slide.id;
 		Slide.timestampSlide = new Date().getTime();
 		if (!slide.zoomRatio) {
 			slide.ajustZoom();
 		}
+		if (transition && this.backdrop) {
+			const transitionParts = this.transition.split("-");
+			var transition = new Transition[transitionParts[0]](this.backdrop.slide, slide, transitionParts[1]);
 
-		const transitionParts = this.transition.split("-");
-		var transition = new Transition[transitionParts[0]](this.backdrop.slide, slide, transitionParts[1]);
-
-		transition.reverse = slide.idx < this.backdrop.slide.idx;
-		transition.options = this.transitionOptions;
-		transition.duration = this.transitionDuration;
-		transition.go().then(data => {
-			this.backdrop.slide = slide;
-		});
+			transition.reverse = slide.idx < this.backdrop.slide.idx;
+			transition.options = this.transitionOptions;
+			transition.duration = this.transitionDuration;
+			await transition.go();
+		} else {
+			if (this.backdrop.slide) {
+				this.backdrop.slide.html.remove();
+			}
+			this.backdrop.appendChild(slide.html);
+		}
+		this.backdrop.slide = slide;
+		this.backdrop.focus();
 	}
 	static async cancelAnimations() {
 		Object.values(this.animations).forEach(animation => animation.cancel());
@@ -517,19 +577,6 @@ export default class Slide extends Plugin {
 			}
 		}
 	}
-	static html_contactsheet() {
-		if (this.contactsheet) return this.contactsheet;
-		var contactsheet = document.createElement("section");
-		contactsheet.classList.add("th-contactsheet");
-		var slide = this.first;
-		while (slide) {
-			contactsheet.appendChild(slide.html.cloneNode(true));
-			slide = slide.next;
-		}
-		contactsheet.obj = this;
-		this.contactsheet = contactsheet;
-		return this.contactsheet;
-	}
 	static async prepare() {
 		await super.prepare();
 		document.body.querySelectorAll("script").forEach(script => {
@@ -558,12 +605,6 @@ export default class Slide extends Plugin {
 			ptr = next;
 		}
 		this.first = slide.first;
-		// document.body.insertBefore(this.html_contactsheet(), document.body.firstChild);
-		// slide = slide.first;
-		// while(slide) {
-		//     document.body.appendChild(slide.html);
-		//     slide = slide.next;
-		// }
 		return this.slides;
 	}
 	processStyle(style) {
@@ -684,10 +725,7 @@ export default class Slide extends Plugin {
 			}
 			body.style.removeProperty("overflow");
 		} else {
-			zoom = Math.min(
-				relativeRect.width / absoluteRect.width,
-				relativeRect.height / absoluteRect.height
-			);
+			zoom = Math.min(relativeRect.width / absoluteRect.width, relativeRect.height / absoluteRect.height);
 		}
 		//TOFIX Some zoom is miscalculated. This line makes sure contents fits in.
 		zoom -= 0.02;
@@ -732,21 +770,23 @@ export default class Slide extends Plugin {
 			sessionStorage.slideshow = "true";
 			document.body.classList.add("th-slideshow");
 			this.backdrop = document.body.appendChild(this.html_backdrop());
-			this.backdrop.slide = slide;
-			this.backdrop.appendChild(this.backdrop.slide.html);
-			setTimeout(() => {
-				this.backdrop.focus();
-				return;
-			}, 10);
+			this.showSlide(slide, false);
+			// setTimeout(() => {
+			// 	this.backdrop.focus();
+			// 	return;
+			// }, 10);
 		} else {
 			return this.stopSlideshow();
 		}
 		return this;
 	}
+	scrollTo(offset = 0) {
+		var pos = this.heading.offsetTop;
+		window.scroll(0, pos + offset);
+	}
 	static stopSlideshow() {
 		document.body.classList.remove("th-slideshow");
-		var pos = this.backdrop.slide.heading.offsetTop;
-		window.scroll(0, pos - 10);
+		this.backdrop.slide.scrollTo();
 		this.backdrop.remove();
 		delete this.backdrop;
 		delete sessionStorage.currentSlide;
