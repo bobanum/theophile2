@@ -21,7 +21,7 @@
 
 .th-toc-pin #th-toc .th-toc-btn-pin {
   opacity: 1;
-  color: #fF0;
+  color: #ff0;
   text-shadow: none;
 }
 
@@ -117,7 +117,7 @@
   position: absolute;
   left: 100%;
   font-size: 1rem;
-  line-height: .9em;
+  line-height: 0.9em;
   opacity: 0.5;
   top: 0.5rem;
   background-color: #fff4;
@@ -167,7 +167,7 @@
 }
 
 #th-toc li > div {
-  padding: .25em 0;
+  padding: 0.25em 0;
 }
 
 #th-toc li.th-toc-current > div,

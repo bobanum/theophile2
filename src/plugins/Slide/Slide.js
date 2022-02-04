@@ -128,14 +128,14 @@ export default class Slide extends Plugin {
 						e2.objectTarget = element;
 						body.dispatchEvent(e2);
 					});
-				})
-			})
-		})
+				});
+			});
+		});
 		return body;
 	}
 	applyStyles(container) {
 		container.querySelectorAll("[data-th-slide-style]").forEach(element => {
-			this.parseElementStyle(element)
+			this.parseElementStyle(element);
 		});
 		return this;
 	}
@@ -157,7 +157,7 @@ export default class Slide extends Plugin {
 			this.addTouchEvents(backdrop);
 		}
 		const config = { attributes: false, childList: true, subtree: false };
-		const callback = (mutationsList, observer) => {
+		const callback = (mutationsList, _observer) => {
 			const mutations = mutationsList.filter(mutation => mutation.addedNodes.length > 0);
 			var slides = mutations.reduce((compil, mutation) => {
 				compil.push(...Array.from(mutation.addedNodes).filter(node => node.matches(".th-slide")));
@@ -177,16 +177,16 @@ export default class Slide extends Plugin {
 		navigation.classList.add("th-slide-navigation");
 		const previous = navigation.appendChild(document.createElement("div"));
 		previous.classList.add("th-slide-previous");
-		previous.addEventListener("click", e => this.showPrevious());
+		previous.addEventListener("click", _e => this.showPrevious());
 		const next = navigation.appendChild(document.createElement("div"));
 		next.classList.add("th-slide-next");
-		next.addEventListener("click", e => this.showNext());
+		next.addEventListener("click", _e => this.showNext());
 		const first = navigation.appendChild(document.createElement("div"));
 		first.classList.add("th-slide-first");
-		first.addEventListener("click", e => this.showFirst());
+		first.addEventListener("click", _e => this.showFirst());
 		const last = navigation.appendChild(document.createElement("div"));
 		last.classList.add("th-slide-last");
-		last.addEventListener("click", e => this.showLast());
+		last.addEventListener("click", _e => this.showLast());
 		navigation.appendChild(this.html_options());
 		return navigation;
 	}
@@ -197,9 +197,9 @@ export default class Slide extends Plugin {
 		menu.classList.add("th-option-menu");
 		var contactsheet = options.appendChild(document.createElement("span"));
 		contactsheet.classList.add("th-option-contactsheet");
-		contactsheet.addEventListener("click", e => {
+		contactsheet.addEventListener("click", _e => {
 			this.showContactsheet();
-		})
+		});
 		var slideshow = options.appendChild(document.createElement("span"));
 		slideshow.classList.add("th-option-slideshow");
 		var continous = options.appendChild(document.createElement("span"));
@@ -208,7 +208,7 @@ export default class Slide extends Plugin {
 		print.classList.add("th-option-print");
 		var stop = options.appendChild(document.createElement("span"));
 		stop.classList.add("th-option-stopslideshow");
-		stop.addEventListener("click", e => {
+		stop.addEventListener("click", _e => {
 			this.stopSlideshow();
 		});
 		return options;
@@ -248,7 +248,7 @@ export default class Slide extends Plugin {
 		});
 		const btnExit = contactsheet.appendChild(document.createElement("span"));
 		btnExit.classList.add("th-contactsheet-exit-btn");
-		btnExit.addEventListener("click", e => {
+		btnExit.addEventListener("click", _e => {
 			this.hideContactsheet();
 		});
 		const container = contactsheet.appendChild(document.createElement("div"));
@@ -271,18 +271,19 @@ export default class Slide extends Plugin {
 			// var code = prefix + e.code;
 			var stop = false;
 			switch (key) {
-				case "ArrowLeft": case "Shift-Tab":
+				case "ArrowLeft": case "Shift-Tab": {
 					stop = true;
-					var previous = this.contactsheetCurrent.previous;
+					let previous = this.contactsheetCurrent.previous;
 					if (previous) {
 						this.highlightThumbnail(previous);
 					}
 					break;
-				case "ArrowDown":
+				}
+				case "ArrowDown": {
 					stop = true;
 					this.contactsheetCurrent.contactsheetThumbnail.classList.remove("th-contactsheet-current");
-					var pos = Math.round(this.contactsheetCurrent.contactsheetThumbnail.getBoundingClientRect().x);
-					var next = this.contactsheetCurrent;
+					let pos = Math.round(this.contactsheetCurrent.contactsheetThumbnail.getBoundingClientRect().x);
+					let next = this.contactsheetCurrent;
 					while (next.next) {
 						next = next.next;
 						if (pos === Math.round(next.contactsheetThumbnail.getBoundingClientRect().x)) {
@@ -291,11 +292,12 @@ export default class Slide extends Plugin {
 					}
 					this.highlightThumbnail(next);
 					break;
-				case "ArrowUp":
+				}
+				case "ArrowUp": {
 					stop = true;
 					this.contactsheetCurrent.contactsheetThumbnail.classList.remove("th-contactsheet-current");
-					var pos = Math.round(this.contactsheetCurrent.contactsheetThumbnail.getBoundingClientRect().x);
-					var previous = this.contactsheetCurrent;
+					let pos = Math.round(this.contactsheetCurrent.contactsheetThumbnail.getBoundingClientRect().x);
+					let previous = this.contactsheetCurrent;
 					while (previous.previous) {
 						previous = previous.previous;
 						if (pos === Math.round(previous.contactsheetThumbnail.getBoundingClientRect().x)) {
@@ -304,13 +306,15 @@ export default class Slide extends Plugin {
 					}
 					this.highlightThumbnail(previous);
 					break;
-				case "ArrowRight": case "Tab":
+				}
+				case "ArrowRight": case "Tab": {
 					stop = true;
-					var next = this.contactsheetCurrent.next;
+					let next = this.contactsheetCurrent.next;
 					if (next) {
 						this.highlightThumbnail(next);
 					}
 					break;
+				}
 				case "Home": {
 					stop = true;
 					this.highlightThumbnail(this.slides[0]);
@@ -321,14 +325,16 @@ export default class Slide extends Plugin {
 					this.highlightThumbnail(this.slides.slice(-1)[0]);
 					break;
 				}
-				case "Enter":
+				case "Enter": {
 					stop = true;
 					this.hideContactsheet(this.contactsheetCurrent);
 					break;
-				case "Escape": case "#":
+				}
+				case "Escape": case "#": {
 					stop = true;
 					this.hideContactsheet(this.contactsheetCurrent);
 					break;
+				}
 			}
 			if (stop) {
 				e.preventDefault();
@@ -354,7 +360,7 @@ export default class Slide extends Plugin {
 		const title = caption.appendChild(document.createElement("div"));
 		title.classList.add("th-contactsheet-title");
 		title.innerHTML = this.heading.innerText;
-		thumbnail.addEventListener("click", e => {
+		thumbnail.addEventListener("click", _e => {
 			Slide.hideContactsheet(this);
 		});
 		this._contactsheetThumbnail = thumbnail;
@@ -452,18 +458,18 @@ export default class Slide extends Plugin {
 			var w = Math.abs(point.x - start.x);
 			var h = Math.abs(point.y - start.y);
 			if (w / h < this.ratio) {	// Vertical
-				feedback.style.width = `0px`;
+				feedback.style.width = "0px";
 				feedback.style.height = `${h}px`;
 				feedback.style.left = `${start.x}px`;
 				feedback.style.top = `${(Math.min(point.y, start.y))}px`;
 			} else {
-				feedback.style.height = `0px`;
+				feedback.style.height = "0px";
 				feedback.style.width = `${w}px`;
 				feedback.style.top = `${start.y}px`;
 				feedback.style.left = `${(Math.min(point.x, start.x))}px`;
 			}
 		});
-		backdrop.addEventListener("touchcancel", e => {
+		backdrop.addEventListener("touchcancel", _e => {
 			feedback.remove();
 			start = null;
 		});
@@ -477,12 +483,12 @@ export default class Slide extends Plugin {
 		}
 		if (transition && this.backdrop) {
 			const transitionParts = this.transition.split("-");
-			var transition = new Transition[transitionParts[0]](this.backdrop.slide, slide, transitionParts[1]);
+			let objTransition = new Transition[transitionParts[0]](this.backdrop.slide, slide, transitionParts[1]);
 
-			transition.reverse = slide.idx < this.backdrop.slide.idx;
-			transition.options = this.transitionOptions;
-			transition.duration = this.transitionDuration;
-			await transition.go();
+			objTransition.reverse = slide.idx < this.backdrop.slide.idx;
+			objTransition.options = this.transitionOptions;
+			objTransition.duration = this.transitionDuration;
+			await objTransition.go();
 		} else {
 			if (this.backdrop.slide) {
 				this.backdrop.slide.html.remove();
@@ -552,7 +558,7 @@ export default class Slide extends Plugin {
 		const footer = document.createElement("footer");
 		var copyright = footer.appendChild(document.createElement("div"));
 		copyright.innerHTML = Slide.footerText;
-		var slideNumber = footer.appendChild(this.html_slideNumber());
+		footer.appendChild(this.html_slideNumber());
 		return footer;
 	}
 	static get html_status() {
@@ -702,7 +708,7 @@ export default class Slide extends Plugin {
 		return this.slides;
 	}
 	processStyle(style) {
-		var cssText = this.processRules(style.sheet.cssRules)
+		var cssText = this.processRules(style.sheet.cssRules);
 		if (style.media) {
 			cssText = `@media ${style.media} {${cssText}}`;
 		}
@@ -722,7 +728,7 @@ export default class Slide extends Plugin {
 				rule = rule.join("{");
 				return rule;
 			} else {
-				console.warn(rule.constructor.name + ' not implemented');
+				console.warn(rule.constructor.name + " not implemented");
 				return rule.cssText;
 			}
 		});
@@ -730,7 +736,6 @@ export default class Slide extends Plugin {
 		return result;
 	}
 	processSelector(selector) {
-		var resultat = [];
 		selector = selector.selectorText || selector;
 		var selectors = selector.trim().split(/\s*,\s*/);
 		var domain = "#slide_" + this.heading.id;
@@ -802,7 +807,7 @@ export default class Slide extends Plugin {
 					if (count++ > 10) break;
 				}
 			} else {
-				count = 0
+				count = 0;
 				while (body.scrollHeight > relativeRect.height) {
 					//TOFIX Makes an infinite loop when Theophile is on github.io, but not local. Could be caused by unscalable contents.
 					zoom -= 0.05;
@@ -835,9 +840,9 @@ export default class Slide extends Plugin {
 			this.zoomRatio = Math.max(1, zoom);
 		} else if (this.zoom === "reduce") {
 			this.zoomRatio = Math.min(1, zoom);
-		} else if (parts = this.zoom.trim().match(/^[0-9\.]+$/)) {
+		} else if ((parts = this.zoom.trim().match(/^[0-9.]+$/))) {
 			this.zoomRatio = parseFloat(parts) || 1;
-		} else if (parts = this.zoom.match(/^\[([0-9\.]+),\s*([0-9\.]+)\]$/)) {
+		} else if ((parts = this.zoom.match(/^\[([0-9.]+),\s*([0-9.]+)\]$/))) {
 			let min = parseFloat(parts[1]) || 1;
 			let max = parseFloat(parts[2]) || 1;
 			if (min > max) {

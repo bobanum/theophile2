@@ -8,7 +8,7 @@ export default class Properties {
 		Object.defineProperties(this, {
 			"footer-text": {
 				get: () => {
-					return this.footerText
+					return this.footerText;
 				},
 				set: value => {
 					this.footerText = value;

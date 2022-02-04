@@ -9,7 +9,7 @@ export default class Reference extends Plugin {
 	}
 	static async processGroup(group) {
 		var refs = Array.from(group.querySelectorAll("a"));
-		const data = await Promise.all(
+		await Promise.all(
 			refs.map(ref => {
 				return this.processRef(ref);
 			})
@@ -24,7 +24,7 @@ export default class Reference extends Plugin {
 		const doc = await this.getRefDocument(href);
 		var id = href.split("#")[1];
 		if (id) {
-			debugger; //TODO
+			console.error("Todo"); //TODO
 		} else {
 			doc.head.querySelectorAll("style,link").forEach(element => {
 				ref.ownerDocument.head.appendChild(element);

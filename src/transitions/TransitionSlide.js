@@ -44,18 +44,14 @@ export default class TransitionSlide extends Transition {
 			: "100%";
 	}
 	end(prop) {
-		return this.reverse ^ (this.mode === "stack")
-			? this.box[prop] + "px"
-			: "100%";
+		return this.reverse ^ (this.mode === "stack") ? this.box[prop] + "px" : "100%";
 	}
 	cancel() {
 		this.moving.style.transition = "none";
 	}
 	prepare(resolve) {
 		super.prepare();
-		this.moving = !(this.reverse ^ (this.mode === "stack"))
-			? this.original
-			: this.replacement;
+		this.moving = !(this.reverse ^ (this.mode === "stack")) ? this.original : this.replacement;
 		this.moving.style.position = "absolute";
 		this.moving.style.zIndex = "100";
 		this.moving.style.transitionDuration = this.duration + "ms";

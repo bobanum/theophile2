@@ -131,7 +131,7 @@ export default class Template extends Plugin {
 	static processIframe(iframe) {
 		if (!iframe.src) {
 			var src = `data:text/html,<!DOCTYPE html><meta charset="UTF-8"><html><body>${iframe.textContent.replace(/#/g, "%23")}</body></html>`;
-			iframe.setAttribute('src', src);
+			iframe.setAttribute("src", src);
 			iframe.setAttribute("scrolling", "no");
 			iframe.style.overflow = "hidden";
 		}
