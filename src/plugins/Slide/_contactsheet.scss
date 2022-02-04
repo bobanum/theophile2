@@ -1,0 +1,68 @@
+#th-contactsheet {
+    position: absolute;
+    top: 1em;
+    right: 1em;
+    bottom: 1em;
+    left: 1em;
+    padding: 1em;
+    border-radius: 1em;
+    border: 2px solid #222;
+    box-shadow: inset 2px 2px 4px black;
+    background-color: #303030;
+    background-image: repeating-linear-gradient(-45deg, transparent, transparent .25em, #333 .25em, #333 .5em);
+    div.th-contactsheet-grid {
+        overflow-y: auto;
+        display: grid;
+        gap: .5em 1ch;
+        grid-template-columns: repeat(auto-fill, 169px);
+        justify-content: space-around;
+        height: 100%;
+    }
+    
+    div.th-contactsheet-thumbnail {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        position: relative;
+    }
+
+    div.th-contactsheet-caption {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 1ch;
+        font-size: 12px;
+    }
+
+    div.th-contactsheet-number {
+        display: flex;
+        align-items: end;
+        justify-content: center;
+        grid-template-columns: 1fr auto;
+        gap: 1ch;
+        font-size: 12px;
+        top: 0;
+        right: 0;
+        position: absolute;
+        background-color: yellow;
+        width: 4ch;
+        border-bottom-left-radius: .5em;
+        border-bottom-right-radius: .5em;
+        color: black;
+        box-shadow: 0 1px 1px black;
+        font-weight: bold;
+        line-height: 1;
+        height: 2em;
+        padding-bottom: 0.1em;
+    }
+
+    .th-slide {
+        --font-size: 5px;
+        pointer-events: none;
+    }
+    .th-slide-body {
+        overflow: hidden;
+    }
+    .th-contactsheet-group {
+        grid-column: 1;
+    }
+}

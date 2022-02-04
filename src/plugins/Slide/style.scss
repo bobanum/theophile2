@@ -3,7 +3,7 @@
 	--th-slide-nlines: 18;
 }
 .th-slideshow {
-	> *:not(.th-slide-backdrop):not(.cadre) {
+	> *:not(.th-slide-backdrop):not(#th-contactsheet) {
 		display: none !important;
 	}
 	> .th-slide-backdrop {
@@ -296,3 +296,4 @@
 	box-shadow: inset 0 0 var(--size) #fff5;
 	mix-blend-mode: exclusion;
 }
+@import "contactsheet";
