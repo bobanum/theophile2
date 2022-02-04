@@ -9,6 +9,8 @@
         position: sticky;
         order: -1;
         align-self: flex-start;
+        left: auto !important;
+
         .th-toc-btn-pin {
             opacity: 1;
             color: #fF0;
