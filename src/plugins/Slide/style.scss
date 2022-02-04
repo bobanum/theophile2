@@ -238,16 +238,6 @@
 		}
 	}
 }
-.th-contactsheet {
-	--font-size: 5pt;
-	font-size: 5pt;
-	display: grid;
-	gap: 1em;
-	grid-template-columns: repeat(auto-fit, minmax(calc(1em * var(--th-slide-nlines) * var(--th-slide-ratio)), 1fr));
-	& ~ * {
-		display: none;
-	}
-}
 @mixin icon-after {
 	display: flex;
 	align-items: center;

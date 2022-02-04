@@ -336,20 +336,6 @@
   content: "menu";
 }
 
-.th-contactsheet {
-  --font-size: 5pt;
-  font-size: 5pt;
-  display: -ms-grid;
-  display: grid;
-  gap: 1em;
-  -ms-grid-columns: (minmax(calc(1em * var(--th-slide-nlines) * var(--th-slide-ratio)), 1fr))[auto-fit];
-      grid-template-columns: repeat(auto-fit, minmax(calc(1em * var(--th-slide-nlines) * var(--th-slide-ratio)), 1fr));
-}
-
-.th-contactsheet ~ * {
-  display: none;
-}
-
 .th-slide-number {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -441,23 +427,49 @@
   mix-blend-mode: exclusion;
 }
 
+:root.th-contactsheet .th-slide-navigation {
+  display: none;
+}
+
 #th-contactsheet {
   position: absolute;
-  top: 1em;
-  right: 1em;
-  bottom: 1em;
-  left: 1em;
+  background-color: #ff03;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: -ms-grid;
+  display: grid;
   padding: 1em;
+  -ms-grid-columns: 100%;
+      grid-template-columns: 100%;
+  -ms-grid-rows: 100%;
+      grid-template-rows: 100%;
+  -ms-flex-line-pack: stretch;
+      align-content: stretch;
+  -webkit-box-pack: stretch;
+      -ms-flex-pack: stretch;
+          justify-content: stretch;
+}
+
+#th-contactsheet > .th-contactsheet-container {
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  padding: .5em;
   border-radius: 1em;
   border: 2px solid #222;
   -webkit-box-shadow: inset 2px 2px 4px black;
           box-shadow: inset 2px 2px 4px black;
   background-color: #303030;
-  background-image: repeating-linear-gradient(-45deg, transparent, transparent 0.25em, #333 0.25em, #333 0.5em);
+  background-image: repeating-linear-gradient(-45deg, transparent, transparent 0.25em, #0003 0.25em, #0003 0.5em);
 }
 
 #th-contactsheet div.th-contactsheet-grid {
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
   overflow-y: auto;
+  outline: none;
+  scroll-behavior: smooth;
   display: -ms-grid;
   display: grid;
   gap: .5em 1ch;
@@ -466,6 +478,7 @@
   -ms-flex-pack: distribute;
       justify-content: space-around;
   height: 100%;
+  padding: .5em .5em;
 }
 
 #th-contactsheet div.th-contactsheet-thumbnail {
@@ -533,5 +546,41 @@
 #th-contactsheet .th-contactsheet-group {
   -ms-grid-column: 1;
   grid-column: 1;
+}
+
+#th-contactsheet .th-contactsheet-current {
+  outline: solid 3px yellow;
+  -webkit-transform: scale(1.1);
+          transform: scale(1.1);
+}
+
+#th-contactsheet .th-contactsheet-exit-btn {
+  position: absolute;
+  background-color: white;
+  color: black;
+  top: 0.75em;
+  right: 0.75em;
+  width: 1em;
+  height: 1em;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  border-radius: 50%;
+  opacity: 0.5;
+}
+
+#th-contactsheet .th-contactsheet-exit-btn:hover {
+  opacity: 1;
+}
+
+#th-contactsheet .th-contactsheet-exit-btn::before {
+  content: "close";
+  font-family: 'Material Icons';
 }
 /*# sourceMappingURL=style.css.map */

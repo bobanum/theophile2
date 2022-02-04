@@ -1,22 +1,41 @@
+:root.th-contactsheet {
+    .th-slide-navigation {
+        display: none;
+    }
+}
 #th-contactsheet {
     position: absolute;
-    top: 1em;
-    right: 1em;
-    bottom: 1em;
-    left: 1em;
+    background-color: #ff03;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: grid;
     padding: 1em;
-    border-radius: 1em;
-    border: 2px solid #222;
-    box-shadow: inset 2px 2px 4px black;
-    background-color: #303030;
-    background-image: repeating-linear-gradient(-45deg, transparent, transparent .25em, #333 .25em, #333 .5em);
+    grid-template-columns: 100%;
+    grid-template-rows: 100%;
+    align-content: stretch;
+    justify-content: stretch;
+    > .th-contactsheet-container {
+        box-sizing: border-box  ;
+        padding: .5em;
+        border-radius: 1em;
+        border: 2px solid #222;
+        box-shadow: inset 2px 2px 4px black;
+        background-color: #303030;
+        background-image: repeating-linear-gradient(-45deg, transparent, transparent .25em, #0003 .25em, #0003 .5em);
+    }
     div.th-contactsheet-grid {
+        box-sizing: border-box;
         overflow-y: auto;
+        outline: none;
+        scroll-behavior: smooth;
         display: grid;
         gap: .5em 1ch;
         grid-template-columns: repeat(auto-fill, 169px);
         justify-content: space-around;
         height: 100%;
+        padding: .5em .5em;
     }
     
     div.th-contactsheet-thumbnail {
@@ -64,5 +83,31 @@
     }
     .th-contactsheet-group {
         grid-column: 1;
+    }
+    .th-contactsheet-current {
+        outline: solid 3px yellow;
+        transform: scale(1.1);
+        // box-shadow: 0 0 0 3px yellow;
+    }
+    .th-contactsheet-exit-btn {
+        position: absolute;
+        background-color: white;
+        color: black;
+        top: 0.75em;
+        right: 0.75em;
+        width: 1em;
+        height: 1em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        opacity: 0.5;
+        &:hover {
+            opacity: 1;
+        }
+        &::before {
+            content: "close";
+            font-family: 'Material Icons';
+        }
     }
 }

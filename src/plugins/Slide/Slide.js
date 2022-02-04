@@ -214,39 +214,54 @@ export default class Slide extends Plugin {
 		return options;
 	}
 	static showContactsheet() {
+		document.documentElement.classList.add("th-contactsheet");
 		var contactsheet = document.body.appendChild(this.html_contactsheet());
-		contactsheet.focus();
+		this.highlightThumbnail(this.backdrop.slide);
+		contactsheet.querySelector(".th-contactsheet-grid").focus();
+	}
+	static hideContactsheet(showSlide) {
+		document.documentElement.classList.remove("th-contactsheet");
+		document.getElementById("th-contactsheet").remove();
+		if (showSlide) {
+			this.showSlide(showSlide);
+		}
+		this.backdrop.focus();
+	}
+	static highlightThumbnail(slide) {
+		document.querySelectorAll(".th-contactsheet-current").forEach(thumbnail => {
+			thumbnail.classList.remove("th-contactsheet-current");
+		});
+		slide.contactsheetThumbnail.classList.add("th-contactsheet-current");
+		setTimeout(() => {
+			slide.contactsheetThumbnail.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
+		}, 10);
+		this.contactsheetCurrent = slide;
 	}
 	static html_contactsheet() {
 		if (this._contactsheet) return this._contactsheet;
 		const contactsheet = document.createElement("div");
 		contactsheet.id = "th-contactsheet";
-		const grid = contactsheet.appendChild(document.createElement("div"));
-		grid.classList.add("th-contactsheet-grid");
-		this.slides.forEach((slide, i) => {
-			const thumbnail = grid.appendChild(document.createElement("div"));
-			thumbnail.classList.add("th-contactsheet-thumbnail");
-			thumbnail.appendChild(slide.html.cloneNode(true));
-			if (slide.heading.tagName === "H1") {
-				thumbnail.classList.add("th-contactsheet-group");
+		contactsheet.addEventListener("click", e => {
+			if (e.target === e.currentTarget) {
+				this.hideContactsheet();
 			}
-			const number = thumbnail.appendChild(document.createElement("div"));
-			number.classList.add("th-contactsheet-number");
-			number.innerHTML = i + 1;
-			const caption = thumbnail.appendChild(document.createElement("div"));
-			caption.classList.add("th-contactsheet-caption");
-			const title = caption.appendChild(document.createElement("div"));
-			title.classList.add("th-contactsheet-title");
-			title.innerHTML = slide.heading.innerText;
-			thumbnail.addEventListener("click", e => {
-				this.showSlide(slide);
-				contactsheet.remove();
-			});
 		});
-		contactsheet.tabIndex = "0";
-		contactsheet.addEventListener("keydown", e => {
-			e.preventDefault();
-			e.stopPropagation();
+		const btnExit = contactsheet.appendChild(document.createElement("span"));
+		btnExit.classList.add("th-contactsheet-exit-btn");
+		btnExit.addEventListener("click", e => {
+			this.hideContactsheet();
+		});
+		const container = contactsheet.appendChild(document.createElement("div"));
+		container.classList.add("th-contactsheet-container");
+		const grid = container.appendChild(document.createElement("div"));
+		grid.classList.add("th-contactsheet-grid");
+		this.slides.forEach(slide => {
+			grid.appendChild(slide.contactsheetThumbnail);
+		});
+		grid.tabIndex = "0";
+		grid.addEventListener("keydown", e => {
+			// e.preventDefault();
+			// e.stopPropagation();
 			if (e.key === "Control" || e.key === "Alt" || e.key === "Shift" || e.key === "Meta") return;
 			var prefix = "";
 			if (e.altKey) prefix += "Alt-";
@@ -254,15 +269,96 @@ export default class Slide extends Plugin {
 			if (e.shiftKey) prefix += "Shift-";
 			var key = prefix + e.key;
 			// var code = prefix + e.code;
-			console.log(key);
+			var stop = false;
 			switch (key) {
-				case "Escape":
-					console.log(123);
+				case "ArrowLeft": case "Shift-Tab":
+					stop = true;
+					var previous = this.contactsheetCurrent.previous;
+					if (previous) {
+						this.highlightThumbnail(previous);
+					}
 					break;
+				case "ArrowDown":
+					stop = true;
+					this.contactsheetCurrent.contactsheetThumbnail.classList.remove("th-contactsheet-current");
+					var pos = Math.round(this.contactsheetCurrent.contactsheetThumbnail.getBoundingClientRect().x);
+					var next = this.contactsheetCurrent;
+					while (next.next) {
+						next = next.next;
+						if (pos === Math.round(next.contactsheetThumbnail.getBoundingClientRect().x)) {
+							break;
+						}
+					}
+					this.highlightThumbnail(next);
+					break;
+				case "ArrowUp":
+					stop = true;
+					this.contactsheetCurrent.contactsheetThumbnail.classList.remove("th-contactsheet-current");
+					var pos = Math.round(this.contactsheetCurrent.contactsheetThumbnail.getBoundingClientRect().x);
+					var previous = this.contactsheetCurrent;
+					while (previous.previous) {
+						previous = previous.previous;
+						if (pos === Math.round(previous.contactsheetThumbnail.getBoundingClientRect().x)) {
+							break;
+						}
+					}
+					this.highlightThumbnail(previous);
+					break;
+				case "ArrowRight": case "Tab":
+					stop = true;
+					var next = this.contactsheetCurrent.next;
+					if (next) {
+						this.highlightThumbnail(next);
+					}
+					break;
+				case "Home": {
+					stop = true;
+					this.highlightThumbnail(this.slides[0]);
+					break;
+				}
+				case "End": {
+					stop = true;
+					this.highlightThumbnail(this.slides.slice(-1)[0]);
+					break;
+				}
+				case "Enter":
+					stop = true;
+					this.hideContactsheet(this.contactsheetCurrent);
+					break;
+				case "Escape": case "#":
+					stop = true;
+					this.hideContactsheet(this.contactsheetCurrent);
+					break;
+			}
+			if (stop) {
+				e.preventDefault();
+				e.stopPropagation();
 			}
 		});
 		this._contactsheet = contactsheet;
 		return contactsheet;
+	}
+	get contactsheetThumbnail() {
+		if (this._contactsheetThumbnail) return this._contactsheetThumbnail;
+		const thumbnail = document.createElement("div");
+		thumbnail.classList.add("th-contactsheet-thumbnail");
+		thumbnail.appendChild(this.html.cloneNode(true));
+		if (this.heading.tagName === "H1") {
+			thumbnail.classList.add("th-contactsheet-group");
+		}
+		const number = thumbnail.appendChild(document.createElement("div"));
+		number.classList.add("th-contactsheet-number");
+		number.innerHTML = this.idx + 1;
+		const caption = thumbnail.appendChild(document.createElement("div"));
+		caption.classList.add("th-contactsheet-caption");
+		const title = caption.appendChild(document.createElement("div"));
+		title.classList.add("th-contactsheet-title");
+		title.innerHTML = this.heading.innerText;
+		thumbnail.addEventListener("click", e => {
+			Slide.hideContactsheet(this);
+		});
+		this._contactsheetThumbnail = thumbnail;
+		return thumbnail;
 	}
 	static addKeydownEvents(backdrop) {
 		backdrop.addEventListener("keydown", e => {
@@ -303,8 +399,6 @@ export default class Slide extends Plugin {
 					}
 					break;
 				case "#":
-					console.log();
-					debugger;
 					e.preventDefault();
 					this.showContactsheet();
 					break;
