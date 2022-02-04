@@ -688,12 +688,12 @@ export default class Slide extends Plugin {
 	static async process() {
 		await super.process();
 		document.documentElement.style.setProperty("--th-slide-nlines", this.nlines);
-		document.documentElement.style.setProperty("--th-slide-ratio", this.ratio);
+		document.documentElement.style.setProperty("--th-slide-ratio", Math.round(this.ratio * 1000) / 1000);
 		var style = document.head.appendChild(document.createElement("style"));
 		var innerHTML = "";
-		innerHTML += `@media (min-aspect-ratio: ${this.ratio} / 1) {.th-slideshow .th-slide {--font-size: calc(100vh / var(--th-slide-nlines));}}`;
-		innerHTML += `@media (min-aspect-ratio: ${this.ratio * 1.2} / 1) {.th-slide-navigation > .th-slide-previous, .th-slide-navigation > .th-slide-next {opacity:.5;background:none}}`;
-		innerHTML += `@media (max-aspect-ratio: ${this.ratio * 0.9} / 1) {.th-slide-navigation > .th-slide-options {opacity:1;background:none;}}`;
+		innerHTML += `@media (min-aspect-ratio: ${Math.round(this.ratio * 1000)} / 1000) {.th-slideshow .th-slide {--font-size: calc(100vh / var(--th-slide-nlines));}}`;
+		innerHTML += `@media (min-aspect-ratio: ${Math.round(this.ratio * 1200)} / 1000) {.th-slide-navigation > .th-slide-previous, .th-slide-navigation > .th-slide-next {opacity:.5;background:none}}`;
+		innerHTML += `@media (max-aspect-ratio: ${Math.round(this.ratio * 900)} / 1000) {.th-slide-navigation > .th-slide-options {opacity:1;background:none;}}`;
 		style.innerHTML = innerHTML;
 		var slide;
 		var ptr = document.body.firstChild;
