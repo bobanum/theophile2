@@ -21,7 +21,10 @@ export default class Theophile {
 		this.ready = false;
 		this.plugins = {};
 		this.config = this.loadDataSet();
-		this.cssLink();
+		const promises = [
+			this.scriptLink(),
+			this.cssLink(),
+		]
 		var plugins = ["Template", "Reference", "Slide", "Toc"];
 		if (this.config.include) {
 			plugins = this.config.include.trim().split(/\s*,\s*/).map(name => name[0].toUpperCase() + name.slice(1).toLowerCase());
@@ -30,9 +33,9 @@ export default class Theophile {
 			const exclude = this.config.exclude.trim().split(/\s*,\s*/).map(name => name[0].toUpperCase() + name.slice(1).toLowerCase());
 			plugins = plugins.filter(name => exclude.indexOf(name) < 0);
 		}
-		const promises = plugins.map(async file => {
+		promises.push(...plugins.map(async file => {
 			return this.loadPlugin(file);
-		});
+		}));
 		promises.push(this.loadConfig(this.config));
 		// Loading DataSet again to prioritize Local properties
 		promises.push(this.loadDataSet(document.documentElement, this.config));
@@ -66,6 +69,46 @@ export default class Theophile {
 		}
 		result.pathname += url;
 		return result;
+	}
+	static processCData() {
+		var html = document.body.innerHTML;
+		var count = 0;
+		const div = document.createElement("div");
+		while (true) {
+			var openingIdx = html.indexOf("&lt;[CDATA[");
+			if (openingIdx < 0) break;
+			var closingIdx = html.indexOf("]]&gt;");
+			if (closingIdx < 0) break;
+			count += 1;
+			var code = html.slice(openingIdx + 11, closingIdx);
+			div.innerText = code;
+			html = html.slice(0, openingIdx) + `<pre class="th-no-markdown">${div.innerHTML}</pre>` + html.slice(closingIdx + 6);
+		}
+		if (count === 0) return;
+		document.body.innerHTML = html;
+	}
+	static processMarkdown() {
+		// document.body.innerHTML = marked.parse('<div>ok</div># quoi \n# <span>_Marked_</span> in browser\n\nRendered by **marked**.');
+		var node, walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+		while (node = walker.nextNode()) {
+			if (["STYLE", "SCRIPT", "OBJECT", "IFRAME", "SVG"].indexOf(node.parentElement.nodeName) >= 0) continue;
+			if (node.parentElement.classList.contains("th-no-markdown")) continue;
+			const startingText0 = node.nodeValue.trimEnd().replace(/^(?:\r\n|\n\r|\r|\n)/, "").replace(/'/g, "&#39;");
+			const startingText = startingText0.replace(/"/g, "&quot;");
+			if (!startingText) continue;
+			let text = node.nodeValue.trimEnd().split(/\r\n|\n\r|\r|\n/);
+			let spaces = text.filter(line => line.length > 0).map(line => line.match(/^\s*/)[0].length);
+			let deindent = Math.min(...spaces);
+			text = text.map(line => line.slice(deindent)).join("\n");
+			text = marked.parse(text).trimEnd().replace(/(?:^<p>)|(?:<\/p>$)/g, "");
+			if (text.trim() === startingText.trim() || text.trim() === startingText0.trim() || text.trim() === "") continue;
+			var div = document.createElement("div");
+			div.innerHTML = text;
+			while (div.firstChild) {
+				node.parentElement.insertBefore(div.firstChild, node);
+			}
+			node.remove();
+		}
 	}
 	static processHeadings() {
 		var headings = Array.from(document.querySelectorAll(this.headings));
@@ -125,6 +168,8 @@ export default class Theophile {
 		return data;
 	}
 	static async process() {
+		this.processCData();
+		this.processMarkdown();
 		this.processHeadings();
 		console.trace("Theophile processed");
 		const promises = Array.from(Object.values(this.plugins), plugin =>
@@ -180,12 +225,28 @@ export default class Theophile {
 		url.pathname = path.join("/");
 		return url;
 	}
+	static scriptLink() {
+		var url = "https://cdn.jsdelivr.net/npm/marked/marked.min.js";
+		const script = document.head.appendChild(document.createElement("script"));
+		script.setAttribute("src", url);
+		return new Promise(resolve => {
+			script.addEventListener("load", e => {
+				console.trace("Script 'markedjs' loaded")
+				resolve(e);
+			});
+		});
+	}
 	static cssLink() {
 		var url = this.appURL("src/css/style.css");
 		const link = document.head.appendChild(document.createElement("link"));
 		link.setAttribute("rel", "stylesheet");
 		link.setAttribute("href", url);
-		return link;
+		return new Promise(resolve => {
+			link.addEventListener("load", e => {
+				console.trace("Style 'style.css' loaded")
+				resolve(e);
+			});
+		});
 	}
 	static async loadPlugin(name) {
 		const obj = await import(`./plugins/${name}/${name}.js`);
