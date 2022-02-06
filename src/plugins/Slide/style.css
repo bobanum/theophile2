@@ -196,10 +196,10 @@
   -ms-grid-column: 1;
   -ms-grid-column-span: 2;
   grid-column: 1 / span 2;
+  font-size: 6vmax;
 }
 
 .th-slide-navigation .th-slide-previous::before {
-  font-size: 3em;
   content: "arrow_back";
 }
 
@@ -208,22 +208,22 @@
   background-image: linear-gradient(to right, #8880, #888c);
   grid-row: 1 / -1;
   grid-column: -3 / span 2;
+  font-size: 6vmax;
 }
 
 .th-slide-navigation .th-slide-next::before {
-  font-size: 3em;
   content: "arrow_forward";
 }
 
 .th-slide-navigation .th-slide-first,
 .th-slide-navigation .th-slide-last {
   grid-row: 1 / -1;
+  font-size: 6vmax;
 }
 
 .th-slide-navigation .th-slide-first::before,
 .th-slide-navigation .th-slide-last::before {
   position: absolute;
-  font-size: 3em;
 }
 
 .th-slide-navigation .th-slide-first:not(:hover)::before,
