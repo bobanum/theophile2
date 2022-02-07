@@ -75,40 +75,47 @@ export default class Theophile {
 		var count = 0;
 		const div = document.createElement("div");
 		while (true) {
-			var openingIdx = html.indexOf("&lt;[CDATA[");
+			var openingIdx = html.indexOf("[CDATA{[");
 			if (openingIdx < 0) break;
-			var closingIdx = html.indexOf("]]&gt;");
+			var closingIdx = html.indexOf("]}]");
 			if (closingIdx < 0) break;
 			count += 1;
-			var code = html.slice(openingIdx + 11, closingIdx);
+			var code = html.slice(openingIdx + 8, closingIdx);
 			div.innerText = code;
-			html = html.slice(0, openingIdx) + `<pre class="th-no-markdown">${div.innerHTML}</pre>` + html.slice(closingIdx + 6);
+			html = html.slice(0, openingIdx) + `<pre class="th-no-markdown">${div.innerHTML}</pre>` + html.slice(closingIdx + 3);
 		}
 		if (count === 0) return;
 		document.body.innerHTML = html;
 	}
 	static processMarkdown() {
+		// console.log(document.body.innerHTML);
 		// document.body.innerHTML = marked.parse('<div>ok</div># quoi \n# <span>_Marked_</span> in browser\n\nRendered by **marked**.');
 		var node, walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+		const changed = [];
 		while (node = walker.nextNode()) {
 			if (["STYLE", "SCRIPT", "OBJECT", "IFRAME", "SVG"].indexOf(node.parentElement.nodeName) >= 0) continue;
-			if (node.parentElement.classList.contains("th-no-markdown")) continue;
+			if (node.parentNode.closest(".th-no-markdown") !== null) continue;
 			const startingText0 = node.nodeValue.trimEnd().replace(/^(?:\r\n|\n\r|\r|\n)/, "").replace(/'/g, "&#39;");
 			const startingText = startingText0.replace(/"/g, "&quot;");
+			const startingText1 = startingText.replace(/>/g, "&gt;").replace(/</g, "&lt;");
 			if (!startingText) continue;
 			let text = node.nodeValue.trimEnd().split(/\r\n|\n\r|\r|\n/);
 			let spaces = text.filter(line => line.length > 0).map(line => line.match(/^\s*/)[0].length);
 			let deindent = Math.min(...spaces);
 			text = text.map(line => line.slice(deindent)).join("\n");
 			text = marked.parse(text).trimEnd().replace(/(?:^<p>)|(?:<\/p>$)/g, "");
-			if (text.trim() === startingText.trim() || text.trim() === startingText0.trim() || text.trim() === "") continue;
+			if (text.trim() === startingText.trim() || text.trim() === startingText0.trim() || text.trim() === startingText1.trim() || text.trim() === "") continue;
+			console.log("DEBUGGING MARKDOWN : ", startingText, startingText0, startingText1, text);
 			var div = document.createElement("div");
 			div.innerHTML = text;
 			while (div.firstChild) {
 				node.parentElement.insertBefore(div.firstChild, node);
 			}
-			node.remove();
+			changed.push(node);
 		}
+		changed.forEach(node => {
+			node.remove();
+		})
 	}
 	static processHeadings() {
 		var headings = Array.from(document.querySelectorAll(this.headings));

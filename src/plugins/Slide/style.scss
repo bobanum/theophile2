@@ -13,6 +13,14 @@
 		--font-size: calc(100vw / (var(--th-slide-nlines) * var(--th-slide-ratio)));
 		font-size: var(--font-size);
 	}
+	.th-web-only {
+		display: none;
+	}
+}
+body:not(.th-slideshow) {
+	.th-slide-only {
+		display: none;
+	}
 }
 .th-slide-backdrop {
 	align-items: center;
