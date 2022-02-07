@@ -199,6 +199,7 @@ export default class Theophile {
 	}
 	static async afterMount() {
 		console.trace("Theophile after mount");
+		hljs.highlightAll();
 		const promises = Array.from(Object.values(this.plugins), plugin =>
 			plugin.afterMount()
 		);
@@ -225,28 +226,42 @@ export default class Theophile {
 		url.pathname = path.join("/");
 		return url;
 	}
-	static scriptLink() {
-		var url = "https://cdn.jsdelivr.net/npm/marked/marked.min.js";
-		const script = document.head.appendChild(document.createElement("script"));
-		script.setAttribute("src", url);
-		return new Promise(resolve => {
-			script.addEventListener("load", e => {
-				console.trace("Script 'markedjs' loaded")
-				resolve(e);
+	static async scriptLink() {
+		var urls = [
+			"https://cdn.jsdelivr.net/npm/marked/marked.min.js", 
+			"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js",
+			"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/languages/javascript.min.js",
+			"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/languages/css.min.js",
+		];
+		const data = await Promise.all(urls.map(url => {
+			const script = document.head.appendChild(document.createElement("script"));
+			script.setAttribute("src", url);
+			return new Promise(resolve => {
+				script.addEventListener("load", e => {
+					resolve(e);
+				});
 			});
-		});
+		}));
+		console.trace("Scripts loaded");
+		return data;
 	}
-	static cssLink() {
-		var url = this.appURL("src/css/style.css");
-		const link = document.head.appendChild(document.createElement("link"));
-		link.setAttribute("rel", "stylesheet");
-		link.setAttribute("href", url);
-		return new Promise(resolve => {
-			link.addEventListener("load", e => {
-				console.trace("Style 'style.css' loaded")
-				resolve(e);
+	static async cssLink() {
+		var urls = [
+			this.appURL("src/css/style.css"),
+			"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/a11y-dark.min.css",
+		];
+		const data = await Promise.all(urls.map(url => {
+			const link = document.head.appendChild(document.createElement("link"));
+			link.setAttribute("rel", "stylesheet");
+			link.setAttribute("href", url);
+			return new Promise(resolve => {
+				link.addEventListener("load", e => {
+					resolve(e);
+				});
 			});
-		});
+		}));
+		console.trace("Styles loaded");
+		return data;
 	}
 	static async loadPlugin(name) {
 		const obj = await import(`./plugins/${name}/${name}.js`);
