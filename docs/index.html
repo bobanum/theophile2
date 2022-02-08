@@ -65,8 +65,87 @@
 							┣ App.js
 							┗ README.md
 						</pre>
-						<h2 id="the_classes">The classes</h2>
-						
+						<h2 id="the_classes">The classes, ids and custom properties</h2>
+						<ul class="hierarchy">
+							<li>--th-slide-nlines</li>
+							<li>--th-slide-ratio</li>
+							<li>#th-contactsheet
+								<ul>
+									<li>.th-contactsheet (added to documentElement)</li>
+									<li>.th-contactsheet-caption</li>
+									<li>.th-contactsheet-container</li>
+									<li>.th-contactsheet-current</li>
+									<li>.th-contactsheet-exit-btn</li>
+									<li>.th-contactsheet-grid</li>
+									<li>.th-contactsheet-group</li>
+									<li>.th-contactsheet-number</li>
+									<li>.th-contactsheet-thumbnail</li>
+									<li>.th-contactsheet-title</li>
+								</ul>
+							</li>
+							<li>Content markup
+								<ul>
+									<li>.th-no-figure</li>
+									<li>.th-no-markdown</li>
+									<li>.th-only-screen</li>
+									<li>.th-references</li>
+									<li>.th-slide-full (css only for now)</li>
+									<li>.th-slide-no-header (css only for now)</li>
+									<li>.th-slide-skip</li>
+									<li>.th-slide-split</li>
+									<li>.th-slide-only</li>
+								</ul>
+							</li>
+							<li>Interface markup
+								<ul>
+									<li>.th-size (-> .th-btn-size)</li>
+									<li>.th-slide-start (-> .th-slide-btn-start)</li>
+									<li>.th-contrast (-> .th-btn-contrast)</li>
+								</ul>
+							</li>
+							<li>.th-slide
+								<ul>
+									<li>.th-slideshow (Applied to body... change to documentElement)</li>
+									<li>.th-slide-backdrop</li>
+									<li>.th-slide-body</li>
+									<li>.th-slide-clock</li>
+									<li>.th-slide-continued</li>
+									<li>.th-slide-number</li>
+									<li>.th-slide-status</li>
+									<li>.th-slide-time</li>
+									<li>.th-slideshow-time</li>
+								</ul>
+							</li>
+							<li>.th-slide-navigation
+								<ul>
+									<li>.th-slide-first (-> .th-slide-navigation-first)</li>
+									<li>.th-slide-previous (-> .th-slide-navigation-previous)</li>
+									<li>.th-slide-next (-> .th-slide-navigation-next)</li>
+									<li>.th-slide-last (-> .th-slide-navigation-last)</li>
+									<li>.th-slide-feedback</li>
+								</ul>
+							</li>
+							<li>.th-slide-options
+								<ul>
+									<li>.th-option-contactsheet</li>
+									<li>.th-option-continous</li>
+									<li>.th-option-menu</li>
+									<li>.th-option-print</li>
+									<li>.th-option-slideshow</li>
+									<li>.th-option-stopslideshow</li>
+								</ul>
+							</li>
+							<li>#th-toc
+								<ul>
+									<li>.th-toc-btn-pin</li>
+									<li>.th-toc-current</li>
+									<li>.th-toc-current-within</li>
+									<li>.th-toc-level-{number}</li>
+									<li>.th-toc-pin</li>
+									<li>.th-web-only</li>
+								</ul>
+							</li>
+						</ul>
 						<h2 id="the_dataset">The dataset</h2>
 
 						<ul>
@@ -105,30 +184,30 @@
 							<div>&lt;!DOCTYPE html&gt;</div>
 							<div>&lt;html lang="fr"&gt;</div>
 							<div>&lt;head&gt;</div>
-							<div>    &lt;meta charset="UTF-8"&gt;</div>
-							<div>    &lt;link rel="shortcut icon" href="../favicon.ico" type="image/x-icon"&gt;</div>
-							<div>    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</div>
-							<div>    &lt;title&gt;My first document&lt;/title&gt;</div>
-							<div>    &lt;script type="module"&gt;</div>
-							<div>        import App from "https://bobanum.github.io/theophile2/App.js";</div>
-							<div>        await App.exec();</div>
-							<div>    &lt;/script&gt;</div>
+							<div> &lt;meta charset="UTF-8"&gt;</div>
+							<div> &lt;link rel="shortcut icon" href="../favicon.ico" type="image/x-icon"&gt;</div>
+							<div> &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</div>
+							<div> &lt;title&gt;My first document&lt;/title&gt;</div>
+							<div> &lt;script type="module"&gt;</div>
+							<div> import App from "https://bobanum.github.io/theophile2/App.js";</div>
+							<div> await App.exec();</div>
+							<div> &lt;/script&gt;</div>
 							<div>&lt;/head&gt;</div>
 							<div>&lt;body&gt;</div>
-							<div>    &lt;h1&gt;My first document&lt;/h1&gt;</div>
-							<div>    &lt;p&gt;Will be in an "intro" slide. (or not)&lt;/p&gt;</div>
-							<div>    &lt;h2&gt;My first slide&lt;/h2&gt;</div>
-							<div>    &lt;p&gt;Molestias magni eveniet porro perferendis, officia maxime ducimus quibusdam ut itaque! Voluptatum nam eius libero tempora. Ullam nam eaque magni reprehenderit repudiandae!&lt;/p&gt;</div>
-							<div>    &lt;h3&gt;Part of a slide&lt;/h3&gt;</div>
-							<div>    &lt;p&gt;Lorem ipsum dolor sit amet consectetur adipisicing elit. Nulla ducimus neque eaque dolor accusantium vitae magnam modi consequatur, minus voluptate quas minima nemo autem cumque laborum et eum doloribus asperiores!&lt;/p&gt;</div>
-							<div>    &lt;br/&gt;</div>
-							<div>    &lt;h3&gt;Other part of a slide&lt;/h3&gt;</div>
-							<div>    &lt;p&gt;Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam quaerat, necessitatibus dignissimos ratione similique aliquid veritatis qui itaque ducimus tempora exercitationem sunt tempore labore accusantium quibusdam optio eos eius ipsa?&lt;/p&gt;</div>
-							<div>    &lt;h2&gt;My second slide&lt;/h2&gt;</div>
-							<div>    &lt;p&gt;Place an image here&lt;/p&gt;</div>
-							<div>    &lt;div class="th-references"&gt;</div>
-							<div>        &lt;a href="page2.html"&gt;Another document as a reference&lt;/a&gt;</div>
-							<div>    &lt;/div&gt;</div>
+							<div> &lt;h1&gt;My first document&lt;/h1&gt;</div>
+							<div> &lt;p&gt;Will be in an "intro" slide. (or not)&lt;/p&gt;</div>
+							<div> &lt;h2&gt;My first slide&lt;/h2&gt;</div>
+							<div> &lt;p&gt;Molestias magni eveniet porro perferendis, officia maxime ducimus quibusdam ut itaque! Voluptatum nam eius libero tempora. Ullam nam eaque magni reprehenderit repudiandae!&lt;/p&gt;</div>
+							<div> &lt;h3&gt;Part of a slide&lt;/h3&gt;</div>
+							<div> &lt;p&gt;Lorem ipsum dolor sit amet consectetur adipisicing elit. Nulla ducimus neque eaque dolor accusantium vitae magnam modi consequatur, minus voluptate quas minima nemo autem cumque laborum et eum doloribus asperiores!&lt;/p&gt;</div>
+							<div> &lt;br/&gt;</div>
+							<div> &lt;h3&gt;Other part of a slide&lt;/h3&gt;</div>
+							<div> &lt;p&gt;Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam quaerat, necessitatibus dignissimos ratione similique aliquid veritatis qui itaque ducimus tempora exercitationem sunt tempore labore accusantium quibusdam optio eos eius ipsa?&lt;/p&gt;</div>
+							<div> &lt;h2&gt;My second slide&lt;/h2&gt;</div>
+							<div> &lt;p&gt;Place an image here&lt;/p&gt;</div>
+							<div> &lt;div class="th-references"&gt;</div>
+							<div> &lt;a href="page2.html"&gt;Another document as a reference&lt;/a&gt;</div>
+							<div> &lt;/div&gt;</div>
 							<div>&lt;/body&gt;</div>
 							<div>&lt;/html&gt;</div>
 						</div>
@@ -412,7 +491,7 @@
 						</ul>
 
 					</li>
-<!--
+					<!--
 					<li>
 						<h2>Les propriétés (Très brute)</h2>
 						<ul class="encadres">
@@ -588,7 +667,7 @@
 						</ul>
 					</li>
 -->
-<!--
+					<!--
 					<li>
 						<h2>Classes et attributs (Très brute)</h2>
 						<ul class="encadres">
@@ -846,40 +925,40 @@
 						<h4>En utilisant le contexte</h4>
 						<div class="bloccode">
 							<div>&lt;style media="print" data-contexte="#qr-mode-solutionnaire:not(:checked) ~ div.qr"&gt;</div>
-							<div>  .question &gt; div:after {</div>
-							<div>    content: none;</div>
-							<div>  }</div>
+							<div> .question &gt; div:after {</div>
+							<div> content: none;</div>
+							<div> }</div>
 							<div>&lt;/style&gt;</div>
 						</div>
 						<div class="bloccode">
 							<div>&lt;style media="screen" data-contexte="#qr-mode-eleve:checked ~ div.qr"&gt;</div>
-							<div>  .question &gt; div:after {</div>
-							<div>    content: none;</div>
-							<div>  }</div>
+							<div> .question &gt; div:after {</div>
+							<div> content: none;</div>
+							<div> }</div>
 							<div>&lt;/style&gt;</div>
 						</div>
 						<h4>Nouvellement : des "media" personnalisés.</h4>
 						<div class="bloccode">
 							<div>&lt;style media="<strong>solutionnaire</strong>"&gt;</div>
-							<div>  .question &gt; div:after {</div>
-							<div>    content: none;</div>
-							<div>  }</div>
+							<div> .question &gt; div:after {</div>
+							<div> content: none;</div>
+							<div> }</div>
 							<div>&lt;/style&gt;</div>
 						</div>
 						<p>Les règles ci-dessus vont s'appliquer lors de l'<strong>impression</strong> de la version pas "solutionnaire".</p>
 						<div class="bloccode">
 							<div>&lt;style media="<strong>eleve</strong>"&gt;</div>
-							<div>  .question &gt; div:after {</div>
-							<div>    content: none;</div>
-							<div>  }</div>
+							<div> .question &gt; div:after {</div>
+							<div> content: none;</div>
+							<div> }</div>
 							<div>&lt;/style&gt;</div>
 						</div>
 						<p>Les règles ci-dessus vont s'appliquer lors de l'<strong>affichage</strong> de la version "eleve".</p>
 						<div class="bloccode">
 							<div>&lt;style media="<strong>solution</strong>"&gt;</div>
-							<div>  .question &gt; div:after {</div>
-							<div>    content: none;</div>
-							<div>  }</div>
+							<div> .question &gt; div:after {</div>
+							<div> content: none;</div>
+							<div> }</div>
 							<div>&lt;/style&gt;</div>
 						</div>
 						<p>La feuille de style ci-dessus résume les 2 précédentes.</p>
