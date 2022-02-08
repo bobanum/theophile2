@@ -9,10 +9,10 @@
         "verbose": true
     },
     "source": {
-        "zzzinclude": ["."],
+        "off-include": ["."],
         "exclude": ["docs", "example"],
-        "zzzincludePattern": ".+\\.js(doc|x)?$",
-        "zzzexcludePattern": "(^|\\/|\\\\)_"
+        "off-includePattern": ".+\\.js(doc|x)?$",
+        "off-excludePattern": "(^|\\/|\\\\)_"
     },
     "tags": {
         "allowUnknownTags": true,

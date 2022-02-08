@@ -1,47 +1,46 @@
-/*jslint esnext:true, browser:true*/
 class Doc {
-	static creerSommaire() {
-		var resultat = document.createElement("div");
-		var h2 = resultat.appendChild(document.createElement("h2"));
-		h2.innerHTML = "Sommaire";
-		resultat.setAttribute("id", "sommaire");
-		resultat.appendChild(this.recupererListe(["h2", "h3"]));
-		return resultat;
+	static createSummary() {
+		var result = document.createElement("div");
+		var h2 = result.appendChild(document.createElement("h2"));
+		h2.innerHTML = "Summary";
+		result.id = "summary";
+		result.appendChild(this.getList(["h2", "h3"]));
+		return result;
 	}
-	static recupererListe(selecteur, domaine) {
-		domaine = domaine || document.body;
-		if (typeof selecteur === "string") {
-			selecteur = [selecteur];
+	static getList(selector, domain) {
+		domain = domain || document.body;
+		if (typeof selector === "string") {
+			selector = [selector];
 		}
-		var elements = domaine.querySelectorAll(selecteur[0]);
+		var elements = domain.querySelectorAll(selector[0]);
 		if (elements.length === 0) {
 			return document.createElement("div");
 		}
-		var resultat = document.createElement("ul");
-		elements.forEach(function (e) {
-			var id = e.getAttribute("id");
+		var result = document.createElement("ul");
+		elements.forEach(element => {
+			var id = element.id;
 			if (!id) {
-				id = this.normaliserString(e.innerHTML);
-				id = this.validerId(id, e);
-				e.parentNode.setAttribute("id", id);
+				id = this.normalizeString(element.innerHTML);
+				id = this.validateId(id, element);
+				element.parentNode.id = id;
 			}
-			var li = resultat.appendChild(document.createElement("li"));
+			var li = result.appendChild(document.createElement("li"));
 			var a = li.appendChild(document.createElement("a"));
-			a.setAttribute("href", "#" + id);
-			a.innerHTML = e.textContent;
-			if (selecteur.length > 1) {
-				li.appendChild(this.recupererListe(selecteur.slice(1), e.parentNode));
+			a.href = "#" + id;
+			a.innerHTML = element.textContent;
+			if (selector.length > 1) {
+				li.appendChild(this.getList(selector.slice(1), element.parentNode));
 			}
-		}, this);
-		return resultat;
+		});
+		return result;
 	}
-	static validerId(id, element) {
+	static validateId(id, element) {
 		if (!document.getElementById(id)) {
 			return id;
 		}
 		var p, pid;
-		if (element && element.parentNode && (p = element.parentNode.closest("[id]"), p) && (pid = p.getAttribute("id"), pid)) {
-			return this.validerId(pid + "-" + id, p);
+		if (element && element.parentNode && (p = element.parentNode.closest("[id]"), p) && (pid = p.id, pid)) {
+			return this.validateId(pid + "-" + id, p);
 		}
 		var cpt = 0;
 		while (document.getElementById(id)) {
@@ -55,33 +54,34 @@ class Doc {
 	 * @param   {string} str - La chaine à normaliser
 	 * @returns {string} - La chaine normalisée
 	 */
-	static normaliserString(str) {
-		var resultat;
-		resultat = str;
-		resultat = resultat.toLowerCase();
-		resultat = resultat.replace(/[áàâä]/g, "a");
-		resultat = resultat.replace(/[éèêë]/g, "e");
-		resultat = resultat.replace(/[íìîï]/g, "i");
-		resultat = resultat.replace(/[óòôö]/g, "o");
-		resultat = resultat.replace(/[úùûü]/g, "u");
-		resultat = resultat.replace(/[ýỳŷÿ]/g, "y");
-		resultat = resultat.replace(/[ç]/g, "c");
-		resultat = resultat.replace(/[æ]/g, "ae");
-		resultat = resultat.replace(/[œ]/g, "oe");
-		resultat = resultat.replace(/[^a-z0-9]/g, "_");
-		resultat = resultat.replace(/_+/g, "_");
-		resultat = resultat.replace(/^_/g, "");
-		resultat = resultat.replace(/_$/g, "");
-		return resultat;
+	static normalizeString(str) {
+		var result;
+		result = str;
+		return result
+			.toLowerCase()
+			.replace(/[áàâä]/g, "a")
+			.replace(/[éèêë]/g, "e")
+			.replace(/[íìîï]/g, "i")
+			.replace(/[óòôö]/g, "o")
+			.replace(/[úùûü]/g, "u")
+			.replace(/[ýỳŷÿ]/g, "y")
+			.replace(/[ç]/g, "c")
+			.replace(/[æ]/g, "ae")
+			.replace(/[œ]/g, "oe")
+			.replace(/[^a-z0-9]/g, "_")
+			.replace(/_+/g, "_")
+			.replace(/^_/g, "")
+			.replace(/_$/g, "");
 	}
 	static load() {
-		var sommaire = this.creerSommaire();
-		var colonne = document.body.querySelector("div.interface>div.body>div.colonne");
-		colonne.appendChild(sommaire);
+		var summary = this.createSummary();
+		console.log(summary);
+		var column = document.body.querySelector("div.interface>div.body>div.column");
+		column.appendChild(summary);
 	}
 	static init() {
-		window.addEventListener("load", function () {
-			Doc.load();
+		window.addEventListener("load", () => {
+			this.load();
 		});
 	}
 }
