@@ -27,7 +27,9 @@ body {
           flex: 1 1 auto;
 }
 
-.section > header, div.interface > header, .section > footer, div.interface > footer {
+.section > header, div.interface > header,
+.section > footer,
+div.interface > footer {
   -webkit-box-flex: 0;
       -ms-flex: 0 0 auto;
           flex: 0 0 auto;
@@ -35,7 +37,9 @@ body {
   padding: .5em;
 }
 
-.section > footer, div.interface > footer {
+
+.section > footer,
+div.interface > footer {
   -webkit-box-ordinal-group: 1001;
       -ms-flex-order: 1000;
           order: 1000;
@@ -116,23 +120,41 @@ div.interface > header a {
   padding: .25em 1em;
 }
 
-div.bloccode {
+.codeblock {
+  white-space: normal;
   font-family: monospace;
   border: 1px solid #ccc;
   margin-bottom: .5em;
 }
 
-div.bloccode > * {
+.codeblock > * {
   white-space: pre;
   padding: .25ch;
 }
 
-div.bloccode > *:nth-child(odd) {
+.codeblock > *:nth-child(odd) {
   background-color: #f7f7f7;
 }
 
-div.bloccode > *:nth-child(even) {
+.codeblock > *:nth-child(even) {
   background-color: white;
+}
+
+h2 {
+  cursor: pointer;
+}
+
+.collapse::after {
+  content: "...";
+  border: 1px solid #ccc;
+  background-color: #eee;
+  color: #666;
+  margin-left: 1ch;
+  padding: 0 .5ch;
+}
+
+.collapse + * {
+  display: none;
 }
 
 #summary {
@@ -168,7 +190,12 @@ ul {
   list-style-type: none;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   margin-bottom: 0;
 }
 

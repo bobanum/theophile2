@@ -74,6 +74,11 @@ class Doc {
 			.replace(/_$/g, "");
 	}
 	static load() {
+		const h2s = document.querySelectorAll("h2").forEach(h2 => {
+			h2.addEventListener("click", e => {
+				e.currentTarget.classList.toggle("collapse");
+			});
+		});
 		var summary = this.createSummary();
 		console.log(summary);
 		var column = document.body.querySelector("div.interface>div.body>div.column");

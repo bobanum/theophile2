@@ -3,8 +3,8 @@
 
 <head>
 	<meta charset="UTF-8">
-	<link rel="stylesheet" href="docs.css" />
-	<script src="docs.js"></script>
+	<link rel="stylesheet" href="css/docs.css" />
+	<script src="js/Doc.js"></script>
 	<title>Documentation</title>
 </head>
 
@@ -24,7 +24,7 @@
 			<div class="contenu">
 				<ul>
 					<li>
-						<h2 id="the_files">The Files</h2>
+						<h2 id="the_files" class="collapse">The Files</h2>
 						<pre style="white-space: pre-line;">
 							theophile/
 							┣ docs/
@@ -96,6 +96,11 @@
 									<li>.th-slide-only</li>
 								</ul>
 							</li>
+							<li>Template markup
+								<ul>
+									<li>.th-container (data-selector)</li>
+								</ul>
+							</li>
 							<li>Interface markup
 								<ul>
 									<li>.th-size (-> .th-btn-size)</li>
@@ -158,7 +163,7 @@
 					</li>
 					<li>
 						<h2>Starting Point</h2>
-						<div class="bloccode">
+						<pre class="codeblock">
 							<div>&lt;!DOCTYPE html&gt;</div>
 							<div>&lt;html lang="en" style="opacity:0;"&gt;</div>
 							<div>&lt;head&gt;</div>
@@ -188,10 +193,37 @@
 							<div>   &lt;/div&gt;</div>
 							<div>&lt;/body&gt;</div>
 							<div>&lt;/html&gt;</div>
-						</div>
+						</pre>
 					</li>
 					<li>
-						<h2>Why opacity:0; ?</h2>
+						<h2>Why <code>opacity:0;</code> ?</h2>
+					</li>
+					<li>
+						<h2>Theophile.js properties</h2>
+						<ul>
+							<li>this.headings = "h1, h2, h3";</li>
+							<li>data-th="exclude:Toc,Slide"</li>
+							<li>data-th="slide-zoom: .5;"</li>
+							<li>data-th-slide-style="--rangees: 4"</li>
+						</ul>
+					</li>
+					<li>
+						<h2>Config file <code>theophile.json</code></h2>
+						<pre class="codeblock">
+							<div>{</div>
+							<div>   "nlines": 20,</div>
+							<div>   "ratio": [16, 9],</div>
+							<div>   "transition": "clip-vertical",</div>
+							<div>   "transition-duration": 500,</div>
+							<div>   "transition-options": {</div>
+							<div>      "direction": "e",</div>
+							<div>      "mode": "stack"</div>
+							<div>   },</div>
+							<div>   "slide": {</div>
+							<div>      "footer-text": "My test"</div>
+							<div>   }</div>
+							<div>}</div>
+						</pre>
 					</li>
 				</ul>
 			</div>
