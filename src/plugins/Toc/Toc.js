@@ -3,9 +3,13 @@ import Plugin from "../Plugin.js";
 //TODO #24 Make scrolling smouth. For now, il scroll-behavious is smouth, page scrolls from top after ending slideshow.
 //TODO #25 Toc: Make it possible to pin TOC on the page
 export default class Toc extends Plugin {
+	static init(Theophile) {
+		super.init(Theophile);
+		this.headings = "h1,h2,h3";
+	}
 	static async process() {
 		await super.process();
-		this.headings = Array.from(document.body.querySelectorAll("h1,h2,h3"));
+		this.headings = Array.from(document.body.querySelectorAll(this.headings));
 		this.hierarchy = this.getHierarchy(this.headings);
 	}
 	static async afterMount() {
@@ -18,6 +22,25 @@ export default class Toc extends Plugin {
 			document.documentElement.classList.toggle("th-toc-pin");
 		});
 		tocContainer.appendChild(this.html);
+	}
+	static async clean() {
+		super.clean();
+		delete this.hierarchy;
+		window.addEventListener("scroll", _e => {
+			const visible = this.findVisibleHeading();
+			if (visible.tocElement.classList.contains("th-toc-current")) {
+				return;
+			}
+			document.querySelectorAll(".th-toc-current, .th-toc-current-within").forEach(element => element.classList.remove("th-toc-current", "th-toc-current-within"));
+			visible.tocElement.classList.add("th-toc-current");
+			var ptr = visible.tocElement;
+			while (ptr) {
+				if (ptr.id === "th-toc") break;
+				ptr.classList.add("th-toc-current-within");
+				ptr = ptr.parentNode.closest("li");
+			}
+	
+		});
 	}
 	static get html() {
 		return this.html_ul(this.hierarchy);
@@ -34,6 +57,8 @@ export default class Toc extends Plugin {
 				const a = div.appendChild(document.createElement("a"));
 				a.href = "#" + headingObject.heading.id;
 				a.innerHTML = headingObject.heading.innerText;
+			} else {
+				li.classList.add("th-toc-no-heading");
 			}
 			if (headingObject.group.length) {
 				li.appendChild(this.html_ul(headingObject.group, level + 1));
@@ -76,24 +101,5 @@ export default class Toc extends Plugin {
 		var last = headings.slice(-1)[0];
 		headings = headings.filter(heading => heading[1] >= 0);
 		return (headings[0] || last)[0];
-	}
-	static async clean() {
-		super.clean();
-		delete this.hierarchy;
-		window.addEventListener("scroll", _e => {
-			const visible = this.findVisibleHeading();
-			if (visible.tocElement.classList.contains("th-toc-current")) {
-				return;
-			}
-			document.querySelectorAll(".th-toc-current, .th-toc-current-within").forEach(element => element.classList.remove("th-toc-current", "th-toc-current-within"));
-			visible.tocElement.classList.add("th-toc-current");
-			var ptr = visible.tocElement;
-			while (ptr) {
-				if (ptr.id === "th-toc") break;
-				ptr.classList.add("th-toc-current-within");
-				ptr = ptr.parentNode.closest("li");
-			}
-
-		});
 	}
 }

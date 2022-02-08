@@ -367,13 +367,17 @@ export default class Theophile {
 		}
 		console.trace("Theophile BEGIN");
 		await this.init(options.root);
+		console.log(options.root);
 		delete options.root;
+		debugger;
 		await this.prepare(options);
+		console.log(this);
 		await this.process();
 		await this.beforeMount();
 		await this.mount();
 		await this.afterMount();
 		await this.clean();
+		console.log(this);
 		console.trace("Theophile END");
 	}
 }

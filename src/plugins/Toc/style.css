@@ -97,6 +97,10 @@
   font-family: "Material Icons";
 }
 
+#th-toc .th-toc-no-heading::marker {
+  content: "";
+}
+
 #th-toc:empty {
   display: none;
 }
