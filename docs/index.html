@@ -21,213 +21,239 @@
 			<div class="column">
 
 			</div>
-			<div class="contenu">
-				<ul>
-					<li>
-						<h2 id="the_files" class="collapse">The Files</h2>
-						<pre style="white-space: pre-line;">
-							theophile/
-							┣ docs/
-							┣ example/
-							┣ img/
-							┣ src/
-							┃ ┣ css/
-							┃ ┃ ┗ style.scss
-							┃ ┣ plugins/
-							┃ ┃ ┣ Reference/
-							┃ ┃ ┃ ┣ Reference.js
-							┃ ┃ ┃ ┗ style.scss
-							┃ ┃ ┣ Slide/
-							┃ ┃ ┃ ┣ Properties.js
-							┃ ┃ ┃ ┣ Slide.js
-							┃ ┃ ┃ ┣ style.scss
-							┃ ┃ ┃ ┣ _contactsheet.scss
-							┃ ┃ ┃ ┗ _navigation.scss
-							┃ ┃ ┣ Template/
-							┃ ┃ ┃ ┣ Properties.js
-							┃ ┃ ┃ ┣ style.scss
-							┃ ┃ ┃ ┗ Template.js
-							┃ ┃ ┣ Toc/
-							┃ ┃ ┃ ┣ style.scss
-							┃ ┃ ┃ ┗ Toc.js
-							┃ ┃ ┗ Plugin.js
-							┃ ┣ transitions/
-							┃ ┃ ┣ Transition.js
-							┃ ┃ ┣ TransitionBlur.js
-							┃ ┃ ┣ TransitionBox.js
-							┃ ┃ ┣ TransitionClip.js
-							┃ ┃ ┣ TransitionFade.js
-							┃ ┃ ┣ TransitionFlip.js
-							┃ ┃ ┣ TransitionMask.js
-							┃ ┃ ┣ TransitionNone.js
-							┃ ┃ ┗ TransitionSlide.js
-							┃ ┗ Theophile.js
-							┣ App.js
-							┗ README.md
-						</pre>
-						<h2 id="the_classes">The classes, ids and custom css properties</h2>
-						<ul class="hierarchy">
-							<li>--th-slide-nlines</li>
-							<li>--th-slide-ratio</li>
-							<li>#th-contactsheet
-								<ul>
-									<li>.th-contactsheet (added to documentElement)</li>
-									<li>.th-contactsheet-caption</li>
-									<li>.th-contactsheet-container</li>
-									<li>.th-contactsheet-current</li>
-									<li>.th-contactsheet-exit-btn</li>
-									<li>.th-contactsheet-grid</li>
-									<li>.th-contactsheet-group</li>
-									<li>.th-contactsheet-number</li>
-									<li>.th-contactsheet-thumbnail</li>
-									<li>.th-contactsheet-title</li>
-								</ul>
-							</li>
-							<li>Content markup
-								<ul>
-									<li>.th-no-figure</li>
-									<li>.th-no-markdown</li>
-									<li>.th-only-screen</li>
-									<li>.th-references</li>
-									<li>.th-slide-full (css only for now)</li>
-									<li>.th-slide-no-header (css only for now)</li>
-									<li>.th-slide-skip</li>
-									<li>.th-slide-split</li>
-									<li>.th-slide-only</li>
-								</ul>
-							</li>
-							<li>Template markup
-								<ul>
-									<li>.th-container (data-selector)</li>
-								</ul>
-							</li>
-							<li>Interface markup
-								<ul>
-									<li>.th-size (-> .th-btn-size)</li>
-									<li>.th-slide-start (-> .th-slide-btn-start)</li>
-									<li>.th-contrast (-> .th-btn-contrast)</li>
-								</ul>
-							</li>
-							<li>.th-slide
-								<ul>
-									<li>.th-slideshow (Applied to body... change to documentElement)</li>
-									<li>.th-slide-backdrop</li>
-									<li>.th-slide-body</li>
-									<li>.th-slide-clock</li>
-									<li>.th-slide-continued</li>
-									<li>.th-slide-number</li>
-									<li>.th-slide-status</li>
-									<li>.th-slide-time</li>
-									<li>.th-slideshow-time</li>
-								</ul>
-							</li>
-							<li>.th-slide-navigation
-								<ul>
-									<li>.th-slide-first (-> .th-slide-navigation-first)</li>
-									<li>.th-slide-previous (-> .th-slide-navigation-previous)</li>
-									<li>.th-slide-next (-> .th-slide-navigation-next)</li>
-									<li>.th-slide-last (-> .th-slide-navigation-last)</li>
-									<li>.th-slide-feedback</li>
-								</ul>
-							</li>
-							<li>.th-slide-options
-								<ul>
-									<li>.th-option-contactsheet</li>
-									<li>.th-option-continous</li>
-									<li>.th-option-menu</li>
-									<li>.th-option-print</li>
-									<li>.th-option-slideshow</li>
-									<li>.th-option-stopslideshow</li>
-								</ul>
-							</li>
-							<li>#th-toc
-								<ul>
-									<li>.th-toc-btn-pin</li>
-									<li>.th-toc-current</li>
-									<li>.th-toc-current-within</li>
-									<li>.th-toc-level-{number}</li>
-									<li>.th-toc-pin</li>
-									<li>.th-web-only</li>
-								</ul>
-							</li>
-						</ul>
-						<h2 id="the_dataset">The dataset</h2>
-
-						<ul>
-							<li>data-th</li>
-							<li>data-th-slide-style</li>
-							<li>data-th-no-figure</li>
-							<li>data-th-{property}</li>
-							<li>data-th-{plugin}-{property}</li>
-						</ul>
-					</li>
-					<li>
-						<h2>Starting Point</h2>
-						<pre class="codeblock">
-							<div>&lt;!DOCTYPE html&gt;</div>
-							<div>&lt;html lang="en" style="opacity:0;"&gt;</div>
-							<div>&lt;head&gt;</div>
-							<div>   &lt;meta charset="UTF-8"&gt;</div>
-							<div>   &lt;link rel="shortcut icon" href="../favicon.ico" type="image/x-icon"&gt;</div>
-							<div>   &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</div>
-							<div>   &lt;title&gt;My first document&lt;/title&gt;</div>
-							<div>   &lt;script type="module"&gt;</div>
-							<div>      import App from "https://bobanum.github.io/theophile2/App.js";</div>
-							<div>      await App.exec();</div>
-							<div>   &lt;/script&gt;</div>
-							<div>&lt;/head&gt;</div>
-							<div>&lt;body&gt;</div>
-							<div>   &lt;h1&gt;My first document&lt;/h1&gt;</div>
-							<div>   &lt;p&gt;Will be in an "intro" slide. (or not)&lt;/p&gt;</div>
-							<div>   &lt;h2&gt;My first slide&lt;/h2&gt;</div>
-							<div>   &lt;p&gt;Molestias magni eveniet porro perferendis, officia maxime ducimus quibusdam ut itaque! Voluptatum nam eius libero tempora. Ullam nam eaque magni reprehenderit repudiandae!&lt;/p&gt;</div>
-							<div>   &lt;h3&gt;Part of a slide&lt;/h3&gt;</div>
-							<div>   &lt;p&gt;Lorem ipsum dolor sit amet consectetur adipisicing elit. Nulla ducimus neque eaque dolor accusantium vitae magnam modi consequatur, minus voluptate quas minima nemo autem cumque laborum et eum doloribus asperiores!&lt;/p&gt;</div>
-							<div>   &lt;br/&gt;</div>
-							<div>   &lt;h3&gt;Other part of a slide&lt;/h3&gt;</div>
-							<div>   &lt;p&gt;Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam quaerat, necessitatibus dignissimos ratione similique aliquid veritatis qui itaque ducimus tempora exercitationem sunt tempore labore accusantium quibusdam optio eos eius ipsa?&lt;/p&gt;</div>
-							<div>   &lt;h2&gt;My second slide&lt;/h2&gt;</div>
-							<div>   &lt;p&gt;Place an image here&lt;/p&gt;</div>
-							<div>   &lt;div class="th-references"&gt;</div>
-							<div>   &lt;a href="page2.html"&gt;Another document as a reference&lt;/a&gt;</div>
-							<div>   &lt;/div&gt;</div>
-							<div>&lt;/body&gt;</div>
-							<div>&lt;/html&gt;</div>
-						</pre>
-					</li>
-					<li>
-						<h2>Why <code>opacity:0;</code> ?</h2>
-					</li>
-					<li>
-						<h2>Theophile.js properties</h2>
-						<ul>
-							<li>this.headings = "h1, h2, h3";</li>
-							<li>data-th="exclude:Toc,Slide"</li>
-							<li>data-th="slide-zoom: .5;"</li>
-							<li>data-th-slide-style="--rangees: 4"</li>
-						</ul>
-					</li>
-					<li>
-						<h2>Config file <code>theophile.json</code></h2>
-						<pre class="codeblock">
-							<div>{</div>
-							<div>   "nlines": 20,</div>
-							<div>   "ratio": [16, 9],</div>
-							<div>   "transition": "clip-vertical",</div>
-							<div>   "transition-duration": 500,</div>
-							<div>   "transition-options": {</div>
-							<div>      "direction": "e",</div>
-							<div>      "mode": "stack"</div>
-							<div>   },</div>
-							<div>   "slide": {</div>
-							<div>      "footer-text": "My test"</div>
-							<div>   }</div>
-							<div>}</div>
-						</pre>
-					</li>
-				</ul>
+			<div class="content">
+				<article class="collapse">
+					<h2 id="the_files">The Files</h2>
+					<pre style="white-space: pre-line; line-height: 1;">
+						theophile/
+						┣━docs/
+						┣━example/
+						┣━img/
+						┣━src/
+						┃ ┣━css/
+						┃ ┃ ┗━style.scss
+						┃ ┣━plugins/
+						┃ ┃ ┣━Reference/
+						┃ ┃ ┃ ┣━Reference.js
+						┃ ┃ ┃ ┗━style.scss
+						┃ ┃ ┣━Slide/
+						┃ ┃ ┃ ┣━Properties.js
+						┃ ┃ ┃ ┣━Slide.js
+						┃ ┃ ┃ ┣━style.scss
+						┃ ┃ ┃ ┣━_contactsheet.scss
+						┃ ┃ ┃ ┗━_navigation.scss
+						┃ ┃ ┣━Template/
+						┃ ┃ ┃ ┣━Properties.js
+						┃ ┃ ┃ ┣━style.scss
+						┃ ┃ ┃ ┗━Template.js
+						┃ ┃ ┣━Toc/
+						┃ ┃ ┃ ┣━style.scss
+						┃ ┃ ┃ ┗━Toc.js
+						┃ ┃ ┗━Plugin.js
+						┃ ┣━transitions/
+						┃ ┃ ┣━Transition.js
+						┃ ┃ ┣━TransitionBlur.js
+						┃ ┃ ┣━TransitionBox.js
+						┃ ┃ ┣━TransitionClip.js
+						┃ ┃ ┣━TransitionFade.js
+						┃ ┃ ┣━TransitionFlip.js
+						┃ ┃ ┣━TransitionMask.js
+						┃ ┃ ┣━TransitionNone.js
+						┃ ┃ ┗━TransitionSlide.js
+						┃ ┗━Theophile.js
+						┣━App.js
+						┗━README.md
+					</pre>
+				</article>
+				<article class="collapse">
+					<h2 id="the_classes">The classes, ids and custom css properties</h2>
+					<ul class="hierarchy">
+						<li>--th-slide-nlines</li>
+						<li>--th-slide-ratio</li>
+						<li>#th-contactsheet
+							<ul>
+								<li>.th-contactsheet (added to documentElement)</li>
+								<li>.th-contactsheet-caption</li>
+								<li>.th-contactsheet-container</li>
+								<li>.th-contactsheet-current</li>
+								<li>.th-contactsheet-exit-btn</li>
+								<li>.th-contactsheet-grid</li>
+								<li>.th-contactsheet-group</li>
+								<li>.th-contactsheet-number</li>
+								<li>.th-contactsheet-thumbnail</li>
+								<li>.th-contactsheet-title</li>
+							</ul>
+						</li>
+						<li>Content markup
+							<ul>
+								<li>.th-no-figure</li>
+								<li>.th-no-markdown</li>
+								<li>.th-only-screen</li>
+								<li>.th-references</li>
+								<li>.th-slide-full (css only for now)</li>
+								<li>.th-slide-no-header (css only for now)</li>
+								<li>.th-slide-skip</li>
+								<li>.th-slide-split</li>
+								<li>.th-slide-only</li>
+							</ul>
+						</li>
+						<li>Template markup
+							<ul>
+								<li>.th-container (data-selector)</li>
+							</ul>
+						</li>
+						<li>Interface markup
+							<ul>
+								<li>.th-size (-> .th-btn-size)</li>
+								<li>.th-slide-start (-> .th-slide-btn-start)</li>
+								<li>.th-contrast (-> .th-btn-contrast)</li>
+							</ul>
+						</li>
+						<li>.th-slide
+							<ul>
+								<li>.th-slideshow (Applied to body... change to documentElement)</li>
+								<li>.th-slide-backdrop</li>
+								<li>.th-slide-body</li>
+								<li>.th-slide-clock</li>
+								<li>.th-slide-continued</li>
+								<li>.th-slide-number</li>
+								<li>.th-slide-status</li>
+								<li>.th-slide-time</li>
+								<li>.th-slideshow-time</li>
+							</ul>
+						</li>
+						<li>.th-slide-navigation
+							<ul>
+								<li>.th-slide-first (-> .th-slide-navigation-first)</li>
+								<li>.th-slide-previous (-> .th-slide-navigation-previous)</li>
+								<li>.th-slide-next (-> .th-slide-navigation-next)</li>
+								<li>.th-slide-last (-> .th-slide-navigation-last)</li>
+								<li>.th-slide-feedback</li>
+							</ul>
+						</li>
+						<li>.th-slide-options
+							<ul>
+								<li>.th-option-contactsheet</li>
+								<li>.th-option-continous</li>
+								<li>.th-option-menu</li>
+								<li>.th-option-print</li>
+								<li>.th-option-slideshow</li>
+								<li>.th-option-stopslideshow</li>
+							</ul>
+						</li>
+						<li>#th-toc
+							<ul>
+								<li>.th-toc-btn-pin</li>
+								<li>.th-toc-current</li>
+								<li>.th-toc-current-within</li>
+								<li>.th-toc-level-{number}</li>
+								<li>.th-toc-pin</li>
+								<li>.th-web-only</li>
+							</ul>
+						</li>
+					</ul>
+				</article>
+				<article class="collapse">
+					<h2 id="the_dataset">The dataset</h2>
+					<ul>
+						<li>data-th</li>
+						<li>data-th-slide-style</li>
+						<li>data-th-no-figure</li>
+						<li>data-th-{property}</li>
+						<li>data-th-{plugin}-{property}</li>
+					</ul>
+				</article>
+				<article class="collapse">
+					<h2>Starting Point</h2>
+					<pre class="codeblock">
+						<div>&lt;!DOCTYPE html&gt;</div>
+						<div>&lt;html lang="en" style="opacity:0;"&gt;</div>
+						<div>&lt;head&gt;</div>
+						<div>   &lt;meta charset="UTF-8"&gt;</div>
+						<div>   &lt;link rel="shortcut icon" href="../favicon.ico" type="image/x-icon"&gt;</div>
+						<div>   &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</div>
+						<div>   &lt;title&gt;My first document&lt;/title&gt;</div>
+						<div>   &lt;script type="module"&gt;</div>
+						<div>      import App from "https://bobanum.github.io/theophile2/App.js";</div>
+						<div>      await App.exec();</div>
+						<div>   &lt;/script&gt;</div>
+						<div>&lt;/head&gt;</div>
+						<div>&lt;body&gt;</div>
+						<div>   &lt;h1&gt;My first document&lt;/h1&gt;</div>
+						<div>   &lt;p&gt;Will be in an "intro" slide. (or not)&lt;/p&gt;</div>
+						<div>   &lt;h2&gt;My first slide&lt;/h2&gt;</div>
+						<div>   &lt;p&gt;Molestias magni eveniet porro perferendis, officia maxime ducimus quibusdam ut itaque! Voluptatum nam eius libero tempora. Ullam nam eaque magni reprehenderit repudiandae!&lt;/p&gt;</div>
+						<div>   &lt;h3&gt;Part of a slide&lt;/h3&gt;</div>
+						<div>   &lt;p&gt;Lorem ipsum dolor sit amet consectetur adipisicing elit. Nulla ducimus neque eaque dolor accusantium vitae magnam modi consequatur, minus voluptate quas minima nemo autem cumque laborum et eum doloribus asperiores!&lt;/p&gt;</div>
+						<div>   &lt;br/&gt;</div>
+						<div>   &lt;h3&gt;Other part of a slide&lt;/h3&gt;</div>
+						<div>   &lt;p&gt;Lorem ipsum dolor sit amet consectetur adipisicing elit. Quam quaerat, necessitatibus dignissimos ratione similique aliquid veritatis qui itaque ducimus tempora exercitationem sunt tempore labore accusantium quibusdam optio eos eius ipsa?&lt;/p&gt;</div>
+						<div>   &lt;h2&gt;My second slide&lt;/h2&gt;</div>
+						<div>   &lt;p&gt;Place an image here&lt;/p&gt;</div>
+						<div>   &lt;div class="th-references"&gt;</div>
+						<div>   &lt;a href="page2.html"&gt;Another document as a reference&lt;/a&gt;</div>
+						<div>   &lt;/div&gt;</div>
+						<div>&lt;/body&gt;</div>
+						<div>&lt;/html&gt;</div>
+					</pre>
+				</article>
+				<article>
+					<h2>Why <code>opacity:0;</code> ?</h2>
+				</article>
+				<article>
+					<h2>Theophile.js properties</h2>
+					<ul>
+						<li>this.headings = "h1, h2, h3";</li>
+						<li>data-th="exclude:Toc,Slide"</li>
+						<li>data-th="slide-zoom: .5;"</li>
+						<li>data-th-slide-style="--rangees: 4"</li>
+					</ul>
+				</article>
+				<article>
+					<h2>The plugins</h2>
+					<h3>Reference</h3>
+					<h4>Properties</h4>
+					<h3>Slide</h3>
+					<h4>Properties</h4>
+					<ul>
+						<li>footer-text (Theophile🧰, Slide📦, object🎁)</li>
+						<li>nlines</li>
+						<li>slide ?</li>
+						<li>ratio</li>
+						<li>transition</li>
+						<li>transition-duration or transitionDuration</li>
+						<li>transition-options</li>
+						<li>include</li>
+						<li>split</li>
+						<li>exclude</li>
+					</ul>
+					<h3>Template</h3>
+					<h4>Properties</h4>
+					<ul>
+						<li>processIframes🧰 (process-iframes)</li>
+					</ul>
+					<h3>Toc</h3>
+					<h4>Properties</h4>
+				</article>
+				<article>
+					<h2>Config file <code>theophile.json</code></h2>
+					<pre class="codeblock">
+						<div>{</div>
+						<div>   "nlines": 20,</div>
+						<div>   "ratio": [16, 9],</div>
+						<div>   "transition": "clip-vertical",</div>
+						<div>   "transition-duration": 500,</div>
+						<div>   "transition-options": {</div>
+						<div>      "direction": "e",</div>
+						<div>      "mode": "stack"</div>
+						<div>   },</div>
+						<div>   "slide": {</div>
+						<div>      "footer-text": "My test"</div>
+						<div>   }</div>
+						<div>}</div>
+					</pre>
+				</article>
 			</div>
-
 		</div>
 	</div>
 </body>

@@ -1,4 +1,7 @@
 export default class Plugin {
+	static init(Theophile) {
+		this.Theophile = Theophile;
+	}
 	static async prepare() {
 		this.cssLink();
 		console.trace("Plugin " + this.name + " ready");
@@ -32,9 +35,6 @@ export default class Plugin {
 		link.setAttribute("rel", "stylesheet");
 		link.setAttribute("href", url);
 		return link;
-	}
-	static init(Theophile) {
-		this.Theophile = Theophile;
 	}
 	static parseStyle(style = {}) {
 		if (style === null) {

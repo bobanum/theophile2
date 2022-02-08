@@ -1,5 +1,9 @@
 import Plugin from "../Plugin.js";
 export default class Reference extends Plugin {
+	static init(Theophile) {
+		super.init(Theophile);
+		this.refsDocuments = {};
+	}
 	static findReferences() {
 		var refs = Array.from(document.querySelectorAll(".th-references"));
 		var promises = refs.map(group => {
@@ -56,9 +60,5 @@ export default class Reference extends Plugin {
 		await super.prepare();
 		const data = await this.findReferences();
 		return data;
-	}
-	static init(Theophile) {
-		super.init(Theophile);
-		this.refsDocuments = {};
 	}
 }

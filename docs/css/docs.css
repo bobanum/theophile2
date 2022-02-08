@@ -34,7 +34,7 @@ div.interface > footer {
       -ms-flex: 0 0 auto;
           flex: 0 0 auto;
   background-color: rgba(0, 0, 0, 0.3);
-  padding: .5em;
+  padding: 0.5em;
 }
 
 
@@ -72,8 +72,8 @@ div.interface > footer {
 .enum > * {
   background-color: rgba(0, 0, 0, 0.1);
   background-color: #eeeef6;
-  margin: .2em;
-  padding: .2em .5em;
+  margin: 0.2em;
+  padding: 0.2em 0.5em;
 }
 
 .hierarchy ul {
@@ -92,6 +92,15 @@ div.interface > footer {
 
 .frame > *:first-child, .frames > * > *:first-child {
   margin-top: 0;
+}
+
+.content {
+  display: -ms-grid;
+  display: grid;
+}
+
+div.body {
+  padding: 1em;
 }
 
 div.column {
@@ -117,19 +126,19 @@ div.interface > header a {
   text-decoration: inherit;
   background-color: rgba(0, 0, 0, 0.1);
   border-radius: 7px;
-  padding: .25em 1em;
+  padding: 0.25em 1em;
 }
 
 .codeblock {
   white-space: normal;
   font-family: monospace;
   border: 1px solid #ccc;
-  margin-bottom: .5em;
+  margin-bottom: 0.5em;
 }
 
 .codeblock > * {
   white-space: pre;
-  padding: .25ch;
+  padding: 0.25ch;
 }
 
 .codeblock > *:nth-child(odd) {
@@ -144,16 +153,21 @@ h2 {
   cursor: pointer;
 }
 
-.collapse::after {
+.collapse > h2::after {
   content: "...";
   border: 1px solid #ccc;
   background-color: #eee;
   color: #666;
   margin-left: 1ch;
-  padding: 0 .5ch;
+  padding: 0 0.5ch;
+  line-height: 0;
+  height: 11px;
+  display: inline-block;
+  margin-top: -2px;
+  vertical-align: 4px;
 }
 
-.collapse + * {
+.collapse > h2 ~ * {
   display: none;
 }
 
@@ -171,7 +185,7 @@ h2 {
   display: -ms-flexbox;
   display: flex;
   line-height: 1;
-  padding: .2em;
+  padding: 0.2em;
 }
 
 #summary ul {
@@ -181,7 +195,7 @@ h2 {
 }
 
 #summary li {
-  margin: .2em 0;
+  margin: 0.2em 0;
 }
 
 ul {
@@ -196,7 +210,7 @@ h3,
 h4,
 h5,
 h6 {
-  margin-bottom: 0;
+  margin: 0;
 }
 
 li > b:first-child {

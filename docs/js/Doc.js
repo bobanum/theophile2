@@ -1,7 +1,7 @@
 class Doc {
 	static createSummary() {
-		var result = document.createElement("div");
-		var h2 = result.appendChild(document.createElement("h2"));
+		const result = document.createElement("div");
+		const h2 = result.appendChild(document.createElement("h2"));
 		h2.innerHTML = "Summary";
 		result.id = "summary";
 		result.appendChild(this.getList(["h2", "h3"]));
@@ -12,11 +12,11 @@ class Doc {
 		if (typeof selector === "string") {
 			selector = [selector];
 		}
-		var elements = domain.querySelectorAll(selector[0]);
+		const elements = domain.querySelectorAll(selector[0]);
 		if (elements.length === 0) {
 			return document.createElement("div");
 		}
-		var result = document.createElement("ul");
+		const result = document.createElement("ul");
 		elements.forEach(element => {
 			var id = element.id;
 			if (!id) {
@@ -24,8 +24,8 @@ class Doc {
 				id = this.validateId(id, element);
 				element.parentNode.id = id;
 			}
-			var li = result.appendChild(document.createElement("li"));
-			var a = li.appendChild(document.createElement("a"));
+			const li = result.appendChild(document.createElement("li"));
+			const a = li.appendChild(document.createElement("a"));
 			a.href = "#" + id;
 			a.innerHTML = element.textContent;
 			if (selector.length > 1) {
@@ -55,9 +55,7 @@ class Doc {
 	 * @returns {string} - La chaine normalisée
 	 */
 	static normalizeString(str) {
-		var result;
-		result = str;
-		return result
+		return str
 			.toLowerCase()
 			.replace(/[áàâä]/g, "a")
 			.replace(/[éèêë]/g, "e")
@@ -74,14 +72,13 @@ class Doc {
 			.replace(/_$/g, "");
 	}
 	static load() {
-		const h2s = document.querySelectorAll("h2").forEach(h2 => {
+		document.querySelectorAll("h2").forEach(h2 => {
 			h2.addEventListener("click", e => {
-				e.currentTarget.classList.toggle("collapse");
+				e.currentTarget.parentNode.classList.toggle("collapse");
 			});
 		});
-		var summary = this.createSummary();
-		console.log(summary);
-		var column = document.body.querySelector("div.interface>div.body>div.column");
+		const summary = this.createSummary();
+		const column = document.body.querySelector("div.interface>div.body>div.column");
 		column.appendChild(summary);
 	}
 	static init() {

@@ -76,6 +76,9 @@
             font-family: "Material Icons";
         }
     }
+    .th-toc-no-heading::marker {
+        content: "";
+    }
     &:empty {
         display: none;
     }
