@@ -1,7 +1,7 @@
 import Plugin from "../Plugin.js";
 export default class Reference extends Plugin {
-	static init(Theophile) {
-		super.init(Theophile);
+	static async init(Theophile) {
+		await super.init(Theophile);
 		this.refsDocuments = {};
 	}
 	static findReferences() {

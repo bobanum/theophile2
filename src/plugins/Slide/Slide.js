@@ -1,29 +1,27 @@
 import Plugin from "../Plugin.js";
 import Transition from "../../transitions/Transition.js";
-import Properties from "./Properties.js";
 import Theophile from "../../Theophile.js";
+//TODO ratio
 /**
  * @export
  * @class Slide
  * @extends {Plugin}
  */
 export default class Slide extends Plugin {
-	static init(Theophile) {
-		super.init(Theophile);
-		this.include = "h1,h2,h3";
-		this.split = "br,.th-slide-split";
-		this.exclude = "h1:not(.th-slide-full)+h2, h2:not(.th-slide-full)+h3, h1:not(.th-slide-full)+h3, .th-slide-skip";
-		this.nlines = 20;
-		this.ratio = 16 / 9;
-		this.transition = "Fade";
-		this.transitionDuration = 500;
-		this.transitionOptions = {};
+	static async init(Theophile) {
+		await super.init(Theophile);
+		this.include = this.include || "h1,h2,h3";
+		this.split = this.split || "br,.th-slide-split";
+		this.exclude = this.exclude || "h1:not(.th-slide-full)+h2, h2:not(.th-slide-full)+h3, h1:not(.th-slide-full)+h3, .th-slide-skip";
+		this.nlines = this.nlines || 20;
+		this.ratio = this.ratio || [16, 9];
+		this.footertext = this.footertext || "";
+		this.transition = this.transition || {name: "Fade", duration: 500,};
 		this.contactsheet = null;
 		this.slides = [];
 		this.animations = {};
 		this.timestamp = null;
 		this.timestampSlide = null;
-		Properties.defineProperties.call(this);
 	}
 	/**
 	 * Creates an instance of Slide.
@@ -60,8 +58,8 @@ export default class Slide extends Plugin {
 		this.zoomRatio = undefined;	// Will be defined on render
 		this.idx = this.constructor.slides.length;
 		this.constructor.slides.push(this);
-		this.footerText = "I'm the footer";
 		heading.slide = this;
+		this.footertext = this.constructor.footertext;
 		this.heading = heading;
 		this.styles = [];
 		if (heading.matches(Slide.split)) {
@@ -557,7 +555,7 @@ export default class Slide extends Plugin {
 	html_footer() {
 		const footer = document.createElement("footer");
 		var copyright = footer.appendChild(document.createElement("div"));
-		copyright.innerHTML = Slide.footerText;
+		copyright.innerHTML = this.footertext;
 		footer.appendChild(this.html_slideNumber());
 		return footer;
 	}
@@ -660,7 +658,8 @@ export default class Slide extends Plugin {
 	}
 	parseOptions(element) {
 		var options = Theophile.parseConfigString(element.getAttribute("data-th"));
-		element.removeAttribute("data-th");
+		options = Theophile.parseConfigString(element.getAttribute("data-th-slide", options.slide));
+		element.removeAttribute("data-th-slide");
 		for (const property in options) {
 			if (Object.hasOwnProperty.call(options, property)) {
 				if (property.slice(0, 6) === "slide-") {

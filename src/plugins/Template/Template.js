@@ -1,10 +1,8 @@
 import Plugin from "../Plugin.js";
-import Properties from "./Properties.js";
 export default class Template extends Plugin {
-	static init(Theophile) {
-		super.init(Theophile);
-		this._processIframes = true;
-		Properties.defineProperties.call(this);
+	static async init(Theophile) {
+		await super.init(Theophile);
+		this.processiframes = (this.processiframes === undefined) ? true : this.processiframes;
 	}
 	static get url() {
 		return this.Theophile.siteURL("template.html");
@@ -41,9 +39,7 @@ export default class Template extends Plugin {
 	}
 	static async process() {
 		await super.process();
-		if (this._processIframes) {
-			this.processIframes(document.body);
-		}
+		this.processAllIframes(document.body);
 	}
 	static async mount() {
 		await super.mount();
@@ -123,19 +119,22 @@ export default class Template extends Plugin {
 			});
 		});
 	}
-	static processIframes(domain) {
-		domain.querySelectorAll("iframe").forEach(iframe => {
+	static processAllIframes(domain) {
+		if (this.processiframes) {
+			domain.querySelectorAll("iframe[src]:not(.th-no-figure)").forEach(iframe => {
+				this.processIframe(iframe);
+			});
+		}
+		domain.querySelectorAll("iframe:not([src])").forEach(iframe => {
 			this.processIframe(iframe);
-		});
-	}
-	static processIframe(iframe) {
-		if (!iframe.src) {
 			var src = `data:text/html,<!DOCTYPE html><meta charset="UTF-8"><html><body>${iframe.textContent.replace(/#/g, "%23")}</body></html>`;
 			iframe.setAttribute("src", src);
 			iframe.setAttribute("scrolling", "no");
 			iframe.style.overflow = "hidden";
-		}
-		if (iframe.classList.contains("th-no-figure") || iframe.getAttribute("data-th-no-figure")) return iframe;
+			iframe.classList.add("th-no-figure");
+		});
+	}
+	static processIframe(iframe) {
 		var figure = document.createElement("figure");
 		figure.classList.add("iframe");
 		if (iframe.style.width) {
