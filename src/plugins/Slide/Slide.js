@@ -10,11 +10,12 @@ import Theophile from "../../Theophile.js";
 export default class Slide extends Plugin {
 	static async init(Theophile) {
 		await super.init(Theophile);
+		this.transitionPromises = [Transition.init(this)];
 		this.include = this.include || "h1,h2,h3";
 		this.split = this.split || "br,.th-slide-split";
 		this.exclude = this.exclude || "h1:not(.th-slide-full)+h2, h2:not(.th-slide-full)+h3, h1:not(.th-slide-full)+h3, .th-slide-skip";
-		this.nlines = this.nlines || 20;
-		this.ratio = this.ratio || [16, 9];
+		this.nlines = parseFloat(this.nlines) || 20;
+		this.ratio = this.parseRatio(this.ratio, [16, 9]);
 		this.footertext = this.footertext || "";
 		this.transition = this.transition || {name: "Fade", duration: 500,};
 		this.contactsheet = null;
@@ -88,6 +89,17 @@ export default class Slide extends Plugin {
 			this._html = this.html_create();
 		}
 		return this._html;
+	}
+	static parseRatio(ratio, def) {
+		if (ratio instanceof Array) return ratio;
+		if (!isNaN(ratio)) 
+			return [Math.round(parseFloat(ratio) * 1000), 1000];
+		var parts;
+		if ((parts = ratio.trim().match(/\[\s*([0-9.]+)\s*,\s*([0-9.]+)\s*\]/))) 
+			return parts.slice(1).map(n => parseFloat(n));
+		if ((parts = ratio.trim().match(/([0-9.]+)\s*\/\s*([0-9.]+)/))) 
+			return parts.slice(1).map(n => parseFloat(n));
+		return def;
 	}
 	html_create() {
 		const slide = document.createElement("div");
@@ -455,7 +467,7 @@ export default class Slide extends Plugin {
 			var point = this.point(e);
 			var w = Math.abs(point.x - start.x);
 			var h = Math.abs(point.y - start.y);
-			if (w / h < this.ratio) {	// Vertical
+			if (w / h < this.ratio[0] / this.ratio[1]) {	// Vertical
 				feedback.style.width = "0px";
 				feedback.style.height = `${h}px`;
 				feedback.style.left = `${start.x}px`;
@@ -480,12 +492,9 @@ export default class Slide extends Plugin {
 			slide.ajustZoom();
 		}
 		if (transition && this.backdrop) {
-			const transitionParts = this.transition.split("-");
-			let objTransition = new Transition[transitionParts[0]](this.backdrop.slide, slide, transitionParts[1]);
+			let objTransition = Transition.fromConfig(this.backdrop.slide, slide);
 
 			objTransition.reverse = slide.idx < this.backdrop.slide.idx;
-			objTransition.options = this.transitionOptions;
-			objTransition.duration = this.transitionDuration;
 			await objTransition.go();
 		} else {
 			if (this.backdrop.slide) {
@@ -686,13 +695,14 @@ export default class Slide extends Plugin {
 	}
 	static async process() {
 		await super.process();
+		const ratio = this.ratio[0] / this.ratio[1];
 		document.documentElement.style.setProperty("--th-slide-nlines", this.nlines);
-		document.documentElement.style.setProperty("--th-slide-ratio", Math.round(this.ratio * 1000) / 1000);
+		document.documentElement.style.setProperty("--th-slide-ratio", Math.round(ratio * 1000) / 1000);
 		var style = document.head.appendChild(document.createElement("style"));
 		var innerHTML = "";
-		innerHTML += `@media (min-aspect-ratio: ${Math.round(this.ratio * 1000)} / 1000) {.th-slideshow .th-slide {--font-size: calc(100vh / var(--th-slide-nlines));}}`;
-		innerHTML += `@media (min-aspect-ratio: ${Math.round(this.ratio * 1200)} / 1000) {.th-slide-navigation > .th-slide-previous, .th-slide-navigation > .th-slide-next {opacity:.5;background:none}}`;
-		innerHTML += `@media (max-aspect-ratio: ${Math.round(this.ratio * 900)} / 1000) {.th-slide-navigation > .th-slide-options {opacity:1;background:none;}}`;
+		innerHTML += `@media (min-aspect-ratio: ${Math.round(ratio * 1000)} / 1000) {.th-slideshow .th-slide {--font-size: calc(100vh / var(--th-slide-nlines));}}`;
+		innerHTML += `@media (min-aspect-ratio: ${Math.round(ratio * 1200)} / 1000) {.th-slide-navigation > .th-slide-previous, .th-slide-navigation > .th-slide-next {opacity:.5;background:none}}`;
+		innerHTML += `@media (max-aspect-ratio: ${Math.round(ratio * 900)} / 1000) {.th-slide-navigation > .th-slide-options {opacity:1;background:none;}}`;
 		style.innerHTML = innerHTML;
 		var slide;
 		var ptr = document.body.firstChild;
@@ -895,6 +905,7 @@ export default class Slide extends Plugin {
 	}
 	static async clean() {
 		super.clean();
+		await Promise.all(this.transitionPromises);
 		window.addEventListener("keydown", e => {
 			if (e.key === "Shift" || e.key === "Control" || e.key === "Alt" || e.key === "Meta") return;
 			if (e.code === "Space") {

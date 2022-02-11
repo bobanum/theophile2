@@ -3,32 +3,24 @@ import Transition from "./Transition.js";
 export default class TransitionMask extends Transition {
 	constructor(original, replacement, type) {
 		super(original, replacement, type);
-		this.direction = "s";
+		this.direction = this.pick(this.direction, ["e", "s", "w", "n"]);
+		
 		this.gradientDirections = ["right", "bottom", "left", "top"];
-		this.width = 50;
-	}
-	get direction() {
-		return this._direction;
-	}
-	set direction(value) {
-		if (typeof value === "string") {
-			value = Math.max(["e", "s", "w", "n"].indexOf(value), 0);
-		}
-		this._direction = value;
+		this.width = this.value(this.width, 0, 100, 50);
 	}
 	cancel() {
 		this.replacement.style.transition = "none";
 	}
 	start() {
-		return (this.reverse ^ (this._direction >= 2)) ? 200 : -100;
+		return (this.reverse ^ (this.direction >= 2)) ? 200 : -100;
 	}
 	end() {
-		return (this.reverse ^ (this._direction >= 2)) ? 100 - this.width : this.width;
+		return (this.reverse ^ (this.direction >= 2)) ? 100 - this.width : this.width;
 	}
 	prepare(resolve) {
 		super.prepare();
-		this.axis = (this._direction % 2) ? "y" : "x";
-		var gradientDirection = this.gradientDirections[(this._direction + (this.reverse ? 2 : 0) % 4)];
+		this.axis = (this.direction % 2) ? "y" : "x";
+		var gradientDirection = this.gradientDirections[(this.direction + (this.reverse ? 2 : 0) % 4)];
 		this.replacement.style.position = "absolute";
 		this.replacement.style.zIndex = "100";
 		this.replacement.style.WebkitMaskImage = `linear-gradient(to ${gradientDirection}, transparent, black ${this.width / 2}%, black)`;

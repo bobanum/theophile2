@@ -8,7 +8,7 @@
         "transition": {
             "name": "clip-vertical",
             "duration": 500,
-            "direction": "e",
+            "direction": "w",
             "mode": "stack"
         },
         "footertext": "My test"

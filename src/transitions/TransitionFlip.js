@@ -3,10 +3,8 @@ import Transition from "./Transition.js";
 export default class TransitionFlip extends Transition {
 	constructor(original, replacement, type) {
 		super(original, replacement, type);
-		var boundingBox = this.original.getBoundingClientRect();
-		this.middle = { Y: boundingBox.width / 2, X: boundingBox.height / 2 };
 		this.reverse = false;
-		this.direction = 3; // E, N, W, S
+		this.direction = this.pick(this.direction, ["e", "n", "w", "s"]);
 	}
 	start() {
 		return "rotate" + this.axis + "(0deg)";

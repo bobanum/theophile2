@@ -6,7 +6,7 @@ export default class TransitionBox extends Transition {
 		var boundingBox = this.original.getBoundingClientRect();
 		this.middle = { Y: boundingBox.width / 2, X: boundingBox.height / 2 };
 		this.reverse = false;
-		this.direction = 0; // E, N, W, S
+		this.direction = this.pick(this.direction, ["e", "n", "w", "s"]);
 	}
 	start() {
 		return ( "translateZ(-" + this.middle[this.axis] + "px) rotate" + this.axis + "(0deg)"

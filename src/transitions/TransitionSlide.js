@@ -10,9 +10,9 @@ export default class TransitionSlide extends Transition {
 			top: boundingBox.top,
 			bottom: document.documentElement.clientHeight - boundingBox.bottom,
 		};
-		this.mode = "stack";
+		this.mode = this.mode || "stack";
 		this.reverse = false;
-		this.direction = 0;
+		this.direction = this.pick(this.direction, ["e", "se", "s", "sw", "w", "nw", "n", "ne"])
 		this.directions = [
 			["left"],
 			["left", "top"],
@@ -25,23 +25,10 @@ export default class TransitionSlide extends Transition {
 		];
 	}
 	get props() {
-		return this.directions[
-			this.mode === "stack" ? this.direction : (this.direction + 4) % 8
-		];
-	}
-	get direction() {
-		return this._direction;
-	}
-	set direction(value) {
-		if (typeof value === "string") {
-			value = Math.max(["e", "se", "s", "sw", "w", "nw", "n", "ne"].indexOf(value), 0);
-		}
-		this._direction = value;
+		return this.directions[this.mode === "stack" ? this.direction : (this.direction + 4) % 8];
 	}
 	start(prop) {
-		return !(this.reverse ^ (this.mode === "stack"))
-			? this.box[prop] + "px"
-			: "100%";
+		return !(this.reverse ^ (this.mode === "stack")) ? this.box[prop] + "px" : "100%";
 	}
 	end(prop) {
 		return this.reverse ^ (this.mode === "stack") ? this.box[prop] + "px" : "100%";
