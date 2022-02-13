@@ -281,7 +281,9 @@ export default class Slide extends Plugin {
 			// var code = prefix + e.code;
 			var stop = false;
 			switch (key) {
-				case "ArrowLeft": case "Shift-Tab": {
+				case "ArrowLeft": 
+				case "PageUp": 
+				case "Shift-Tab": {
 					stop = true;
 					let previous = this.contactsheetCurrent.previous;
 					if (previous) {
@@ -317,7 +319,8 @@ export default class Slide extends Plugin {
 					this.highlightThumbnail(previous);
 					break;
 				}
-				case "ArrowRight": case "Tab": {
+				case "ArrowRight": 
+				case "PageDown": {
 					stop = true;
 					let next = this.contactsheetCurrent.next;
 					if (next) {
@@ -335,12 +338,14 @@ export default class Slide extends Plugin {
 					this.highlightThumbnail(this.slides.slice(-1)[0]);
 					break;
 				}
+				case "Tab":
 				case "Enter": {
 					stop = true;
 					this.hideContactsheet(this.contactsheetCurrent);
 					break;
 				}
-				case "Escape": case "#": {
+				case "Escape": 
+				case "#": {
 					stop = true;
 					this.hideContactsheet();
 					break;
@@ -385,17 +390,17 @@ export default class Slide extends Plugin {
 			if (e.shiftKey) prefix += "Shift-";
 			var key = prefix + e.key;
 			// var code = prefix + e.code;
+			console.log(key);
 			switch (key) {
 				case "ArrowRight":
 				case "ArrowDown":
-				case "PageDown":
+				case "PageUp":
 				case "+":
-				case "Enter":
 					this.showNext();
 					break;
 				case "ArrowLeft":
 				case "ArrowUp":
-				case "PageUp":
+				case "PageDown":
 				case "-":
 					this.showPrevious();
 					break;
@@ -407,6 +412,7 @@ export default class Slide extends Plugin {
 					break;
 				case " ":
 				case "Escape":
+				case "Tab":
 					e.preventDefault();
 					if (Object.values(this.animations).length > 0) {
 						this.cancelAnimations();
@@ -415,6 +421,7 @@ export default class Slide extends Plugin {
 					}
 					break;
 				case "#":
+				case "Enter":
 					e.preventDefault();
 					this.showContactsheet();
 					break;
@@ -908,7 +915,7 @@ export default class Slide extends Plugin {
 		await Promise.all(this.transitionPromises);
 		window.addEventListener("keydown", e => {
 			if (e.key === "Shift" || e.key === "Control" || e.key === "Alt" || e.key === "Meta") return;
-			if (e.code === "Space") {
+			if (e.code === "Space" || e.code === "Tab") {
 				// var visible = this.getVisible();
 				if (this.backdrop) {
 					return;
