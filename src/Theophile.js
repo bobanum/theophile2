@@ -4,42 +4,38 @@
  * @class Theophile
  */
 export default class Theophile {
+	static async exec(root) {
+		console.trace("Theophile BEGIN");
+		await this.init(root);
+		await this.prepare();
+		await this.process();
+		await this.beforeMount();
+		await this.mount();
+		await this.afterMount();
+		await this.clean();
+		console.trace("Theophile END");
+	}
 	/**
 	 * Description
 	 * @param {string} [root="."]
 	 * @returns Promise
 	 * @memberof Theophile
 	 */
-	static init(root = ".") {
+	static async init(root = ".") {
 		if (this.loaded) {
 			return Promise.resolve();
 		}
 		this.loaded = true;
 		this._root = "";
 		this.root = root;
-		this.headings = "h1, h2, h3";
 		this.ready = false;
 		this.plugins = {};
-		this.config = this.loadDataSet();
-		const promises = [
-			this.scriptLink(),
-			this.cssLink(),
-		]
-		var plugins = ["Template", "Reference", "Slide", "Toc"];
-		if (this.config.include) {
-			plugins = this.config.include.trim().split(/\s*,\s*/).map(name => name[0].toUpperCase() + name.slice(1).toLowerCase());
-		}
-		if (this.config.exclude) {
-			const exclude = this.config.exclude.trim().split(/\s*,\s*/).map(name => name[0].toUpperCase() + name.slice(1).toLowerCase());
-			plugins = plugins.filter(name => exclude.indexOf(name) < 0);
-		}
-		promises.push(...plugins.map(async file => {
-			return this.loadPlugin(file);
-		}));
-		promises.push(this.loadConfig(this.config));
-		// Loading DataSet again to prioritize Local properties
-		promises.push(this.loadDataSet(document.documentElement, this.config));
-		return Promise.all(promises);
+		await this.loadConfig();
+		this.linkPromises = Promise.all([
+			this.loadScripts(),
+			this.loadStyles(),
+		]);
+		return Promise.all(this.loadPlugins(["Template", "Reference", "Slide", "Toc"]));
 	}
 	static get root() {
 		return this._root;
@@ -118,7 +114,7 @@ export default class Theophile {
 		})
 	}
 	static processHeadings() {
-		var headings = Array.from(document.querySelectorAll(this.headings));
+		var headings = Array.from(document.querySelectorAll("h1,h2,h3,h4,h5,h6,[data-th-heading]"));
 		headings.forEach(heading => {
 			if (heading.hasAttribute("id")) {
 				return;
@@ -146,20 +142,11 @@ export default class Theophile {
 			.replace(/_+/g, "_");
 		return result;
 	}
-	static async prepare(options = {}) {
-		for (let property in options) {
-			this[property] = options[property];
-		}
-		for (let property in this.config) {
-			this[property] = this.config[property];
-		}
-
+	static async prepare() {
+		await this.linkPromises;
 		await new Promise(resolve => {
-			if (
-				document.readyState === "complete" ||
-				document.readyState === "interactive"
-			)
-				return resolve();
+			//TODO Check pertinence
+			if (document.readyState === "complete" || document.readyState === "interactive") return resolve();
 			window.addEventListener("DomContentLoaded", e => {
 				console.trace("DomContent Loaded in prepare");
 				this.ready = true;
@@ -167,9 +154,7 @@ export default class Theophile {
 			});
 		});
 		console.trace("Theophile ready");
-		const promises = Array.from(Object.values(this.plugins), plugin =>
-			plugin.prepare()
-		);
+		const promises = Array.from(Object.values(this.plugins), plugin => plugin.prepare());
 		const data = await Promise.all(promises);
 		console.trace("Plugins ready");
 		return data;
@@ -233,50 +218,65 @@ export default class Theophile {
 		url.pathname = path.join("/");
 		return url;
 	}
-	static async scriptLink() {
+	static async loadScripts() {
+		await this.loadScript("https://cdn.jsdelivr.net/npm/marked/marked.min.js");
 		var urls = [
-			"https://cdn.jsdelivr.net/npm/marked/marked.min.js", 
 			"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js",
 			"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/languages/javascript.min.js",
 			"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/languages/css.min.js",
 		];
-		const data = await Promise.all(urls.map(url => {
-			const script = document.head.appendChild(document.createElement("script"));
-			script.setAttribute("src", url);
-			return new Promise(resolve => {
-				script.addEventListener("load", e => {
-					resolve(e);
-				});
-			});
-		}));
+		const data = await Promise.all(urls.map(url => this.loadScript(url)));
 		console.trace("Scripts loaded");
 		return data;
 	}
-	static async cssLink() {
+	static async loadStyles() {
 		var urls = [
 			this.appURL("src/css/style.css"),
 			"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/a11y-dark.min.css",
 		];
-		const data = await Promise.all(urls.map(url => {
-			const link = document.head.appendChild(document.createElement("link"));
-			link.setAttribute("rel", "stylesheet");
-			link.setAttribute("href", url);
-			return new Promise(resolve => {
-				link.addEventListener("load", e => {
-					resolve(e);
-				});
-			});
-		}));
+		const data = await Promise.all(urls.map(url => this.loadLink(url)));
 		console.trace("Styles loaded");
 		return data;
 	}
-	static async loadPlugin(name) {
-		const obj = await import(`./plugins/${name}/${name}.js`);
-		const plugin = obj.default;
-		console.trace(`Plugin ${plugin.name} loaded`);
-		this[plugin.name] = plugin;
-		this.plugins[plugin.name] = plugin;
-		return plugin.init(this);
+	static loadScript(url) {
+		return new Promise(resolve => {
+			const script = document.head.appendChild(document.createElement("script"));
+			script.setAttribute("src", url);
+			script.addEventListener("load", e => {
+				resolve(e.currentTarget);
+			});
+		});
+	}
+	static loadLink(url) {
+		return new Promise(resolve => {
+			const link = document.head.appendChild(document.createElement("link"));
+			link.setAttribute("rel", "stylesheet");
+			link.setAttribute("href", url);
+			link.addEventListener("load", e => {
+				resolve(e.currentTarget);
+			});
+		});
+	}
+	static loadPlugins(plugins) {
+		if (this.include) {
+			plugins = this.include.trim().split(/\s*,\s*/).map(name => name[0].toUpperCase() + name.slice(1).toLowerCase());
+		}
+		if (this.exclude) {
+			const exclude = this.exclude.trim().split(/\s*,\s*/).map(name => name[0].toUpperCase() + name.slice(1).toLowerCase());
+			plugins = plugins.filter(name => exclude.indexOf(name) < 0);
+		}
+		return plugins.map(async file => {
+			return this.loadPlugin(file);
+		});
+	}
+	static loadPlugin(name) {
+		return import(`./plugins/${name}/${name}.js`).then(obj => {
+			const plugin = obj.default;
+			console.trace(`Plugin ${plugin.name} loaded`);
+			this[plugin.name] = plugin;
+			this.plugins[plugin.name] = plugin;
+			return plugin.init(this);
+		});
 	}
 	static loadJson(url) {
 		return new Promise((resolve, reject) => {
@@ -311,73 +311,63 @@ export default class Theophile {
 			}
 		});
 	}
-	static async loadConfig(to) {
-		var data;
+	static async loadConfig() {
+		var config;
 		try {
-			data = await this.loadJson(this.siteURL("theophile.json"));
+			config = await this.loadJson(this.siteURL("theophile.json"));
 		} catch (err) {
-			data = {};
+			config = {};
 		}
-		if (!to) return data;
-		for (let property in data) {
-			to[property] = data[property];
+		this.loadDataSet(document.documentElement, config);
+		for (let property in config) {
+			this[property] = config[property];
 		}
-		return data;
+		return config;
 	}
-	static loadDataSet(dataset, to) {
-		if (dataset === undefined) {
-			dataset = document.documentElement.dataset;
-		}
-		dataset = dataset.dataset || dataset;
+	static loadDataSet(element, to) {
+		var dataset = element.dataset;
 		to = to || {};
 		for (let property in dataset) {
-			if (property.slice(0, 2) === "th") {
-				let value = dataset[property];
-				property = property.slice(2, 3).toLowerCase() + property.slice(3);
-				if (property === "") {
-					this.parseConfigString(value, to);
-				} else {
-					to[property] = value;
-				}
+			if (property === "th") {
+				this.parseConfigString(dataset[property], to);
+			} else if (property.match(/^th[A-Z]/) !== null) {
+				this.setCompoundProperty(property.slice(2), dataset[property], to);
 			}
 		}
 		return to;
 	}
+	static setCompoundProperty(property, value, to) {
+		const properties = property.replace(/[A-Z]/g, x => "-" + x).replace(/^-/, "").toLowerCase().split("-");
+		// properties.push(property.match())
+		// [...property.matchAll(/^[a-z0-9]*|[A-Z][a-z0-9]*/g), ...property.matchAll(/-[a-z][a-zA-Z0-9]*/g)];
+		to = to || {};
+		let destination = to;
+		properties.slice(0, -1).forEach(p => {
+			if (!destination[p]) {
+				destination[p] = {};
+			}
+			destination = destination[p];
+		});
+		destination[properties.slice(-1)[0]] = this.parseConfigString(value, destination[properties.slice(-1)[0]]);
+	}
 	static parseConfigString(data, to) {
 		if (!data) return {};
-		data = data.replace(/\s*;\s*$/, "").split(/;/).reduce((result, option) => {
-			var parts = option.match(/\s*([a-zA-z_-][a-zA-z0-9_-]*)\s*:\s*(.*)\s*/);
+		if (data.indexOf(":") < 0)
+			return data;
+		to = to || {};
+		data.replace(/\s*;\s*$/, "").split(/;/).forEach(property => {
+			var parts = property.match(/\s*([a-zA-z_-][a-zA-z0-9_-]*)\s*:\s*(.*)\s*/);
 			if (parts) {
-				result[parts[1]] = parts[2];
+				this.setCompoundProperty(parts[1], parts[2], to);
 			}
-			return result;
-		}, {});
+		});
 		//TODO Normalize
-		if (!to) return data;
-		for (const property in data) {
-			if (Object.hasOwnProperty.call(data, property)) {
-				to[property] = data[property];
-			}
-		}
-		return data;
-	}
-	static async exec(options = {}) {
-		if (typeof options === "string") {
-			options = { root: options };
-		}
-		console.trace("Theophile BEGIN");
-		await this.init(options.root);
-		console.log(options.root);
-		delete options.root;
-		debugger;
-		await this.prepare(options);
-		console.log(this);
-		await this.process();
-		await this.beforeMount();
-		await this.mount();
-		await this.afterMount();
-		await this.clean();
-		console.log(this);
-		console.trace("Theophile END");
+		// if (!to) return data;
+		// for (const property in data) {
+		// 	if (Object.hasOwnProperty.call(data, property)) {
+		// 		to[property] = data[property];
+		// 	}
+		// }
+		return to;
 	}
 }

@@ -1,29 +1,28 @@
 import Plugin from "../Plugin.js";
 import Transition from "../../transitions/Transition.js";
-import Properties from "./Properties.js";
 import Theophile from "../../Theophile.js";
+//TODO ratio
 /**
  * @export
  * @class Slide
  * @extends {Plugin}
  */
 export default class Slide extends Plugin {
-	static init(Theophile) {
-		super.init(Theophile);
-		this.include = "h1,h2,h3";
-		this.split = "br,.th-slide-split";
-		this.exclude = "h1:not(.th-slide-full)+h2, h2:not(.th-slide-full)+h3, h1:not(.th-slide-full)+h3, .th-slide-skip";
-		this.nlines = 20;
-		this.ratio = 16 / 9;
-		this.transition = "Fade";
-		this.transitionDuration = 500;
-		this.transitionOptions = {};
+	static async init(Theophile) {
+		await super.init(Theophile);
+		this.transitionPromises = [Transition.init(this)];
+		this.include = this.include || "h1,h2,h3";
+		this.split = this.split || "br,.th-slide-split";
+		this.exclude = this.exclude || "h1:not(.th-slide-full)+h2, h2:not(.th-slide-full)+h3, h1:not(.th-slide-full)+h3, .th-slide-skip";
+		this.nlines = parseFloat(this.nlines) || 20;
+		this.ratio = this.parseRatio(this.ratio, [16, 9]);
+		this.footertext = this.footertext || "";
+		this.transition = this.transition || {name: "Fade", duration: 500,};
 		this.contactsheet = null;
 		this.slides = [];
 		this.animations = {};
 		this.timestamp = null;
 		this.timestampSlide = null;
-		Properties.defineProperties.call(this);
 	}
 	/**
 	 * Creates an instance of Slide.
@@ -60,8 +59,8 @@ export default class Slide extends Plugin {
 		this.zoomRatio = undefined;	// Will be defined on render
 		this.idx = this.constructor.slides.length;
 		this.constructor.slides.push(this);
-		this.footerText = "I'm the footer";
 		heading.slide = this;
+		this.footertext = this.constructor.footertext;
 		this.heading = heading;
 		this.styles = [];
 		if (heading.matches(Slide.split)) {
@@ -90,6 +89,17 @@ export default class Slide extends Plugin {
 			this._html = this.html_create();
 		}
 		return this._html;
+	}
+	static parseRatio(ratio, def) {
+		if (ratio instanceof Array) return ratio;
+		if (!isNaN(ratio)) 
+			return [Math.round(parseFloat(ratio) * 1000), 1000];
+		var parts;
+		if ((parts = ratio.trim().match(/\[\s*([0-9.]+)\s*,\s*([0-9.]+)\s*\]/))) 
+			return parts.slice(1).map(n => parseFloat(n));
+		if ((parts = ratio.trim().match(/([0-9.]+)\s*\/\s*([0-9.]+)/))) 
+			return parts.slice(1).map(n => parseFloat(n));
+		return def;
 	}
 	html_create() {
 		const slide = document.createElement("div");
@@ -271,7 +281,9 @@ export default class Slide extends Plugin {
 			// var code = prefix + e.code;
 			var stop = false;
 			switch (key) {
-				case "ArrowLeft": case "Shift-Tab": {
+				case "ArrowLeft": 
+				case "PageUp": 
+				case "Shift-Tab": {
 					stop = true;
 					let previous = this.contactsheetCurrent.previous;
 					if (previous) {
@@ -307,7 +319,8 @@ export default class Slide extends Plugin {
 					this.highlightThumbnail(previous);
 					break;
 				}
-				case "ArrowRight": case "Tab": {
+				case "ArrowRight": 
+				case "PageDown": {
 					stop = true;
 					let next = this.contactsheetCurrent.next;
 					if (next) {
@@ -325,12 +338,14 @@ export default class Slide extends Plugin {
 					this.highlightThumbnail(this.slides.slice(-1)[0]);
 					break;
 				}
+				case "Tab":
 				case "Enter": {
 					stop = true;
 					this.hideContactsheet(this.contactsheetCurrent);
 					break;
 				}
-				case "Escape": case "#": {
+				case "Escape": 
+				case "#": {
 					stop = true;
 					this.hideContactsheet();
 					break;
@@ -375,17 +390,17 @@ export default class Slide extends Plugin {
 			if (e.shiftKey) prefix += "Shift-";
 			var key = prefix + e.key;
 			// var code = prefix + e.code;
+			console.log(key);
 			switch (key) {
 				case "ArrowRight":
 				case "ArrowDown":
-				case "PageDown":
+				case "PageUp":
 				case "+":
-				case "Enter":
 					this.showNext();
 					break;
 				case "ArrowLeft":
 				case "ArrowUp":
-				case "PageUp":
+				case "PageDown":
 				case "-":
 					this.showPrevious();
 					break;
@@ -397,6 +412,7 @@ export default class Slide extends Plugin {
 					break;
 				case " ":
 				case "Escape":
+				case "Tab":
 					e.preventDefault();
 					if (Object.values(this.animations).length > 0) {
 						this.cancelAnimations();
@@ -405,6 +421,7 @@ export default class Slide extends Plugin {
 					}
 					break;
 				case "#":
+				case "Enter":
 					e.preventDefault();
 					this.showContactsheet();
 					break;
@@ -457,7 +474,7 @@ export default class Slide extends Plugin {
 			var point = this.point(e);
 			var w = Math.abs(point.x - start.x);
 			var h = Math.abs(point.y - start.y);
-			if (w / h < this.ratio) {	// Vertical
+			if (w / h < this.ratio[0] / this.ratio[1]) {	// Vertical
 				feedback.style.width = "0px";
 				feedback.style.height = `${h}px`;
 				feedback.style.left = `${start.x}px`;
@@ -482,12 +499,9 @@ export default class Slide extends Plugin {
 			slide.ajustZoom();
 		}
 		if (transition && this.backdrop) {
-			const transitionParts = this.transition.split("-");
-			let objTransition = new Transition[transitionParts[0]](this.backdrop.slide, slide, transitionParts[1]);
+			let objTransition = Transition.fromConfig(this.backdrop.slide, slide);
 
 			objTransition.reverse = slide.idx < this.backdrop.slide.idx;
-			objTransition.options = this.transitionOptions;
-			objTransition.duration = this.transitionDuration;
 			await objTransition.go();
 		} else {
 			if (this.backdrop.slide) {
@@ -557,7 +571,7 @@ export default class Slide extends Plugin {
 	html_footer() {
 		const footer = document.createElement("footer");
 		var copyright = footer.appendChild(document.createElement("div"));
-		copyright.innerHTML = Slide.footerText;
+		copyright.innerHTML = this.footertext;
 		footer.appendChild(this.html_slideNumber());
 		return footer;
 	}
@@ -660,7 +674,8 @@ export default class Slide extends Plugin {
 	}
 	parseOptions(element) {
 		var options = Theophile.parseConfigString(element.getAttribute("data-th"));
-		element.removeAttribute("data-th");
+		options = Theophile.parseConfigString(element.getAttribute("data-th-slide", options.slide));
+		element.removeAttribute("data-th-slide");
 		for (const property in options) {
 			if (Object.hasOwnProperty.call(options, property)) {
 				if (property.slice(0, 6) === "slide-") {
@@ -687,13 +702,14 @@ export default class Slide extends Plugin {
 	}
 	static async process() {
 		await super.process();
+		const ratio = this.ratio[0] / this.ratio[1];
 		document.documentElement.style.setProperty("--th-slide-nlines", this.nlines);
-		document.documentElement.style.setProperty("--th-slide-ratio", Math.round(this.ratio * 1000) / 1000);
+		document.documentElement.style.setProperty("--th-slide-ratio", Math.round(ratio * 1000) / 1000);
 		var style = document.head.appendChild(document.createElement("style"));
 		var innerHTML = "";
-		innerHTML += `@media (min-aspect-ratio: ${Math.round(this.ratio * 1000)} / 1000) {.th-slideshow .th-slide {--font-size: calc(100vh / var(--th-slide-nlines));}}`;
-		innerHTML += `@media (min-aspect-ratio: ${Math.round(this.ratio * 1200)} / 1000) {.th-slide-navigation > .th-slide-previous, .th-slide-navigation > .th-slide-next {opacity:.5;background:none}}`;
-		innerHTML += `@media (max-aspect-ratio: ${Math.round(this.ratio * 900)} / 1000) {.th-slide-navigation > .th-slide-options {opacity:1;background:none;}}`;
+		innerHTML += `@media (min-aspect-ratio: ${Math.round(ratio * 1000)} / 1000) {.th-slideshow .th-slide {--font-size: calc(100vh / var(--th-slide-nlines));}}`;
+		innerHTML += `@media (min-aspect-ratio: ${Math.round(ratio * 1200)} / 1000) {.th-slide-navigation > .th-slide-previous, .th-slide-navigation > .th-slide-next {opacity:.5;background:none}}`;
+		innerHTML += `@media (max-aspect-ratio: ${Math.round(ratio * 900)} / 1000) {.th-slide-navigation > .th-slide-options {opacity:1;background:none;}}`;
 		style.innerHTML = innerHTML;
 		var slide;
 		var ptr = document.body.firstChild;
@@ -896,9 +912,10 @@ export default class Slide extends Plugin {
 	}
 	static async clean() {
 		super.clean();
+		await Promise.all(this.transitionPromises);
 		window.addEventListener("keydown", e => {
 			if (e.key === "Shift" || e.key === "Control" || e.key === "Alt" || e.key === "Meta") return;
-			if (e.code === "Space") {
+			if (e.code === "Space" || e.code === "Tab") {
 				// var visible = this.getVisible();
 				if (this.backdrop) {
 					return;

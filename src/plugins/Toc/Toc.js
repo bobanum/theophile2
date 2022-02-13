@@ -3,14 +3,14 @@ import Plugin from "../Plugin.js";
 //TODO #24 Make scrolling smouth. For now, il scroll-behavious is smouth, page scrolls from top after ending slideshow.
 //TODO #25 Toc: Make it possible to pin TOC on the page
 export default class Toc extends Plugin {
-	static init(Theophile) {
-		super.init(Theophile);
-		this.headings = "h1,h2,h3";
+	static async init(Theophile) {
+		await super.init(Theophile);
+		this.headings = this.headings || "h1,h2,h3";
 	}
 	static async process() {
 		await super.process();
-		this.headings = Array.from(document.body.querySelectorAll(this.headings));
-		this.hierarchy = this.getHierarchy(this.headings);
+		this._headings = Array.from(document.body.querySelectorAll(this.headings));
+		this.hierarchy = this.getHierarchy(this._headings);
 	}
 	static async afterMount() {
 		await super.afterMount();
@@ -95,7 +95,7 @@ export default class Toc extends Plugin {
 		return result;
 	}
 	static findVisibleHeading() {
-		var headings = this.headings.map(heading => {
+		var headings = this._headings.map(heading => {
 			return [heading, heading.getBoundingClientRect().y];
 		}).sort((a, b) => (a[1] < b[1] ? -1 : 1));
 		var last = headings.slice(-1)[0];

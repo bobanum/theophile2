@@ -3,7 +3,7 @@ import Transition from "./Transition.js";
 export default class TransitionBlur extends Transition {
 	constructor(original, replacement, type) {
 		super(original, replacement, type);
-		this.blur = 1;
+		this.blur = this.value(this.blur, 0, 10, 1);
 	}
 	get filter() {
 		return `blur(${this.blur}em) contrast(0.5) saturate(2) brightness(.6)`;

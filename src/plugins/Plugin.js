@@ -1,9 +1,11 @@
 export default class Plugin {
-	static init(Theophile) {
+	static async init(Theophile) {
 		this.Theophile = Theophile;
+		this.loadConfig();
+		this.linkPromises = this.loadStyles();
 	}
 	static async prepare() {
-		this.cssLink();
+		await this.linkPromises;
 		console.trace("Plugin " + this.name + " ready");
 		return Promise.resolve();
 	}
@@ -27,14 +29,25 @@ export default class Plugin {
 		console.trace("Plugin " + this.name + " cleaned");
 		return Promise.resolve();
 	}
-	static cssLink() {
-		var url = this.Theophile.appURL(`src/plugins/${this.name}/style.css`);
-
-		const link = document.head.appendChild(document.createElement("link"));
-		link.id = `th-${this.name}-style`;
-		link.setAttribute("rel", "stylesheet");
-		link.setAttribute("href", url);
-		return link;
+	static async loadConfig() {
+		var config = this.Theophile[this.name.toLowerCase()] || {};
+		for (let property in config) {
+			this[property] = config[property];
+		}
+		return config;
+	}
+	static loadStyles() {
+		return new Promise(resolve => {
+			var url = this.Theophile.appURL(`src/plugins/${this.name}/style.css`);
+	
+			const link = document.head.appendChild(document.createElement("link"));
+			link.id = `th-${this.name}-style`;
+			link.setAttribute("rel", "stylesheet");
+			link.setAttribute("href", url);
+			link.addEventListener("load", e => {
+				resolve(e.currentTarget);
+			});
+		});
 	}
 	static parseStyle(style = {}) {
 		if (style === null) {
