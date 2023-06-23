@@ -1,4 +1,4 @@
-import Theophile from "./src/Theophile.js";
+import Theophile from "./Theophile.js";
 console.trace = false ? console.log : () => {};
 export default class App extends Theophile {
 	static async init() {

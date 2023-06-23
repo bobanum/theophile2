@@ -1,0 +1,28 @@
+{
+  "name": "theophile",
+  "version": "1.0.0",
+  "description": "A templating module that transforms a web page into a (Powerpoint-like) presentation",
+  "main": "src/index.js",
+  "directories": {
+    "doc": "docs",
+    "example": "example"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bobanum/theophile.git"
+  },
+  "keywords": [
+    "Powerpoint",
+    "Webpage",
+    "Templating"
+  ],
+  "author": "Martin Boudreau",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bobanum/theophile/issues"
+  },
+  "homepage": "https://github.com/bobanum/theophile#readme"
+}
