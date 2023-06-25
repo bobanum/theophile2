@@ -1,0 +1,16 @@
+{
+    "nlines": 20,
+    "ratio": [
+        16,
+        9
+    ],
+    "slide": {
+        "transition": {
+            "name": "clip-vertical",
+            "duration": 500,
+            "direction": "w",
+            "mode": "stack"
+        },
+        "footertext": "My test"
+    }
+}

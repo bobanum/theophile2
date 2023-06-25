@@ -1,3 +1,5 @@
+import { marked } from "/node_modules/marked/lib/marked.esm.js";
+import hljs from './highlight/highlight.min.js';
 /**
  * Description
  * @export
@@ -55,10 +57,11 @@ export default class Theophile {
 		return (this._root = result);
 	}
 	static siteURL(url) {
-		if (url.match(/^[a-zA-Z0-9]+:\/\//)) {
+		if (url && url.match(/^[a-zA-Z][a-zA-Z0-9+.-]*?:\/\//)) {
 			return new URL(url);
 		}
 		var result = new URL(this.root);
+		if (!url) return result;
 		if (url[0] === "/") {
 			result.pathname = url;
 			return result;
@@ -84,6 +87,11 @@ export default class Theophile {
 		document.body.innerHTML = html;
 	}
 	static processMarkdown() {
+		marked.use({
+			mangle: false,
+			headerIds: false,
+		});
+		
 		// console.log(document.body.innerHTML);
 		// document.body.innerHTML = marked.parse('<div>ok</div># quoi \n# <span>_Marked_</span> in browser\n\nRendered by **marked**.');
 		var node, walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
@@ -101,7 +109,7 @@ export default class Theophile {
 			text = text.map(line => line.slice(deindent)).join("\n");
 			text = marked.parse(text).trimEnd().replace(/(?:^<p>)|(?:<\/p>$)/g, "");
 			if (text.trim() === startingText.trim() || text.trim() === startingText0.trim() || text.trim() === startingText1.trim() || text.trim() === "") continue;
-			console.log("DEBUGGING MARKDOWN : ", startingText, startingText0, startingText1, text);
+			// console.log("DEBUGGING MARKDOWN : ", startingText, startingText0, startingText1, text);
 			var div = document.createElement("div");
 			div.innerHTML = text;
 			while (div.firstChild) {
@@ -210,6 +218,9 @@ export default class Theophile {
 		return data;
 	}
 	static appURL(file) {
+		if (file && file.match(/^[a-zA-Z][a-zA-Z0-9+.-]*?:\/\//)) {
+			return file;
+		}
 		var url = new URL(import.meta.url);
 		var path = url.pathname.split("/").slice(0, -2);
 		if (file) {
@@ -219,11 +230,11 @@ export default class Theophile {
 		return url;
 	}
 	static async loadScripts() {
-		await this.loadScript("https://cdn.jsdelivr.net/npm/marked/marked.min.js");
+		// await this.loadScript("https://cdn.jsdelivr.net/npm/marked/marked.min.js");
 		var urls = [
-			"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js",
-			"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/languages/javascript.min.js",
-			"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/languages/css.min.js",
+			// "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js",
+			// "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/languages/javascript.min.js",
+			// "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/languages/css.min.js",
 		];
 		const data = await Promise.all(urls.map(url => this.loadScript(url)));
 		console.trace("Scripts loaded");
@@ -316,7 +327,8 @@ export default class Theophile {
 		try {
 			config = await this.loadJson(this.siteURL("theophile.json"));
 		} catch (err) {
-			config = {};
+			console.warn("No config file found. Loading default config.");
+			config = await this.loadJson(this.appURL("defaults/theophile.json"));
 		}
 		this.loadDataSet(document.documentElement, config);
 		for (let property in config) {

@@ -24,5 +24,8 @@
   "bugs": {
     "url": "https://github.com/bobanum/theophile/issues"
   },
-  "homepage": "https://github.com/bobanum/theophile#readme"
+  "homepage": "https://github.com/bobanum/theophile#readme",
+  "dependencies": {
+    "marked": "^5.1.0"
+  }
 }

@@ -7,13 +7,17 @@ export default class Template extends Plugin {
 	static get url() {
 		return this.Theophile.siteURL("template.html");
 	}
-	static async load() {
+	static async load(url = this.url) {
 		return new Promise(resolve => {
 			const xhr = new XMLHttpRequest();
-			xhr.open("get", this.url);
+			xhr.open("get", url);
 			xhr.responseType = "document";
 			xhr.addEventListener("load", e => {
-				resolve(e.target.response);
+				if (e.target.status !== 200) {
+					return resolve(false);
+				}
+				console.trace("Template loaded from " + url);
+				return resolve(e.target.response);
 			});
 			xhr.send();
 		});
@@ -21,18 +25,37 @@ export default class Template extends Plugin {
 	static async prepare() {
 		await super.prepare();
 		this.template = await this.load();
-		// this.template.querySelectorAll("script").forEach(script => {
-		//     if (script.innerHTML.indexOf('For SVG support') >= 0) {
-		//         script.remove();
-		//     }
-		// });
-		this.template
+		if (this.template) {
+			this.adaptUrl(this.template, url => this.Theophile.siteURL(url));
+			return this.template;
+		}
+		console.warn("Template not found. Using default template");
+		this.template = await this.load(this.Theophile.appURL("defaults/template.html"));
+		this.adaptUrl(this.template, url => this.Theophile.appURL(`defaults/${url}`));
+		return this.template;
+		// this.template
+		// 	.querySelectorAll("[src],[href],[data]")
+		// 	.forEach(element => {
+
+		// 		console.log(element);
+		// 		["src", "href", "data"].forEach(name => {
+		// 			const url = element.getAttribute(name);
+		// 			if (url) {
+		// 				element.setAttribute(name, this.Theophile.siteURL(url));
+		// 			}
+		// 		});
+		// 	});
+	}
+	static adaptUrl(template, urlFn) {
+		template
 			.querySelectorAll("[src],[href],[data]")
 			.forEach(element => {
+
+				console.log(element);
 				["src", "href", "data"].forEach(name => {
 					const url = element.getAttribute(name);
 					if (url) {
-						element.setAttribute(name, this.Theophile.siteURL(url));
+						element.setAttribute(name, urlFn(url));
 					}
 				});
 			});

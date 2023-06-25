@@ -90,7 +90,8 @@ export default class Slide extends Plugin {
 		}
 		return this._html;
 	}
-	static parseRatio(ratio, def) {
+	static parseRatio(ratio, defaultRatio) {
+		if (!ratio) return defaultRatio;
 		if (ratio instanceof Array) return ratio;
 		if (!isNaN(ratio)) 
 			return [Math.round(parseFloat(ratio) * 1000), 1000];
@@ -99,7 +100,7 @@ export default class Slide extends Plugin {
 			return parts.slice(1).map(n => parseFloat(n));
 		if ((parts = ratio.trim().match(/([0-9.]+)\s*\/\s*([0-9.]+)/))) 
 			return parts.slice(1).map(n => parseFloat(n));
-		return def;
+		return defaultRatio;
 	}
 	html_create() {
 		const slide = document.createElement("div");
