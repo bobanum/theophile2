@@ -1,21 +1,22 @@
-import { marked } from "/node_modules/marked/lib/marked.esm.js";
-import hljs from './highlight/highlight.min.js';
+import Plugin from "./Plugin.js";
 /**
  * Description
  * @export
  * @class Theophile
  */
-export default class Theophile {
+export default class Theophile extends Plugin {
+	static name = "Theophile";
+	static loaded = false;
 	static async exec(root) {
-		console.trace("Theophile BEGIN");
-		await this.init(root);
-		await this.prepare();
-		await this.process();
-		await this.beforeMount();
-		await this.mount();
-		await this.afterMount();
-		await this.clean();
-		console.trace("Theophile END");
+		this.log("Theophile BEGIN");
+		await this.execHook("beforeFetch", root);
+		await this.execHook("fetched", root);
+		await this.execHook("beforeMount", root);
+		await this.execHook("beforeCleanup", root);
+		await this.execHook("cleanedup", root);
+		await this.execHook("mounted", root);
+		await this.execHook("afterMounted", root);
+		this.log("Theophile END");
 	}
 	/**
 	 * Description
@@ -23,21 +24,8 @@ export default class Theophile {
 	 * @returns Promise
 	 * @memberof Theophile
 	 */
-	static async init(root = ".") {
-		if (this.loaded) {
-			return Promise.resolve();
-		}
-		this.loaded = true;
-		this._root = "";
-		this.root = root;
-		this.ready = false;
-		this.plugins = {};
-		await this.loadConfig();
-		this.linkPromises = Promise.all([
-			this.loadScripts(),
-			this.loadStyles(),
-		]);
-		return Promise.all(this.loadPlugins(["Template", "Reference", "Slide", "Toc"]));
+	static async init() {
+		super.init();
 	}
 	static get root() {
 		return this._root;
@@ -69,154 +57,6 @@ export default class Theophile {
 		result.pathname += url;
 		return result;
 	}
-	static processCData() {
-		var html = document.body.innerHTML;
-		var count = 0;
-		const div = document.createElement("div");
-		while (true) {
-			var openingIdx = html.indexOf("[CDATA{[");
-			if (openingIdx < 0) break;
-			var closingIdx = html.indexOf("]}]");
-			if (closingIdx < 0) break;
-			count += 1;
-			var code = html.slice(openingIdx + 8, closingIdx);
-			div.innerText = code;
-			html = html.slice(0, openingIdx) + `<pre class="th-no-markdown">${div.innerHTML}</pre>` + html.slice(closingIdx + 3);
-		}
-		if (count === 0) return;
-		document.body.innerHTML = html;
-	}
-	static processMarkdown() {
-		marked.use({
-			mangle: false,
-			headerIds: false,
-		});
-		
-		// console.log(document.body.innerHTML);
-		// document.body.innerHTML = marked.parse('<div>ok</div># quoi \n# <span>_Marked_</span> in browser\n\nRendered by **marked**.');
-		var node, walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
-		const changed = [];
-		while (node = walker.nextNode()) {
-			if (["STYLE", "SCRIPT", "OBJECT", "IFRAME", "SVG"].indexOf(node.parentElement.nodeName) >= 0) continue;
-			if (node.parentNode.closest(".th-no-markdown") !== null) continue;
-			const startingText0 = node.nodeValue.trimEnd().replace(/^(?:\r\n|\n\r|\r|\n)/, "").replace(/'/g, "&#39;");
-			const startingText = startingText0.replace(/"/g, "&quot;");
-			const startingText1 = startingText.replace(/>/g, "&gt;").replace(/</g, "&lt;");
-			if (!startingText) continue;
-			let text = node.nodeValue.trimEnd().split(/\r\n|\n\r|\r|\n/);
-			let spaces = text.filter(line => line.length > 0).map(line => line.match(/^\s*/)[0].length);
-			let deindent = Math.min(...spaces);
-			text = text.map(line => line.slice(deindent)).join("\n");
-			text = marked.parse(text).trimEnd().replace(/(?:^<p>)|(?:<\/p>$)/g, "");
-			if (text.trim() === startingText.trim() || text.trim() === startingText0.trim() || text.trim() === startingText1.trim() || text.trim() === "") continue;
-			// console.log("DEBUGGING MARKDOWN : ", startingText, startingText0, startingText1, text);
-			var div = document.createElement("div");
-			div.innerHTML = text;
-			while (div.firstChild) {
-				node.parentElement.insertBefore(div.firstChild, node);
-			}
-			changed.push(node);
-		}
-		changed.forEach(node => {
-			node.remove();
-		});
-	}
-	static processHeadings() {
-		var headings = Array.from(document.querySelectorAll("h1,h2,h3,h4,h5,h6,[data-th-heading]"));
-		headings.forEach(heading => {
-			if (heading.hasAttribute("id")) {
-				return;
-			}
-			var str = heading.textContent;
-			str = this.normalizeString(str);
-			str = str.slice(0, 128);
-			if (!document.getElementById(str)) {
-				heading.setAttribute("id", str);
-				return;
-			}
-			var n = 2;
-			while (document.getElementById(str + "-" + n)) {
-				n += 1;
-			}
-			heading.setAttribute("id", str + "-" + n);
-		});
-	}
-	static normalizeString(str) {
-		var result = str
-			.normalize("NFD")
-			.replace(/[\u0300-\u036f]/g, "")
-			.toLowerCase()
-			.replace(/[^a-z0-9_\.\-]/g, "_")
-			.replace(/_+/g, "_");
-		return result;
-	}
-	static async prepare() {
-		await this.linkPromises;
-		await new Promise(resolve => {
-			//TODO Check pertinence
-			if (document.readyState === "complete" || document.readyState === "interactive") return resolve();
-			window.addEventListener("DomContentLoaded", e => {
-				console.trace("DomContent Loaded in prepare");
-				this.ready = true;
-				resolve();
-			});
-		});
-		console.trace("Theophile ready");
-		const promises = Array.from(Object.values(this.plugins), plugin => plugin.prepare());
-		const data = await Promise.all(promises);
-		console.trace("Plugins ready");
-		return data;
-	}
-	static async process() {
-		this.processCData();
-		this.processMarkdown();
-		this.processHeadings();
-		console.trace("Theophile processed");
-		const promises = Array.from(Object.values(this.plugins), plugin =>
-			plugin.process()
-		);
-		const data = await Promise.all(promises);
-		console.trace("Plugins processed");
-		return data;
-	}
-	static async beforeMount() {
-		console.trace("Theophile before mount");
-		const promises = Array.from(Object.values(this.plugins), plugin =>
-			plugin.beforeMount()
-		);
-		const data = await Promise.all(promises);
-		console.trace("Plugins before mounte");
-		return data;
-	}
-	static async mount() {
-		console.trace("Theophile mounted");
-		const promises = Array.from(Object.values(this.plugins), plugin =>
-			plugin.mount()
-		);
-		const data = await Promise.all(promises);
-		console.trace("Plugins mounted");
-		return data;
-	}
-	static async afterMount() {
-		console.trace("Theophile after mount");
-		hljs.highlightAll();
-		const promises = Array.from(Object.values(this.plugins), plugin =>
-			plugin.afterMount()
-		);
-		const data = await Promise.all(promises);
-		console.trace("Plugins after mount");
-		return data;
-	}
-	static async clean() {
-		document.documentElement.style.opacity = 1;
-		console.trace("Theophile cleaned");
-		const promises = Array.from(Object.values(this.plugins), plugin =>
-			plugin.clean()
-		);
-		const data = await Promise.all(promises);
-		console.trace("Plugins cleaned");
-		return data;
-	}
 	static appURL(file) {
 		if (file && file.match(/^[a-zA-Z][a-zA-Z0-9+.-]*?:\/\//)) {
 			return file;
@@ -229,65 +69,14 @@ export default class Theophile {
 		url.pathname = path.join("/");
 		return url;
 	}
-	static async loadScripts() {
-		// await this.loadScript("https://cdn.jsdelivr.net/npm/marked/marked.min.js");
-		var urls = [
-			// "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js",
-			// "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/languages/javascript.min.js",
-			// "https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/languages/css.min.js",
-		];
-		const data = await Promise.all(urls.map(url => this.loadScript(url)));
-		console.trace("Scripts loaded");
-		return data;
-	}
-	static async loadStyles() {
-		var urls = [
-			this.appURL("src/css/style.css"),
-			"https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/a11y-dark.min.css",
-		];
-		const data = await Promise.all(urls.map(url => this.loadLink(url)));
-		console.trace("Styles loaded");
-		return data;
-	}
-	static loadScript(url) {
-		return new Promise(resolve => {
-			const script = document.head.appendChild(document.createElement("script"));
-			script.setAttribute("src", url);
-			script.addEventListener("load", e => {
-				resolve(e.currentTarget);
-			});
-		});
-	}
-	static loadLink(url) {
-		return new Promise(resolve => {
-			const link = document.head.appendChild(document.createElement("link"));
-			link.setAttribute("rel", "stylesheet");
-			link.setAttribute("href", url);
-			link.addEventListener("load", e => {
-				resolve(e.currentTarget);
-			});
-		});
-	}
-	static loadPlugins(plugins) {
-		if (this.include) {
-			plugins = this.include.trim().split(/\s*,\s*/).map(name => name[0].toUpperCase() + name.slice(1).toLowerCase());
-		}
-		if (this.exclude) {
-			const exclude = this.exclude.trim().split(/\s*,\s*/).map(name => name[0].toUpperCase() + name.slice(1).toLowerCase());
-			plugins = plugins.filter(name => exclude.indexOf(name) < 0);
-		}
-		return plugins.map(async file => {
-			return this.loadPlugin(file);
-		});
-	}
-	static loadPlugin(name) {
-		return import(`./plugins/${name}/${name}.js`).then(obj => {
-			const plugin = obj.default;
-			console.trace(`Plugin ${plugin.name} loaded`);
-			this[plugin.name] = plugin;
-			this.plugins[plugin.name] = plugin;
-			return plugin.init(this);
-		});
+	static normalizeString(str) {
+		var result = str
+			.normalize("NFD")
+			.replace(/[\u0300-\u036f]/g, "")
+			.toLowerCase()
+			.replace(/[^a-z0-9_\.\-]/g, "_")
+			.replace(/_+/g, "_");
+		return result;
 	}
 	static loadJson(url) {
 		return new Promise((resolve, reject) => {
@@ -321,20 +110,6 @@ export default class Theophile {
 				reject(err);
 			}
 		});
-	}
-	static async loadConfig() {
-		var config;
-		try {
-			config = await this.loadJson(this.siteURL("theophile.json"));
-		} catch (err) {
-			console.warn("No config file found. Loading default config.");
-			config = await this.loadJson(this.appURL("defaults/theophile.json"));
-		}
-		this.loadDataSet(document.documentElement, config);
-		for (let property in config) {
-			this[property] = config[property];
-		}
-		return config;
 	}
 	static loadDataSet(element, to) {
 		var dataset = element.dataset;
@@ -383,3 +158,4 @@ export default class Theophile {
 		return to;
 	}
 }
+Theophile.init();
