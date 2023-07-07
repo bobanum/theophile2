@@ -22,18 +22,13 @@ body {
 
 #app {
   min-height: 100%;
-  display: -ms-grid;
   display: grid;
-  -ms-grid-rows: auto 1fr auto;
-      grid-template-rows: auto 1fr auto;
+  grid-template-rows: auto 1fr auto;
 }
-
 #app > * {
   padding: 1em;
 }
-
-#app > header,
-#app > footer {
+#app > header, #app > footer {
   background-color: hsl(var(--hue), var(--sat), 10%);
 }
 
@@ -53,4 +48,3 @@ li {
   width: 1200px;
   margin: 0 auto;
 }
-/*# sourceMappingURL=example.css.map */

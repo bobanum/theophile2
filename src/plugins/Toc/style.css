@@ -1,43 +1,31 @@
 @charset "UTF-8";
 .th-toc-pin body {
-  display: -ms-grid;
   display: grid;
-  -ms-grid-columns: auto 1fr;
-      grid-template-columns: auto 1fr;
+  grid-template-columns: auto 1fr;
   height: auto;
   gap: 1em;
 }
-
 .th-toc-pin #th-toc {
-  position: -webkit-sticky;
   position: sticky;
-  -webkit-box-ordinal-group: 0;
-      -ms-flex-order: -1;
-          order: -1;
-  -ms-flex-item-align: start;
-      align-self: flex-start;
+  order: -1;
+  align-self: flex-start;
   left: auto !important;
 }
-
 .th-toc-pin #th-toc .th-toc-btn-pin {
   opacity: 1;
   color: #ff0;
   text-shadow: none;
 }
-
 .th-toc-pin #th-toc .th-toc-btn-pin::before {
   margin-left: 1px;
   margin-top: 1px;
 }
-
 .th-toc-pin #th-toc::after {
   display: none;
 }
-
 .th-toc-pin #th-toc > ul {
   overflow: visible;
 }
-
 .th-toc-pin #th-toc ul {
   display: block !important;
 }
@@ -46,30 +34,25 @@
   --width: 27ch;
   --trigger-width: 1ch;
   position: fixed;
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
+  box-sizing: border-box;
   left: calc(-1 * var(--width) + 0.25px);
   top: 0.5rem;
   bottom: 0.5rem;
   line-height: 0.9;
-  background-color: #f2f2f2;
+  background-color: hsl(0, 0%, 95%);
   color: black;
   padding: 0.5em 0.5ch;
   border-top-right-radius: var(--trigger-width);
   border-bottom-right-radius: var(--trigger-width);
-  border: 3px solid #cccccc;
+  border: 3px solid hsl(0, 0%, 80%);
   border-left: none;
   border-width: 1px 3px;
   width: var(--width);
-  -webkit-transition: left 500ms;
   transition: left 500ms;
-  -webkit-transition-timing-function: ease-in;
-          transition-timing-function: ease-in;
-  -webkit-transition-delay: 0ms;
-          transition-delay: 0ms;
+  transition-timing-function: ease-in;
+  transition-delay: 0ms;
   overflow: visible;
 }
-
 #th-toc .th-toc-btn-pin {
   position: absolute;
   z-index: 1000;
@@ -77,44 +60,30 @@
   top: 0.25em;
   width: 1.3em;
   height: 1.3em;
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
+  align-items: center;
+  justify-content: center;
   background-color: #996;
   color: white;
   text-shadow: 1px 1px 2px black;
   border-radius: 100%;
 }
-
 #th-toc .th-toc-btn-pin::before {
   content: "push_pin";
   font-family: "Material Icons";
 }
-
 #th-toc .th-toc-no-heading::marker {
   content: "";
 }
-
 #th-toc:empty {
   display: none;
 }
-
 #th-toc:hover {
-  -webkit-transition-delay: 500ms;
-          transition-delay: 500ms;
-  -webkit-transition-timing-function: ease-out;
-          transition-timing-function: ease-out;
+  transition-delay: 500ms;
+  transition-timing-function: ease-out;
   left: 0;
-  -webkit-box-shadow: 0.2ch 0 0.3ch #0008;
-          box-shadow: 0.2ch 0 0.3ch #0008;
+  box-shadow: 0.2ch 0 0.3ch rgba(0, 0, 0, 0.5333333333);
 }
-
 #th-toc::after {
   content: "menu_open";
   font-family: "Material Icons";
@@ -124,43 +93,36 @@
   line-height: 0.9em;
   opacity: 0.5;
   top: 0.5rem;
-  background-color: #fff4;
+  background-color: rgba(255, 255, 255, 0.2666666667);
   padding: 0.25rem;
   border-top-right-radius: 0.25rem;
   border-bottom-right-radius: 0.25rem;
   color: white;
   z-index: -1;
 }
-
 #th-toc:hover::after {
   opacity: 1;
 }
-
 #th-toc ul {
   margin: 0;
   padding: 0;
   padding-left: 2ch;
 }
-
 #th-toc > ul {
   padding-left: 0;
   overflow-y: auto;
   height: 100%;
 }
-
 #th-toc > ul ul {
   font-size: 0.9em;
   list-style-type: disc;
 }
-
 #th-toc > ul ul li::marker {
   content: "–";
 }
-
 #th-toc li {
   position: relative;
 }
-
 #th-toc li.th-toc-current::after {
   content: "▸";
   font-size: 1rem;
@@ -169,34 +131,27 @@
   top: 0;
   line-height: 1;
 }
-
 #th-toc li > div {
   padding: 0.25em 0;
 }
-
 #th-toc li.th-toc-current > div,
 #th-toc li > div:hover {
   color: #ff0;
-  background-color: #737326;
+  background-color: hsl(60, 50%, 30%);
 }
-
 #th-toc a {
   color: inherit;
   text-decoration: none;
   display: block;
   padding: 0 0.5ch;
 }
-
 #th-toc .th-toc-level-1 > div {
   font-weight: bold;
 }
-
 #th-toc .th-toc-level-1 li:not(:hover):not(.th-toc-current-within) > ul {
   display: none;
 }
-
 #th-toc .th-toc-current-within li > ul,
 #th-toc :hover li > ul {
   display: block !important;
 }
-/*# sourceMappingURL=style.css.map */

@@ -120,6 +120,11 @@ export default class Template extends Plugin {
 		});
 	}
 	static processAllIframes(domain) {
+		// Escaping html code in pre>code>iframe and removine iframe
+		domain.querySelectorAll("pre>code>iframe").forEach(iframe => {
+			iframe.parentNode.textContent = iframe.textContent;
+		});
+
 		if (this.processiframes) {
 			domain.querySelectorAll("iframe[src]:not(.th-no-figure)").forEach(iframe => {
 				this.processIframe(iframe);

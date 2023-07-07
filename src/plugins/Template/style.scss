@@ -27,3 +27,38 @@ figure.iframe {
         }
     }
 }
+pre {
+    position: relative;
+}
+pre>button {
+    font-family: 'Material Icons';
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 0.25em;
+    border: none;
+    background: none;
+    color: white;
+    font-size: 1.5em;
+    opacity: .25;
+    transition: opacity 200ms;
+    display: grid;
+    align-items: center;
+    justify-items: center;
+
+    &:focus::before {
+        font-family: sans-serif;
+        position: absolute;
+        color: #333;
+        content: "Copié";
+        font-size: .5em;
+        border:1px solid #333;
+        background-color: #fff8;
+        border-radius: .25em;
+        padding: 0 .5em;
+        font-weight: bold;
+    }
+    &:hover {
+        opacity: 1;
+    }
+}

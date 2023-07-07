@@ -111,7 +111,7 @@ export default class Theophile {
 		}
 		changed.forEach(node => {
 			node.remove();
-		})
+		});
 	}
 	static processHeadings() {
 		var headings = Array.from(document.querySelectorAll("h1,h2,h3,h4,h5,h6,[data-th-heading]"));
@@ -196,6 +196,21 @@ export default class Theophile {
 			plugin.afterMount()
 		);
 		const data = await Promise.all(promises);
+		const listings = Array.from(document.querySelectorAll("pre>code"));
+		listings.forEach(listing => {
+			const copyBtn = document.createElement("button");
+			copyBtn.classList.add("th-copy-btn");
+			copyBtn.textContent = "content_copy";
+			copyBtn.addEventListener("click", e => {
+				const range = document.createRange();
+				range.selectNode(listing);
+				window.getSelection().removeAllRanges();
+				window.getSelection().addRange(range);
+				document.execCommand("copy");
+				window.getSelection().removeAllRanges();
+			});
+			listing.parentElement.insertBefore(copyBtn, listing);
+		});
 		console.trace("Plugins after mount");
 		return data;
 	}
