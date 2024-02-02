@@ -1,25 +1,31 @@
 const path = require('path');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
-  entry: './src/index.js',
+  entry: './index.js',
   output: {
-    path: path.resolve(__dirname),
+    path: path.resolve(__dirname, 'dist'),
     filename: 'index.js',
   },
   mode: 'production',
   module: {
     rules: [
       {
-        test: /\.s[ac]ss$/i,
+        test: /\.scss$/i,
         use: [
-          // Creates `style` nodes from JS strings
           "style-loader",
-          // Translates CSS into CommonJS
+          MiniCssExtractPlugin.loader,
           "css-loader",
-          // Compiles Sass to CSS
           "sass-loader",
         ],
       },
+      {
+        test: /\.html$/i,
+        loader: "html-loader",
+      },
+      // { test: /\.css$/, use: [MiniCssExtractPlugin.loader, "css-loader"] },
+      // { test: /\.scss$/, use: [MiniCssExtractPlugin.loader, "css-loader"] },
+      // { test: /\.scss$/, use: MiniCssExtractPlugin.loader({ fallback: 'style-loader', use: ['css-loader', 'sass-loader']}) },
     ],
   },
   devServer: {
@@ -29,4 +35,7 @@ module.exports = {
     compress: true,
     port: 9000,
   },
+  plugins: [
+     new MiniCssExtractPlugin({filename:'[name]-[chunkhash].css'}),
+  ],
 };

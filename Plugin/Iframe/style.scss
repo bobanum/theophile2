@@ -1,6 +1,8 @@
 figure.iframe {
     margin: 0;
     padding: 0;
+    border: 1px solid hsl(var(--hue, 0), var(--hue, 100%), 80%);
+    border-radius: .5em;
     iframe {
         border: none;
     }

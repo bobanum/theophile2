@@ -18,14 +18,14 @@ export default class Plugin {
 		mounted: [],
 		afterMounted: [],
 	};
-	static registerPlugin(plugin, name = null) {
-		name = name || plugin.name;
+	static registerPlugin(plugin, ...args) {
+		const name = plugin.name;
 		if (this.parent) {
 			return this.parent.registerPlugin(plugin, `${this.name}.${name}`);
 		}
 		if (this.plugins[name]) return this;
 		this.plugins[name] = plugin;
-		plugin.init(this);
+		plugin.init(this, ...args);
 		return this;
 	}
 

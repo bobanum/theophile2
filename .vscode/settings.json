@@ -1,5 +1,10 @@
 {
     "liveServer.settings.port": 5500,
     "prettier.arrowParens": "avoid",
-    "docthis.authorName": "Martin Boudreau"
+    "docthis.authorName": "Martin Boudreau",
+    "typescript.inlayHints.enumMemberValues.enabled": true,
+    "workbench.colorCustomizations": {
+        "titleBar.activeBackground": "#660000",
+        "titleBar.activeForeground": "#FFFFFF"
+    }
 }

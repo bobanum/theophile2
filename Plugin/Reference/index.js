@@ -1,5 +1,4 @@
-import './style.scss';
-import Plugin from "../../Plugin.js";
+import Plugin from "..";
 
 /**
  * Reference plugin class.

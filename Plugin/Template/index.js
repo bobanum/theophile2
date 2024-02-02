@@ -1,13 +1,30 @@
-import Plugin from "../Plugin.js";
+import Plugin from "../../Plugin.js";
 export default class Template extends Plugin {
-	static async init(Theophile) {
-		await super.init(Theophile);
-		this.processiframes = (this.processiframes === undefined) ? true : this.processiframes;
+	// static async init(Theophile) {
+	// 	await super.init(Theophile);
+	// 	this.processiframes = (this.processiframes === undefined) ? true : this.processiframes;
+	// }
+	static init(Theophile, template) {
+		super.init(Theophile);
+		// Parse template from string to document
+		if (typeof template === "string") {
+			const parser = new DOMParser();
+			template = parser.parseFromString(template, "text/html");
+		}
+		console.log("Template.init", this.name, template);
+		this.template = template;
+		this.cleanedup(() => {
+			this.log("cleanedup : ", this.name);
+			this.mount();
+		});
+		this.fetched(() => {
+		});
 	}
+
 	static get url() {
 		return this.Theophile.siteURL("template.html");
 	}
-	static async load(url = this.url) {
+	static async ZZZload(url = this.url) {
 		return new Promise(resolve => {
 			const xhr = new XMLHttpRequest();
 			xhr.open("get", url);
@@ -22,7 +39,7 @@ export default class Template extends Plugin {
 			xhr.send();
 		});
 	}
-	static async prepare() {
+	static async ZZZprepare() {
 		await super.prepare();
 		this.template = await this.load();
 		if (this.template) {
@@ -60,19 +77,14 @@ export default class Template extends Plugin {
 				});
 			});
 	}
-	static async process() {
-		await super.process();
-		this.processAllIframes(document.body);
-	}
-	static async mount() {
-		await super.mount();
-		var promises = Array.from(this.template.querySelectorAll("link"), link => {
-			return new Promise(resolve => {
-				link.addEventListener("load", e => {
-					resolve(e);
-				});
-			});
-		});
+	static mount() {
+		// var promises = Array.from(this.template.querySelectorAll("link"), link => {
+		// 	return new Promise(resolve => {
+		// 		link.addEventListener("load", e => {
+		// 			resolve(e);
+		// 		});
+		// 	});
+		// });
 		const containers = this.template.querySelectorAll(".container");
 		containers.forEach(container => {
 			var selector = container.getAttribute("data-selector");
@@ -100,10 +112,10 @@ export default class Template extends Plugin {
 		}
 		//TODO : Never been tested... TEST!
 		this.template.querySelectorAll("link,style,script").forEach(element => {
-			document.head.appendChild(element);
+			// document.head.appendChild(element);
 		});
-		// return 
-		Promise.all(promises);
+		return 
+		// Promise.all(promises);
 	}
 	static async clean() {
 		await super.clean();
@@ -141,44 +153,5 @@ export default class Template extends Plugin {
 				});
 			});
 		});
-	}
-	static processAllIframes(domain) {
-		if (this.processiframes) {
-			domain.querySelectorAll("iframe[src]:not(.th-no-figure)").forEach(iframe => {
-				this.processIframe(iframe);
-			});
-		}
-		domain.querySelectorAll("iframe:not([src])").forEach(iframe => {
-			this.processIframe(iframe);
-			var src = `data:text/html,<!DOCTYPE html><meta charset="UTF-8"><html><body>${iframe.textContent.replace(/#/g, "%23")}</body></html>`;
-			iframe.setAttribute("src", src);
-			iframe.setAttribute("scrolling", "no");
-			iframe.style.overflow = "hidden";
-			iframe.classList.add("th-no-figure");
-		});
-	}
-	static processIframe(iframe) {
-		var figure = document.createElement("figure");
-		figure.classList.add("iframe");
-		if (iframe.style.width) {
-			figure.style.width = iframe.style.width;
-		} else {
-			//TODO Is it OK?
-			var style = window.getComputedStyle(iframe);
-			figure.style.width = style.width;
-		}
-		iframe.parentNode.insertBefore(figure, iframe);
-		figure.appendChild(iframe);
-		var figcaption = figure.appendChild(document.createElement("figcaption"));
-		figcaption.innerHTML = iframe.title;
-		iframe.title = "";
-		var a = figcaption.appendChild(document.createElement("a"));
-		a.classList.add("open-in-new");
-		a.target = "_blank";
-		a.href = iframe.src;
-		var span = a.appendChild(document.createElement("span"));
-		//TODO : Localize
-		a.title = span.innerHTML = "Ouvrir dans un nouvel onglet";
-		return figure;
 	}
 }
