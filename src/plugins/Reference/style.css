@@ -1,0 +1,46 @@
+.th-reference-link {
+  display: grid;
+  grid-template: 1em/1em;
+  align-items: center;
+  justify-items: center;
+  position: absolute;
+  margin-left: -2em;
+  margin-top: 2em;
+  text-decoration: none;
+  color: inherit;
+}
+.th-reference-link:hover::before {
+  opacity: 1;
+}
+.th-reference-link:hover::after {
+  opacity: 1;
+  transition: opacity 0.1s ease-in-out;
+  transition-delay: 1000ms;
+}
+.th-reference-link::before {
+  transition: opacity 0.3s ease-in-out;
+  opacity: 0.3;
+  content: "open_in_browser";
+  font-family: "Material Icons";
+}
+.th-reference-link::after {
+  grid-row: 1;
+  opacity: 0;
+  font-family: ui-sans-serif;
+  font-family: system-ui, sans-serif;
+  pointer-events: none;
+  content: "Pleine page";
+  font-size: 12px;
+  text-align: center;
+  width: -moz-min-content;
+  width: min-content;
+  position: absolute;
+  justify-self: center;
+  line-height: 1;
+  margin-top: 3rem;
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 0.3em;
+  color: #333;
+  padding: 0.25em 0.5em 0.4em;
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+}

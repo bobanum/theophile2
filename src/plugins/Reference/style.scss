@@ -1,0 +1,50 @@
+.th-reference-link {
+	display: grid;
+	grid-template: 1em / 1em;
+	align-items: center;
+	justify-items: center;
+	position: absolute;
+	margin-left: -2em;
+	margin-top: 2em;
+	text-decoration: none;
+	color: inherit;
+	
+	&:hover {
+		&::before {
+			opacity: 1;
+		}
+		&::after {
+			opacity: 1;
+			transition: opacity .1s ease-in-out;
+			transition-delay: 1000ms;
+		}
+	}
+	
+	&::before {
+		transition: opacity .3s ease-in-out;
+		opacity: .3;
+		content: 'open_in_browser';
+		font-family: 'Material Icons';
+	}
+	
+	&::after {
+		grid-row: 1;
+		opacity: 0;
+		font-family: ui-sans-serif;
+		font-family: system-ui, sans-serif;
+		pointer-events: none;
+		content: 'Pleine page';
+		font-size: 12px;
+		text-align: center;
+		width: min-content;
+		position: absolute;
+		justify-self: center;
+		line-height: 1;
+		margin-top: 3rem;
+		background-color: #fffc;
+		border-radius: .3em;
+		color: #333;
+		padding: .25em .5em .4em;
+		box-shadow: 1px 1px 3px rgba(0,0,0,.3);
+	}
+}
