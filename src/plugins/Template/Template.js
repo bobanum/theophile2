@@ -50,8 +50,6 @@ export default class Template extends Plugin {
 		template
 			.querySelectorAll("[src],[href],[data]")
 			.forEach(element => {
-
-				console.log(element);
 				["src", "href", "data"].forEach(name => {
 					const url = element.getAttribute(name);
 					if (url) {

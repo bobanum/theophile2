@@ -7,4 +7,4 @@ export default class App extends Theophile {
 		return super.init.apply(super.prototype.constructor, arguments);
 	}
 }
-App.exec();
+// App.exec();

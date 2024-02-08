@@ -15,6 +15,9 @@ export default class Toc extends Plugin {
 	static async afterMount() {
 		await super.afterMount();
 		const tocContainer = document.querySelector("#th-toc");
+		if (this.speed) {
+			tocContainer.style.setProperty("--speed", this.speed);
+		}
 		if (!tocContainer) return;
 		const btnPin = tocContainer.appendChild(document.createElement("span"));
 		btnPin.classList.add("th-toc-btn-pin");

@@ -35,8 +35,10 @@
 //     scroll-behavior: smooth;
 // }
 #th-toc {
+    --speed: 500ms;
     --width: 27ch;
     --trigger-width: 1ch;
+    --delay: 500ms;
     position: fixed;
     box-sizing: border-box;
     left: calc(-1 * var(--width) + 0.25px);
@@ -52,7 +54,8 @@
     border-left: none;
     border-width: 1px 3px;
     width: var(--width);
-    transition: left 500ms;
+    transition-property: left;
+    transition-duration: var(--speed);
     transition-timing-function: ease-in;
     transition-delay: 0ms;
     overflow: visible;
@@ -85,7 +88,7 @@
     &:hover {
         // IN transition
         // transition: left 20ms;
-        transition-delay: 500ms;
+        transition-delay: var(--delay);
         transition-timing-function: ease-out;
         left: 0;
         box-shadow: 0.2ch 0 0.3ch #0008;

@@ -1,4 +1,4 @@
-import { marked } from "/node_modules/marked/lib/marked.esm.js";
+import { marked } from "../node_modules/marked/lib/marked.esm.js";
 import hljs from './highlight/highlight.min.js';
 /**
  * Description

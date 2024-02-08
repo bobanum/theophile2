@@ -28,3 +28,39 @@ figure.iframe a.open-in-new::before {
   font-family: "Material Icons";
   content: "open_in_new";
 }
+
+pre {
+  position: relative;
+}
+
+pre > button {
+  font-family: "Material Icons";
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 0.25em;
+  border: none;
+  background: none;
+  color: white;
+  font-size: 1.5em;
+  opacity: 0.25;
+  transition: opacity 200ms;
+  display: grid;
+  align-items: center;
+  justify-items: center;
+}
+pre > button:focus::before {
+  font-family: sans-serif;
+  position: absolute;
+  color: #333;
+  content: "Copié";
+  font-size: 0.5em;
+  border: 1px solid #333;
+  background-color: rgba(255, 255, 255, 0.5333333333);
+  border-radius: 0.25em;
+  padding: 0 0.5em;
+  font-weight: bold;
+}
+pre > button:hover {
+  opacity: 1;
+}
