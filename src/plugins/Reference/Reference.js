@@ -39,7 +39,7 @@ export default class Reference extends Plugin {
 			ref.parentNode.removeChild(ref);
 		}
 	}
-	static getRefDocument(url) {
+	static zzzgetRefDocument(url) {
 		url = url.split("#")[0];
 		if (this.refsDocuments[url]) {
 			return Promise.resolve(this.refsDocuments[url]);
@@ -55,6 +55,89 @@ export default class Reference extends Plugin {
 			});
 			xhr.send();
 		});
+	}
+	/**
+	 * Retrieves the reference document based on the provided URL.
+	 * @param {string} url - The URL of the reference document.
+	 * @returns {Promise} - A promise that resolves with the reference document.
+	 */
+	static async getRefDocument(url) {
+		url = url.split("#")[0];
+		if (this.refsDocuments[url]) {
+			return Promise.resolve(this.refsDocuments[url]);
+		}
+		if (url.endsWith(".html") || url.endsWith(".htm")) {
+			this.refsDocuments[url] = await this.getRefHtml(url);
+		} else if (url.endsWith(".md")) {
+			this.refsDocuments[url] = await this.getRefMarkdown(url);
+		} else {
+			console.error("Unknown file type", url);
+		}
+		return this.refsDocuments[url];
+	}
+	/**
+	 * Fetches HTML content from the specified URL and returns it as a parsed document.
+	 * @param {string} url - The URL to fetch the HTML content from.
+	 * @returns {Promise<Document>} - A promise that resolves to the parsed document.
+	 * @throws {Error} - If there is an HTTP error or if fetching the HTML fails.
+	 */
+	static async getRefHtml(url) {
+		try {
+			const response = await fetch(url);
+
+			if (!response.ok) {
+				throw new Error(`HTTP error! Status: ${response.status}`);
+			}
+
+			const html = await response.text();
+			const parser = new DOMParser();
+			const doc = parser.parseFromString(html, 'text/html');
+
+			return doc;
+		} catch (error) {
+			throw new Error(`Failed to fetch HTML: ${error.message}`);
+		}
+	}
+	/**
+	* Retrieves the markdown content from the specified URL and returns it as a Promise.
+	* If the content has already been fetched before, it will be retrieved from cache.
+	*
+	* @param {string} url - The URL of the markdown content.
+	* @returns {Promise<HTMLDivElement>} A Promise that resolves to the HTMLDivElement containing the markdown content.
+	*/
+	static async getRefMarkdown(url) {
+		try {
+			// Fetch the markdown content
+			const response = await fetch(url);
+
+			if (!response.ok) {
+				throw new Error(`HTTP error! Status: ${response.status}`);
+			}
+
+			// Parse the markdown content using marked.js
+			const markdownText = await response.text();
+			var htmlContent = marked.parse(markdownText);
+			const refUrls = [...htmlContent.matchAll(/(href|src)="([^"]+)"/g)];
+			refUrls.forEach(refUrl => {
+				if (refUrl[2].startsWith("http")) return;
+				var root = new URL(url).href.split("/").slice(0, -1).join("/");
+				console.log(root);
+				if (refUrl[2].startsWith("/")) {
+					var abs = refUrl[0].replace(refUrl[2], root + refUrl[2]);
+				} else {
+					var abs = refUrl[0].replace(refUrl[2], root + "/" + refUrl[2]);
+				}
+				console.log(abs, refUrl[0]);
+				htmlContent = htmlContent.replace(refUrl[0], abs);
+			});
+
+			// Create an HTML document and set the body content
+			const doc = document.implementation.createHTMLDocument();
+			doc.body.innerHTML = htmlContent;
+			return doc;
+		} catch (error) {
+			throw new Error(`Failed to fetch and parse markdown: ${error.message}`);
+		}
 	}
 	static async prepare() {
 		await super.prepare();
